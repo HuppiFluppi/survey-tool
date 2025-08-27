@@ -1,0 +1,74 @@
+title: "survey"
+description: "xyz"
+image_path: "file.png"
+type: quiz # or survey
+score:
+  show_question_scores: true
+  show_leaderboard: true
+  leaderboard:
+    show_scores: true
+    winner_notification: true
+    limit: 10
+    show_at_start: true
+
+--- # first page
+title: "page1"
+description: "page1 description"
+image_path: "file.png"
+content:
+  - type: name
+    required: true
+    title: "give me your name"
+  - type: choice
+    required: true
+    title: "what is your favorite weather?"
+    config:
+      multiple: false
+      limit: 2
+      choices:
+        - title: "sun"
+          correct: true
+          score: 5
+        - title: "rain"
+          correct: false
+        - title: "snow"
+          correct: false
+        - title: "wind"
+          correct: false
+        - title: "cloud"
+          correct: true
+          score: 5
+  - type: text
+    required: true
+    title: "what is your favorite weather?"
+    config:
+      multiline: true
+      score: 5
+      correct_answer: "sun"
+  - type: rating
+    required: true
+    title: "what is your favorite weather?"
+  - type: likert
+    required: true
+    title: "what is your favorite weather?"
+    config:
+      choices:
+        - "a lot"
+        - "a little"
+        - "not at all"
+      statements:
+        - title: "sun"
+          correct_choice: "a lot"
+          score: 5
+        - title: "rain"
+          correct_choice: "a little"
+          score: 5
+        - title: "snow"
+          correct_choice: "not at all"
+          score: 5
+        - title: "wind"
+          correct_choice: "not at all"
+          score: 5
+        - title: "cloud"
+          correct_choice: "not at all"
+          score: 5
