@@ -25,9 +25,7 @@ data class ScoreSettings(
 
 data class LeaderboardSettings(
     val showScores: Boolean = true,
-    val winnerNotification: Boolean = true,
     val limit: Int = 10,
-    val showAtStart: Boolean = true,
 )
 
 data class SurveyPage(
