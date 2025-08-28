@@ -1,5 +1,6 @@
 package com.zinkel.survey.ui
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,11 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -80,6 +83,10 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
             )
 
             Divider()
+            if (surveyContentUiState.totalPages > 1) {
+                val animatedProgress by animateFloatAsState(targetValue = (surveyContentUiState.currentPage - 1).toFloat() / surveyContentUiState.totalPages.toFloat())
+                LinearProgressIndicator(progress = animatedProgress, backgroundColor = MaterialTheme.colorScheme.background.copy(alpha = 0.2f), modifier = Modifier.fillMaxWidth())
+            }
 
             Column(modifier = Modifier.weight(1f).padding(8.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 PageHeader(surveyContentUiState.pageTitle, surveyContentUiState.pageDescription)
@@ -95,7 +102,7 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
                 }
             }
 
-            Divider()
+            Divider(thickness = 2.dp)
 
             Row(horizontalArrangement = SpaceBetween, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
                 Button(onClick = surveyModel::cancelSurvey) {
