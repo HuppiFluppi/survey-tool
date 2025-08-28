@@ -44,7 +44,10 @@ fun SurveyContentScreenPreview() {
                         TextQuestion("text question", "1-5", score = 5), ChoiceQuestion(
                             "Choice question", "1-6", choices = listOf(ChoiceItem("first choice"), ChoiceItem("second choice"), ChoiceItem("third choice"))
                         ), NameQuestion("whats your name?", "1-7"), RatingQuestion("how well do you rate this survey?", "1-8"), LikertQuestion(
-                            "how well do you rate this survey?", "1-1ß", choices = listOf("very bad", "not so bad", "quite good", "excellent"), statements = listOf(
+                            "how well do you rate this survey?",
+                            "1-1ß",
+                            choices = listOf("very bad", "not so bad", "quite good", "excellent"),
+                            statements = listOf(
                                 LikertStatement("schwubzidität", score = 1),
                                 LikertStatement("moppeligkeit", score = 1),
                                 LikertStatement("schnuffigkeit", score = 1),

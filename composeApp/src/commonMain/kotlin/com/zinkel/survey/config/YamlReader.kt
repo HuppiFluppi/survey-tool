@@ -39,9 +39,7 @@ class YamlReader : SurveyConfigReader {
 
     private fun mapLeaderboard(leaderboard: Map<String, Any>) = LeaderboardSettings(
         showScores = leaderboard["show_scores"] as? Boolean ?: true,
-        winnerNotification = leaderboard["winner_notification"] as? Boolean ?: true,
         limit = leaderboard["limit"] as? Int ?: 10,
-        showAtStart = leaderboard["show_at_start"] as? Boolean ?: true,
     )
 
     private fun mapPage(document: Map<String, Any>, pageNumber: Int) = SurveyPage(
@@ -59,14 +57,14 @@ class YamlReader : SurveyConfigReader {
 
         when (type) {
             SurveyContentType.TEXT -> {
-                val config = content["config"] as? Map<String, Any> ?: throw IllegalArgumentException("Survey file malformed (no config for text content)")
+                val config = content["config"] as? Map<String, Any>
                 return TextQuestion(
                     title = title,
                     id = getContentId(pageNumber, contentNumber),
                     required = required,
-                    multiline = config["multiline"] as? Boolean ?: false,
-                    score = config["score"] as? Int,
-                    correctAnswer = config["correct_answer"] as? String,
+                    multiline = config?.get("multiline") as? Boolean ?: false,
+                    score = config?.get("score") as? Int,
+                    correctAnswer = config?.get("correct_answer") as? String,
                 )
             }
 

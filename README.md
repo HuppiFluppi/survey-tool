@@ -43,7 +43,7 @@ And maybe help others who come across this repo, having the same need I had year
 Steps to use:
 
 1) Define a survey configuration
-- Check the [template](template.yml) for a sample configuration
+- Check the [template](template.yaml) for a sample configuration
 - Add questions to your like
 - Configure settings as needed
 
