@@ -4,9 +4,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,6 +33,7 @@ import com.zinkel.survey.ui.elements.TextElement
 import org.jetbrains.compose.resources.stringResource
 import surveytool.composeapp.generated.resources.Res
 import surveytool.composeapp.generated.resources.advance
+import surveytool.composeapp.generated.resources.back
 import surveytool.composeapp.generated.resources.cancel
 import surveytool.composeapp.generated.resources.finish
 
@@ -104,11 +105,17 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
 
             Divider(thickness = 2.dp)
 
-            Row(horizontalArrangement = SpaceBetween, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
-                Button(onClick = surveyModel::cancelSurvey) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = surveyModel::cancelSurvey, modifier = Modifier.padding(8.dp, 4.dp)) {
                     Text(stringResource(Res.string.cancel))
                 }
-                Button(onClick = surveyModel::advanceSurvey) {
+                Spacer(modifier = Modifier.weight(1f))
+                if (surveyContentUiState.currentPage > 1) {
+                    Button(onClick = surveyModel::backSurvey, modifier = Modifier.padding(4.dp, 4.dp)) {
+                        Text(stringResource(Res.string.back))
+                    }
+                }
+                Button(onClick = surveyModel::advanceSurvey, modifier = Modifier.padding(4.dp, 4.dp)) {
                     if (surveyContentUiState.currentPage == surveyContentUiState.totalPages) Text(stringResource(Res.string.finish))
                     else Text(stringResource(Res.string.advance))
                 }

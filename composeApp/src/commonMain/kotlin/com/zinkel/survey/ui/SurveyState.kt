@@ -28,18 +28,18 @@ class SurveyModel(val surveyConfig: SurveyConfig) {
     var highscoreUiState by mutableStateOf(HighscoreUiState(surveyConfig.score.leaderboard.limit, surveyConfig.score.leaderboard.showScores, emptyList()))
         private set
 
-    private var currentPage = 0
+    private var currentPageIndex = 0
 
     fun takeSurvey() {
         surveyUiState = SurveyUiState.Content(
             SurveyContentUiState(
                 surveyTitle = surveyConfig.title,
                 totalPages = surveyConfig.pages.size,
-                currentPage = currentPage + 1,
-                pageTitle = surveyConfig.pages[currentPage].title,
-                pageDescription = surveyConfig.pages[currentPage].description,
+                currentPage = currentPageIndex + 1,
+                pageTitle = surveyConfig.pages[currentPageIndex].title,
+                pageDescription = surveyConfig.pages[currentPageIndex].description,
                 showQuestionScores = surveyConfig.score.showQuestionScores,
-                content = surveyConfig.pages[currentPage].content
+                content = surveyConfig.pages[currentPageIndex].content
             )
         )
     }
@@ -48,26 +48,40 @@ class SurveyModel(val surveyConfig: SurveyConfig) {
         resetSurvey()
     }
 
+    fun backSurvey() {
+        if(currentPageIndex == 0) return //should be prevented by UI logic
+
+        currentPageIndex--
+        surveyUiState = SurveyUiState.Content(
+            (surveyUiState as SurveyUiState.Content).contentUiState.copy(
+                currentPage = currentPageIndex + 1,
+                pageTitle = surveyConfig.pages[currentPageIndex].title,
+                pageDescription = surveyConfig.pages[currentPageIndex].description,
+                content = surveyConfig.pages[currentPageIndex].content
+            )
+        )
+    }
+
     private fun resetSurvey() {
-        currentPage = 0
+        currentPageIndex = 0
         surveyUiState = SurveyUiState.Summary(surveySummaryUiState)
     }
 
     fun advanceSurvey() {
-        currentPage++
+        currentPageIndex++
 
         //TODO checkInput()
 
-        if (currentPage == surveyConfig.pages.size) { //finalized survey
+        if (currentPageIndex == surveyConfig.pages.size) { //finalized survey
             //TODO
             resetSurvey()
         } else { //advance to the next page
             surveyUiState = SurveyUiState.Content(
                 (surveyUiState as SurveyUiState.Content).contentUiState.copy(
-                    currentPage = currentPage + 1,
-                    pageTitle = surveyConfig.pages[currentPage].title,
-                    pageDescription = surveyConfig.pages[currentPage].description,
-                    content = surveyConfig.pages[currentPage].content
+                    currentPage = currentPageIndex + 1,
+                    pageTitle = surveyConfig.pages[currentPageIndex].title,
+                    pageDescription = surveyConfig.pages[currentPageIndex].description,
+                    content = surveyConfig.pages[currentPageIndex].content
                 )
             )
         }
