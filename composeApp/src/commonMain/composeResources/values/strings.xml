@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Felix Simple Survey Tool</string>
     <string name="load_file">Load File</string>
+    <string name="drop_file">Drop File</string>
     <string name="load_file_error_title">File load error</string>
     <string name="load_file_error_text">Please check the chosen file is a proper survey input file. \nError message: %1$s</string>
     <string name="survey_pages_questions">%2$d questions on %1$d pages</string>
