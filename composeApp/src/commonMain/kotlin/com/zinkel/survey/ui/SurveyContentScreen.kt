@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -89,7 +90,11 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
                 LinearProgressIndicator(progress = animatedProgress, backgroundColor = MaterialTheme.colorScheme.background.copy(alpha = 0.2f), modifier = Modifier.fillMaxWidth())
             }
 
-            Column(modifier = Modifier.weight(1f).padding(8.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            val scrollState = rememberScrollState()
+            LaunchedEffect(surveyContentUiState.currentPage) {
+                scrollState.animateScrollTo(0)
+            }
+            Column(modifier = Modifier.weight(1f).padding(8.dp).verticalScroll(scrollState), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 PageHeader(surveyContentUiState.pageTitle, surveyContentUiState.pageDescription)
 
                 surveyContentUiState.content.forEach {

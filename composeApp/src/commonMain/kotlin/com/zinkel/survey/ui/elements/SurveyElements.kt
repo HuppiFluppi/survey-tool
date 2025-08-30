@@ -73,7 +73,7 @@ fun NameElement(question: NameQuestion) {
             titleRow(question.title, question.required, false, null)
 
             Row {
-                var txt by remember { mutableStateOf("") }
+                var txt by remember(question.id) { mutableStateOf("") }
                 TextFieldWithoutPadding(value = txt, onValueChange = { txt = it }, modifier = Modifier.weight(1f))
                 Box(modifier = Modifier.weight(0.5f))
             }
@@ -99,7 +99,7 @@ fun ChoiceElement(question: ChoiceQuestion, showQuestionScores: Boolean) {
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, question.choices.sumOf { it.score ?: 0 })
 
-            val checkStates = remember { question.choices.map { it.title to false }.toMutableStateMap() }
+            val checkStates = remember(question.id) { question.choices.map { it.title to false }.toMutableStateMap() }
             question.choices.forEach { choice ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
@@ -144,7 +144,7 @@ fun LikertElement(question: LikertQuestion, showQuestionScores: Boolean) {
                 }
             }
             question.statements.forEach { statement ->
-                val (selectedOption, onOptionSelected) = remember { mutableStateOf<String?>(null) }
+                val (selectedOption, onOptionSelected) = remember(question.id) { mutableStateOf<String?>(null) }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = statement.title, modifier = Modifier.weight(1f))
                     question.choices.forEach { choice ->
@@ -168,7 +168,7 @@ fun RatingElement(question: RatingQuestion, showQuestionScores: Boolean) {
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, null)
 
-            var rating by remember { mutableStateOf(0) }
+            var rating by remember(question.id) { mutableStateOf(0) }
             val filledStar = painterResource(Res.drawable.star_filled)
             val unfilledStar = painterResource(Res.drawable.star_unfilled)
             Row {
@@ -194,7 +194,7 @@ fun TextElement(question: TextQuestion, showQuestionScores: Boolean) {
             titleRow(question.title, question.required, showQuestionScores, question.score)
 
             Row {
-                var txt by remember { mutableStateOf("") }
+                var txt by remember(question.id) { mutableStateOf("") }
                 TextFieldWithoutPadding(
                     value = txt,
                     onValueChange = { txt = it },
