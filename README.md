@@ -36,14 +36,15 @@ And maybe help others who come across this repo, having the same need I had year
 ## Tech stack
 - Kotlin: 2.2 / JVM 21
 - Build system: Gradle (Kotlin DSL)
-- UI: Jetpack Compose (Android) or Compose Multiplatform (depending on target)
+- UI: Jetpack Compose (Android) or Compose Multiplatform
 
 ## Quick Start
 
 Steps to use:
 
 1) Define a survey configuration
-- Check the [template](template.yaml) for a sample configuration
+- Check the [template](template.yaml) for a documented configuration
+- Check the [examples folder](examples) for different kind of survey and quiz configurations
 - Add questions to your like
 - Configure settings as needed
 
@@ -73,11 +74,7 @@ The model tracks:
 ### Build
 Gradle tasks:
 - Build: `./gradlew assemble`
-- Run (Android projects): `./gradlew installDebug`
-- Clean: `./gradlew clean`
-
-Make sure:
-- JVM 21 is available
+- Run (Desktop): `./gradlew run`
 
 ### Test
 - Unit tests: `./gradlew test`
@@ -90,15 +87,20 @@ Make sure:
 - Add support for more question types
 - Add multi survey languages support
 - Add support for images
-- Add support color themes
+- Add support for custom color themes
 - Add fullscreen/kiosk mode
-- Add Conditional pages
+- Add conditional pages
 
 ## Contributing
 Contributions are welcome! Please:
 - Open issues with clear steps to reproduce and expected behavior
 - Submit Pull Requests with concise descriptions, tests (where applicable), and clean commit history
-- Follow the project’s coding style and architectural guidelines
+- Follow the project’s coding style and patterns
+
+## Disclaimer
+
+This software is provided "as is", without warranty of any kind. The author is certain parts of this software could be done better.
+The todos are plenty and bugs are likely hiding. Use at your own risk and have fun. This is a learning and experiment project.
 
 ## License
-This project is licensed under MIT. See [license file](LICENSE)
+This project is provided under MIT license. See [license file](LICENSE)
