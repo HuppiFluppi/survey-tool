@@ -1,6 +1,8 @@
 package com.zinkel.survey.ui.elements
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -16,15 +18,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -70,14 +64,22 @@ fun PageHeader(pageTitle: String?, pageDescription: String?) {
 }
 
 @Composable
+fun ErrorHeader(inputError: String? = null) {
+    AnimatedVisibility(inputError != null, modifier = Modifier.fillMaxWidth().background(color = MaterialTheme.colorScheme.error).padding(8.dp)) {
+        Text(text = inputError ?: "", color = MaterialTheme.colorScheme.onError, textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
 @Preview
 fun NameElementPreview() {
-    NameElement(NameQuestion(title = "What is your name?", id = "1-1"), {})
+    NameElement(NameQuestion(title = "What is your name?", id = "1-1"), {}, inputError = "This is an error")
 }
 
 @Composable
 fun NameElement(question: NameQuestion, onValueChange: (String) -> Unit, savedValue: String = "", inputError: String? = null) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        ErrorHeader(inputError)
         Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
             titleRow(question.title, question.required, false, null)
 
@@ -111,6 +113,7 @@ fun ChoiceElement(
     inputError: String? = null,
 ) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        ErrorHeader(inputError)
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, question.choices.sumOf { it.score ?: 0 })
 
@@ -163,6 +166,7 @@ fun LikertElement(
     inputError: String? = null,
 ) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        ErrorHeader(inputError)
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, question.statements.sumOf { it.score ?: 0 })
 
@@ -198,6 +202,7 @@ fun RatingElementPreview() {
 @Composable
 fun RatingElement(question: RatingQuestion, showQuestionScores: Boolean, onValueChange: (Int) -> Unit, savedValue: Int = 0, inputError: String? = null) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        ErrorHeader(inputError)
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, null)
 
@@ -223,6 +228,7 @@ fun TextElementPreview() {
 @Composable
 fun TextElement(question: TextQuestion, showQuestionScores: Boolean, onValueChange: (String) -> Unit, savedValue: String = "", inputError: String? = null) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        ErrorHeader(inputError)
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, question.score)
 

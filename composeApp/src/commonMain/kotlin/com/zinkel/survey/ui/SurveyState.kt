@@ -117,13 +117,14 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
                     pageTitle = surveyConfig.pages[currentPageIndex].title,
                     pageDescription = surveyConfig.pages[currentPageIndex].description,
                     content = surveyContentPage.values.toList(),
+                    inputErrors = emptyMap()
                 )
             )
         }
     }
 
     private fun checkInputValid(): Boolean {
-        val inputErrors = runBlocking { //suspending needed to get resource strings, while not ideal, runBlocking is accepted here
+        val inputErrors = runBlocking { //suspending needed to get resource strings. while not ideal, runBlocking is chosen here
             surveyContentPage.entries.asFlow()
                 .map { it.key to it.value.validate() }
                 .filterNot { it.second.isValid }

@@ -16,4 +16,5 @@
     <string name="required">Required</string>
     <string name="points">%1$d points</string>
     <string name="validation_error_required">Question requires an answer</string>
+    <string name="highscore_unknown_player">&lt;unknown&gt;</string>
 </resources>
