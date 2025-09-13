@@ -82,14 +82,17 @@ Gradle tasks:
 - Consider CI integration to enforce checks
 
 ## Roadmap
-- Enable Android target
-- Add remote configuration loading and data sending
-- Add support for more question types
-- Add multi survey languages support
-- Add support for images
-- Add support for custom color themes
-- Add fullscreen/kiosk mode
-- Add conditional pages
+- [ ] Enable Android target
+- [ ] Refactor package structure and remedy some code smells
+- [ ] Add support for specifying the participant name question 
+- [ ] Add possibility to resume survey by loading existing data
+- [ ] Add remote configuration loading and data sending
+- [ ] Add support for more question types
+- [ ] Add multi survey languages support
+- [ ] Add support for images (Background, Summary, Page Header)
+- [ ] Add support for custom color themes
+- [ ] Add fullscreen/kiosk mode (Desktop)
+- [ ] Add conditional pages
 
 ## Contributing
 Contributions are welcome! Please:

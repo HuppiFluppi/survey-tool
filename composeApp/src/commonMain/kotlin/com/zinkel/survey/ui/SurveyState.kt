@@ -3,7 +3,9 @@ package com.zinkel.survey.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.Snapshot
 import com.zinkel.survey.config.SurveyConfig
+import com.zinkel.survey.config.SurveyContentType
 import com.zinkel.survey.config.SurveyType
 import com.zinkel.survey.data.ChoiceSurveyContentData
 import com.zinkel.survey.data.LikertSurveyContentData
@@ -21,6 +23,8 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.getString
+import surveytool.composeapp.generated.resources.Res
+import surveytool.composeapp.generated.resources.highscore_unknown_player
 import java.io.File
 
 class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, private val coroutineScope: CoroutineScope) {
@@ -106,8 +110,9 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
             val instance4save = surveyInstance ?: throw RuntimeException("SurveyInstance is null")
             coroutineScope.launch {
                 dataManager.addSurveyData(instance4save)
+                updateHighscore(instance4save)
             }
-            //TODO highscore
+
             resetSurvey()
         } else { //advance to the next page
             fillSurveyContentPage()
@@ -120,6 +125,17 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
                     inputErrors = emptyMap()
                 )
             )
+        }
+    }
+
+    private suspend fun updateHighscore(instance: SurveyInstance) {
+        val answers = instance.getAllAnswers()
+        val newEntry = HighscoreEntry( //just taking the first name question is merely a hack for now
+            answers.find { it.question.type == SurveyContentType.NAME }?.answer as? String ?: getString(Res.string.highscore_unknown_player),
+            answers.sumOf { it.calculateScore() })
+        Snapshot.withMutableSnapshot {
+            // as the UI sorts and limits, simply adding works but might eventually become a problem with many highscore entries
+            highscoreUiState = highscoreUiState.copy(scores = highscoreUiState.scores + newEntry)
         }
     }
 
