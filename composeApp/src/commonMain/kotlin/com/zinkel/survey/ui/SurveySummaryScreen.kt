@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zinkel.survey.config.SurveyType
@@ -35,7 +36,7 @@ fun SurveySummaryScreen(surveyModel: SurveyModel) {
     ) {
         Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
             Text(text = surveySummaryUiState.title, fontSize = 32.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(16.dp))
-            Text(text = surveySummaryUiState.description, maxLines = 10, modifier = Modifier.padding(16.dp))
+            Text(text = surveySummaryUiState.description, maxLines = 10, textAlign = TextAlign.Center, modifier = Modifier.padding(64.dp, 16.dp))
 
             if (surveySummaryUiState.highscoreEnabled) {
                 HighScore(surveyModel.highscoreUiState)

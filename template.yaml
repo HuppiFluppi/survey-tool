@@ -4,10 +4,10 @@ title: "Template Survey"
 
 # description: String (required)
 # Description of the survey
-description: > # '>' means to continue the description on the next line. You can also write all on one line
-  "This survey configurations is a template.
+description: > # '>' means to continue the description on the next line. You can also write all on one line. The quotation marks (") are then omitted.
+  This survey configurations is a template.
   It's purpose is to help you get started.
-  All options are explained and you can get an understanding of what is possible"
+  All options are explained and you can get an understanding of what is possible
 
 # image_path: String (optional): path to image file
 # Image to show at the top of the survey
