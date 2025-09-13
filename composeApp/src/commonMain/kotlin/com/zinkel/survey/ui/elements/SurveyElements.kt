@@ -9,13 +9,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
-import androidx.compose.material3.*
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -63,19 +72,19 @@ fun PageHeader(pageTitle: String?, pageDescription: String?) {
 @Composable
 @Preview
 fun NameElementPreview() {
-    NameElement(NameQuestion(title = "What is your name?", id = "1-1"))
+    NameElement(NameQuestion(title = "What is your name?", id = "1-1"), {})
 }
 
 @Composable
-fun NameElement(question: NameQuestion) {
+fun NameElement(question: NameQuestion, onValueChange: (String) -> Unit, savedValue: String = "", inputError: String? = null) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
             titleRow(question.title, question.required, false, null)
 
             Row {
-                var txt by remember(question.id) { mutableStateOf("") }
-                TextFieldWithoutPadding(value = txt, onValueChange = { txt = it }, modifier = Modifier.weight(1f))
-                Box(modifier = Modifier.weight(0.5f))
+                var txt by remember(question.id) { mutableStateOf(savedValue) }
+                TextFieldWithoutPadding(value = txt, onValueChange = { txt = it; onValueChange(it) }, modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(0.5f))
             }
         }
     }
@@ -89,22 +98,28 @@ fun ChoiceElementPreview() {
             title = "What is your name?",
             id = "1-1",
             choices = listOf(ChoiceItem("first choice"), ChoiceItem("second choice"), ChoiceItem("third choice"))
-        ), true
+        ), true, {}
     )
 }
 
 @Composable
-fun ChoiceElement(question: ChoiceQuestion, showQuestionScores: Boolean) {
+fun ChoiceElement(
+    question: ChoiceQuestion,
+    showQuestionScores: Boolean,
+    onValueChange: (List<String>) -> Unit,
+    savedValues: List<String> = emptyList(),
+    inputError: String? = null,
+) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, question.choices.sumOf { it.score ?: 0 })
 
-            val checkStates = remember(question.id) { question.choices.map { it.title to false }.toMutableStateMap() }
+            val checkStates = remember(question.id) { question.choices.map { it.title to (it.title in savedValues) }.toMutableStateMap() }
             question.choices.forEach { choice ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = checkStates[choice.title]!!,
-                        onCheckedChange = { handleChoiceChange(it, choice, question.multiple, question.limit, checkStates) })
+                        onCheckedChange = { handleChoiceChange(it, choice, question.multiple, question.limit, checkStates, onValueChange) })
                     Text(text = choice.title)
                 }
             }
@@ -112,12 +127,20 @@ fun ChoiceElement(question: ChoiceQuestion, showQuestionScores: Boolean) {
     }
 }
 
-fun handleChoiceChange(checked: Boolean, choice: ChoiceItem, multiple: Boolean, limit: Int, checkStates: MutableMap<String, Boolean>) {
+fun handleChoiceChange(
+    checked: Boolean,
+    choice: ChoiceItem,
+    multiple: Boolean,
+    limit: Int,
+    checkStates: MutableMap<String, Boolean>,
+    onValueChange: (List<String>) -> Unit,
+) {
     if (limit > 0 && checked && checkStates.count { it.value } == limit) return // cant check more than limit
     if (!multiple && checkStates.any { it.value }) {
         checkStates.filter { it.value }.forEach { checkStates[it.key] = false }
     }
     checkStates[choice.title] = checked
+    onValueChange(checkStates.filter { it.value }.map { it.key })
 }
 
 @Composable
@@ -127,12 +150,18 @@ fun LikertElementPreview() {
         LikertQuestion(
             "Likert Question", "1-1", choices = listOf("Strongly Disagree", "Disagree", "Neither Agree nor Disagree", "Agree", "Strongly Agree"),
             statements = listOf(LikertStatement("Banana", 1), LikertStatement("Apple", 1), LikertStatement("Orange", 1))
-        ), true
+        ), true, { _, _ -> }
     )
 }
 
 @Composable
-fun LikertElement(question: LikertQuestion, showQuestionScores: Boolean) {
+fun LikertElement(
+    question: LikertQuestion,
+    showQuestionScores: Boolean,
+    onValueChange: (String, String) -> Unit,
+    savedValues: Map<String, String> = emptyMap(),
+    inputError: String? = null,
+) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, question.statements.sumOf { it.score ?: 0 })
@@ -144,11 +173,15 @@ fun LikertElement(question: LikertQuestion, showQuestionScores: Boolean) {
                 }
             }
             question.statements.forEach { statement ->
-                val (selectedOption, onOptionSelected) = remember(question.id) { mutableStateOf<String?>(null) }
+                val (selectedOption, onOptionSelected) = remember(question.id) { mutableStateOf(savedValues[statement.title]) }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = statement.title, modifier = Modifier.weight(1f))
                     question.choices.forEach { choice ->
-                        RadioButton(selected = (choice == selectedOption), onClick = { onOptionSelected(choice) }, modifier = Modifier.weight(0.5f))
+                        RadioButton(
+                            selected = (choice == selectedOption),
+                            onClick = { onOptionSelected(choice); onValueChange(statement.title, choice) },
+                            modifier = Modifier.weight(0.5f)
+                        )
                     }
                 }
             }
@@ -159,22 +192,22 @@ fun LikertElement(question: LikertQuestion, showQuestionScores: Boolean) {
 @Composable
 @Preview
 fun RatingElementPreview() {
-    RatingElement(RatingQuestion(title = "How are you feeling today?", "1-1"), true)
+    RatingElement(RatingQuestion(title = "How are you feeling today?", "1-1"), true, {})
 }
 
 @Composable
-fun RatingElement(question: RatingQuestion, showQuestionScores: Boolean) {
+fun RatingElement(question: RatingQuestion, showQuestionScores: Boolean, onValueChange: (Int) -> Unit, savedValue: Int = 0, inputError: String? = null) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, null)
 
-            var rating by remember(question.id) { mutableStateOf(0) }
+            var rating by remember(question.id) { mutableStateOf(savedValue) }
             val filledStar = painterResource(Res.drawable.star_filled)
             val unfilledStar = painterResource(Res.drawable.star_unfilled)
             Row {
                 for (i in 1..5) {
                     val image = if (i <= rating) filledStar else unfilledStar
-                    Icon(image, contentDescription = null, modifier = Modifier.padding(8.dp).clickable { rating = i })
+                    Icon(image, contentDescription = null, modifier = Modifier.padding(8.dp).clickable { rating = i; onValueChange(i) })
                 }
             }
         }
@@ -184,26 +217,26 @@ fun RatingElement(question: RatingQuestion, showQuestionScores: Boolean) {
 @Composable
 @Preview
 fun TextElementPreview() {
-    TextElement(TextQuestion(title = "How are you feeling today?", "1-1", score = 5), true)
+    TextElement(TextQuestion(title = "How are you feeling today?", "1-1", score = 5), true, {})
 }
 
 @Composable
-fun TextElement(question: TextQuestion, showQuestionScores: Boolean) {
+fun TextElement(question: TextQuestion, showQuestionScores: Boolean, onValueChange: (String) -> Unit, savedValue: String = "", inputError: String? = null) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(8.dp)) {
             titleRow(question.title, question.required, showQuestionScores, question.score)
 
             Row {
-                var txt by remember(question.id) { mutableStateOf("") }
+                var txt by remember(question.id) { mutableStateOf(savedValue) }
                 TextFieldWithoutPadding(
                     value = txt,
-                    onValueChange = { txt = it },
+                    onValueChange = { txt = it; onValueChange(it) },
                     singleLine = !question.multiline,
                     minLines = if (question.multiline) 3 else 1,
                     maxLines = 6,
                     modifier = Modifier.weight(1f)
                 )
-                Box(modifier = Modifier.weight(0.5f))
+                Spacer(modifier = Modifier.weight(0.5f))
             }
         }
     }

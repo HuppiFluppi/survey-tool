@@ -21,10 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zinkel.survey.config.*
+import com.zinkel.survey.data.ChoiceSurveyContentData
+import com.zinkel.survey.data.LikertSurveyContentData
+import com.zinkel.survey.data.NameSurveyContentData
+import com.zinkel.survey.data.RatingSurveyContentData
+import com.zinkel.survey.data.TextSurveyContentData
 import com.zinkel.survey.ui.elements.ChoiceElement
 import com.zinkel.survey.ui.elements.LikertElement
 import com.zinkel.survey.ui.elements.NameElement
@@ -37,6 +43,7 @@ import surveytool.composeapp.generated.resources.advance
 import surveytool.composeapp.generated.resources.back
 import surveytool.composeapp.generated.resources.cancel
 import surveytool.composeapp.generated.resources.finish
+import java.io.File
 
 @Composable
 @Preview
@@ -61,7 +68,9 @@ fun SurveyContentScreenPreview() {
                     )
                 )
             ), score = ScoreSettings()
-        )
+        ),
+        File("test.yaml"),
+        rememberCoroutineScope()
     )
     model.takeSurvey()
     SurveyContentScreen(model)
@@ -87,7 +96,11 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
             Divider()
             if (surveyContentUiState.totalPages > 1) {
                 val animatedProgress by animateFloatAsState(targetValue = (surveyContentUiState.currentPage - 1).toFloat() / surveyContentUiState.totalPages.toFloat())
-                LinearProgressIndicator(progress = animatedProgress, backgroundColor = MaterialTheme.colorScheme.background.copy(alpha = 0.2f), modifier = Modifier.fillMaxWidth())
+                LinearProgressIndicator(
+                    progress = animatedProgress,
+                    backgroundColor = MaterialTheme.colorScheme.background.copy(alpha = 0.2f),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
             val scrollState = rememberScrollState()
@@ -98,12 +111,45 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
                 PageHeader(surveyContentUiState.pageTitle, surveyContentUiState.pageDescription)
 
                 surveyContentUiState.content.forEach {
-                    when (it.type) {
-                        SurveyContentType.TEXT   -> TextElement(it as TextQuestion, surveyContentUiState.showQuestionScores)
-                        SurveyContentType.CHOICE -> ChoiceElement(it as ChoiceQuestion, surveyContentUiState.showQuestionScores)
-                        SurveyContentType.NAME   -> NameElement(it as NameQuestion)
-                        SurveyContentType.RATING -> RatingElement(it as RatingQuestion, surveyContentUiState.showQuestionScores)
-                        SurveyContentType.LIKERT -> LikertElement(it as LikertQuestion, surveyContentUiState.showQuestionScores)
+                    when (it) {
+                        is TextSurveyContentData   -> TextElement(
+                            it.question,
+                            surveyContentUiState.showQuestionScores,
+                            { answer -> surveyModel.updateAnswer(it.question.id, answer) },
+                            it.answer ?: "",
+                            surveyContentUiState.inputErrors[it.question.id]
+                        )
+
+                        is ChoiceSurveyContentData -> ChoiceElement(
+                            it.question,
+                            surveyContentUiState.showQuestionScores,
+                            { answer -> surveyModel.updateAnswer(it.question.id, answer) },
+                            it.answer ?: emptyList(),
+                            surveyContentUiState.inputErrors[it.question.id]
+                        )
+
+                        is NameSurveyContentData   -> NameElement(
+                            it.question,
+                            { answer -> surveyModel.updateAnswer(it.question.id, answer) },
+                            it.answer ?: "",
+                            surveyContentUiState.inputErrors[it.question.id]
+                        )
+
+                        is RatingSurveyContentData -> RatingElement(
+                            it.question,
+                            surveyContentUiState.showQuestionScores,
+                            { answer -> surveyModel.updateAnswer(it.question.id, answer) },
+                            it.answer ?: 0,
+                            surveyContentUiState.inputErrors[it.question.id]
+                        )
+
+                        is LikertSurveyContentData -> LikertElement(
+                            it.question,
+                            surveyContentUiState.showQuestionScores,
+                            { statement, choice -> surveyModel.updateAnswer(it.question.id, statement, choice) },
+                            it.answer ?: emptyMap(),
+                            surveyContentUiState.inputErrors[it.question.id]
+                        )
                     }
                 }
             }

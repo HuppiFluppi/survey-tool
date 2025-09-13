@@ -17,8 +17,9 @@ object SurveyLoadModel {
         try {
             surveyLoadUiState = SurveyLoadUiState.Loading
             val config = withContext(Dispatchers.Default) { SurveyConfigLoader.load(file) }
-            surveyLoadUiState = SurveyLoadUiState.Loaded(config)
+            surveyLoadUiState = SurveyLoadUiState.Loaded(config, file)
         } catch (e: Exception) {
+            e.printStackTrace()
             surveyLoadUiState = SurveyLoadUiState.Error(e.message ?: "Unknown error")
         }
     }
@@ -31,6 +32,6 @@ object SurveyLoadModel {
 sealed class SurveyLoadUiState {
     data object NotLoaded : SurveyLoadUiState()
     data object Loading : SurveyLoadUiState()
-    data class Loaded(val config: SurveyConfig) : SurveyLoadUiState()
+    data class Loaded(val config: SurveyConfig, val configFile: File) : SurveyLoadUiState()
     data class Error(val message: String) : SurveyLoadUiState()
 }

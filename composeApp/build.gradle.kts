@@ -31,6 +31,8 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.snakeyaml)
+            implementation(libs.kotlin.csv)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -38,7 +40,6 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-            implementation(libs.snakeyaml)
         }
     }
 }

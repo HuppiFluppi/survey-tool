@@ -59,6 +59,7 @@ class TextQuestion(
     title: String,
     id: String,
     required: Boolean = true,
+
     val multiline: Boolean = false,
     val score: Int? = null,
     val correctAnswer: String? = null,
