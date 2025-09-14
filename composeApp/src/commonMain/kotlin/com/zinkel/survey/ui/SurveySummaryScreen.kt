@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zinkel.survey.config.SurveyType
 import com.zinkel.survey.ui.elements.HighScore
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import surveytool.composeapp.generated.resources.Res
 import surveytool.composeapp.generated.resources.survey_pages_questions
@@ -48,7 +49,12 @@ fun SurveySummaryScreen(surveyModel: SurveyModel) {
             }
 
             Text(
-                text = stringResource(Res.string.survey_pages_questions, surveySummaryUiState.totalPages, surveySummaryUiState.totalQuestions),
+                text = pluralStringResource(
+                    Res.plurals.survey_pages_questions,
+                    surveySummaryUiState.totalPages,
+                    surveySummaryUiState.totalPages,
+                    surveySummaryUiState.totalQuestions
+                ),
                 modifier = Modifier.padding(16.dp)
             )
 

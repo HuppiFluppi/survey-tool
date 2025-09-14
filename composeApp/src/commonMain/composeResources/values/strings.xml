@@ -1,10 +1,13 @@
 <resources>
-    <string name="app_name">Felix Simple Survey Tool</string>
+    <string name="app_name">Felix Shiny Survey Tool</string>
     <string name="load_file">Load File</string>
     <string name="drop_file">Drop File</string>
     <string name="load_file_error_title">File load error</string>
     <string name="load_file_error_text">Please check the chosen file is a proper survey input file. \nError message: %1$s</string>
-    <string name="survey_pages_questions">%2$d questions on %1$d pages</string>
+    <plurals name="survey_pages_questions">
+        <item quantity="one">%2$d questions on %1$d page</item>
+        <item quantity="other">%2$d questions on %1$d pages</item>
+    </plurals>
     <string name="take_quiz">Take quiz</string>
     <string name="take_survey">Take survey</string>
     <string name="cancel">Cancel</string>

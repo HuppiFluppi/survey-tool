@@ -1,3 +1,23 @@
 <resources>
-
+    <string name="app_name">Felix Duftes Umfrage Tool</string>
+    <string name="load_file">Datei laden</string>
+    <string name="drop_file">Datei ablegen</string>
+    <string name="load_file_error_title">Fehler beim Laden</string>
+    <string name="load_file_error_text">Prüfe bitte, ob die Datei das korrekte Format hat.\nFehler: %1$s</string>
+    <plurals name="survey_pages_questions">
+        <item quantity="one">%2$d Fragen auf %1$d Seite</item>
+        <item quantity="other">%2$d Fragen auf %1$d Seiten</item>
+    </plurals>
+    <string name="take_quiz">Quiz starten</string>
+    <string name="take_survey">Umfrage starten</string>
+    <string name="cancel">Abbruch</string>
+    <string name="back">Zurück</string>
+    <string name="advance">Weiter</string>
+    <string name="finish">Abschließen</string>
+    <string name="ok">Ok</string>
+    <string name="highscore">Highscore</string>
+    <string name="required">Benötigt</string>
+    <string name="points">Punkte: %1$d</string>
+    <string name="validation_error_required">Pflichtfrage</string>
+    <string name="highscore_unknown_player">&lt;unbekannt&gt;</string>
 </resources>
