@@ -42,6 +42,16 @@ import surveytool.composeapp.generated.resources.*
 import java.io.File
 import java.net.URI
 
+/**
+ * A composable function that displays the Survey Load Screen UI. This screen allows users to load a survey
+ * configuration file either through a file picker or drag-and-drop functionality. It also handles various
+ * states of the UI during the file loading process, such as file selection, drag-and-drop, and errors.
+ *
+ * @param surveyLoadUiState Describes the current state of the survey loading process. It provides information
+ * about whether the data is not loaded, loading, successfully loaded, or encountered an error.
+ * @param onFileSelected Callback invoked when a valid file is selected or dropped. It accepts a `File` object
+ * representing the selected survey configuration file.
+ */
 @Composable
 fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File) -> Unit) {
     val validExtensions = remember { setOf("yaml", "yml") }

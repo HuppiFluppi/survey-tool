@@ -57,6 +57,29 @@ Steps to use:
 - Points must be configured per question.
 - Leaderboard can be configured to display scores.
 
+## Roadmap
+- [ ] Enable Android target
+- [ ] Refactor package structure and remedy some code smells
+- [ ] Add support for specifying the participant name question 
+- [ ] Add possibility to resume survey by loading existing data (highscore, instanceId, etc.)
+- [ ] Add remote configuration loading and data sending
+- [ ] Add support for more question types
+- [ ] Add multi survey languages support
+- [ ] Add support for images (Background, Summary, Page Header)
+- [ ] Add support for custom color themes
+- [ ] Add fullscreen/kiosk mode (Desktop)
+- [ ] Add conditional pages
+
+## Contributing
+Contributions are welcome! Please:
+- Open issues with clear steps to reproduce and expected behavior
+- Submit Pull Requests with concise descriptions, tests (where applicable), and clean commit history
+- Follow the project’s coding style and patterns
+
+## Disclaimer
+This software is provided "as is", without warranty of any kind. The author is certain, parts of this software could be done better.
+The todos are plenty and bugs are likely hiding. Use at your own risk and have fun. This is a learning and experiment project.
+
 ## Development
 
 ### Flow & State of loaded survey
@@ -80,30 +103,6 @@ Gradle tasks:
 - Unit tests: `./gradlew test`
 - Lint/Static analysis: Use your preferred tools (e.g., IDE inspections, Detekt, Ktlint)
 - Consider CI integration to enforce checks
-
-## Roadmap
-- [ ] Enable Android target
-- [ ] Refactor package structure and remedy some code smells
-- [ ] Add support for specifying the participant name question 
-- [ ] Add possibility to resume survey by loading existing data
-- [ ] Add remote configuration loading and data sending
-- [ ] Add support for more question types
-- [ ] Add multi survey languages support
-- [ ] Add support for images (Background, Summary, Page Header)
-- [ ] Add support for custom color themes
-- [ ] Add fullscreen/kiosk mode (Desktop)
-- [ ] Add conditional pages
-
-## Contributing
-Contributions are welcome! Please:
-- Open issues with clear steps to reproduce and expected behavior
-- Submit Pull Requests with concise descriptions, tests (where applicable), and clean commit history
-- Follow the project’s coding style and patterns
-
-## Disclaimer
-
-This software is provided "as is", without warranty of any kind. The author is certain parts of this software could be done better.
-The todos are plenty and bugs are likely hiding. Use at your own risk and have fun. This is a learning and experiment project.
 
 ## License
 This project is provided under MIT license. See [license file](LICENSE)

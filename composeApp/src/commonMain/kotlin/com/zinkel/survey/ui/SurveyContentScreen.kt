@@ -76,6 +76,14 @@ fun SurveyContentScreenPreview() {
     SurveyContentScreen(model)
 }
 
+/**
+ * A composable function that displays the content of a running survey. It manages the UI
+ * interactions and state for various types of survey questions such as text, choice, rating,
+ * and others. The function also manages navigation between different pages within the survey.
+ *
+ * @param surveyModel The [SurveyModel] instance containing the state and logic for the survey,
+ * including survey data, user inputs, and navigation actions.
+ */
 @Composable
 fun SurveyContentScreen(surveyModel: SurveyModel) {
     val surveyContentUiState = (surveyModel.surveyUiState as SurveyModel.SurveyUiState.Content).contentUiState
@@ -137,7 +145,6 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
 
                         is RatingSurveyContentData -> RatingElement(
                             it.question,
-                            surveyContentUiState.showQuestionScores,
                             { answer -> surveyModel.updateAnswer(it.question.id, answer) },
                             it.answer ?: 0,
                             surveyContentUiState.inputErrors[it.question.id]

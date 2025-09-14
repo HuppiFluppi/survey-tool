@@ -24,6 +24,11 @@ import surveytool.composeapp.generated.resources.survey_pages_questions
 import surveytool.composeapp.generated.resources.take_quiz
 import surveytool.composeapp.generated.resources.take_survey
 
+/**
+ * Composable function that displays a summary screen for a survey or quiz.
+ *
+ * @param surveyModel The data model containing the survey's UI state and associated actions.
+ */
 @Composable
 fun SurveySummaryScreen(surveyModel: SurveyModel) {
     val surveySummaryUiState = (surveyModel.surveyUiState as SurveyModel.SurveyUiState.Summary).summaryUiState
