@@ -16,9 +16,11 @@ kotlin = "2.2.10"
 kotlinx-coroutines = "1.10.2"
 snakeyaml = "2.10"
 kotlin-csv = "1.10.0"
+mockk = "1.14.5"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk"}
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }

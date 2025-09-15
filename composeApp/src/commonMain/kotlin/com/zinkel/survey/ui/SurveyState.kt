@@ -273,7 +273,7 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
         when (val content = surveyContentPage[id]) {
             is NameSurveyContentData -> content.answer = answer
             is TextSurveyContentData -> content.answer = answer
-            null                     -> throw RuntimeException("SurveyContendData <$id> not found")
+            null                     -> throw RuntimeException("SurveyContentData <$id> not found")
             else                     -> throw RuntimeException("Unexpected content type: ${content::class}")
         }
     }

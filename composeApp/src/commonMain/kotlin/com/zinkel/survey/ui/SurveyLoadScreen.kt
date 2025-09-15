@@ -72,8 +72,8 @@ fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = stringResource(Res.string.app_name), fontSize = 32.sp, modifier = Modifier.padding(32.dp))
-            Icon(painter = painterResource(Res.drawable.app_icon), contentDescription = null, modifier = Modifier.padding(16.dp))
+            Text(text = stringResource(Res.string.app_name), color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 32.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 32.dp))
+            Icon(painter = painterResource(Res.drawable.app_icon), tint = Color.Unspecified, contentDescription = "app icon", modifier = Modifier.padding(16.dp))
             Button(onClick = { showFilePicker = true }, modifier = Modifier.padding(16.dp)) {
                 Text(text = stringResource(Res.string.load_file))
             }
