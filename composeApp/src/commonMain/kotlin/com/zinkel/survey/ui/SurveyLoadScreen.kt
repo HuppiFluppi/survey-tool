@@ -5,6 +5,7 @@ import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CutCornerShape
@@ -72,11 +73,29 @@ fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = stringResource(Res.string.app_name), color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 32.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 32.dp))
-            Icon(painter = painterResource(Res.drawable.app_icon), tint = Color.Unspecified, contentDescription = "app icon", modifier = Modifier.padding(16.dp))
+            Text(
+                text = stringResource(Res.string.app_name),
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 32.dp)
+            )
+            Icon(
+                painter = painterResource(Res.drawable.app_icon),
+                tint = Color.Unspecified,
+                contentDescription = "app icon",
+                modifier = Modifier.padding(16.dp)
+            )
             Button(onClick = { showFilePicker = true }, modifier = Modifier.padding(16.dp)) {
                 Text(text = stringResource(Res.string.load_file))
             }
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "${stringResource(Res.string.app_version)} (${stringResource(Res.string.app_build)})",
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                fontSize = 10.sp,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
         }
 
         // Drag and drop indicator

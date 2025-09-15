@@ -1,4 +1,6 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -82,6 +84,25 @@ kotlin {
 //dependencies {
 //    debugImplementation(compose.uiTooling)
 //}
+
+tasks.register("fillAppInfoXml") {
+    val version = project.version
+    val appInfoFile = file("src/commonMain/composeResources/values/appinfo.xml")
+
+    doLast {
+        val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd.HHmmss"))
+
+        appInfoFile.writeText(
+            """
+            <resources>
+                <string name="app_version">v${version}</string>
+                <string name="app_build">${timestamp}</string>
+            </resources>
+        """.trimIndent()
+        )
+    }
+}
+tasks.getByName("generateResourceAccessorsForCommonMain").dependsOn("fillAppInfoXml")
 
 compose.desktop {
     application {
