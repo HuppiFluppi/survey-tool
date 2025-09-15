@@ -14,9 +14,13 @@ kotlin {
 //            jvmTarget.set(JvmTarget.JVM_17)
 //        }
 //    }
-    
-    jvm()
-    
+
+    jvm {
+        mainRun {
+            mainClass = "com.zinkel.survey.MainKt"
+        }
+    }
+
     sourceSets {
 //        androidMain.dependencies {
 //            implementation(compose.preview)
@@ -82,6 +86,11 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "com.zinkel.survey.MainKt"
+
+        buildTypes.release.proguard {
+            // disable because of a problem with enum class valueOf and proguard (`-keepclassmembers enum * { *; }` needed)
+            isEnabled = false
+        }
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)

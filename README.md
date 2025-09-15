@@ -100,9 +100,14 @@ Gradle tasks:
 - Run (Desktop): `./gradlew run`
 
 ### Test
-- Unit tests: `./gradlew test`
+- Run tests in Gradle (force rerun): `./gradlew cleanAllTests allTests --no-build-cache`
 - Lint/Static analysis: Use your preferred tools (e.g., IDE inspections, Detekt, Ktlint)
 - Consider CI integration to enforce checks
+
+### Release
+- Release as uber jar: `./gradlew packageUberJarForCurrentOS`
+- Create installables: `./gradlew package*`  
+  `package[Release](Deb|Msi|Dmb|DistributionForCurrentOS)`
 
 ## License
 This project is provided under MIT license. See [license file](LICENSE)
