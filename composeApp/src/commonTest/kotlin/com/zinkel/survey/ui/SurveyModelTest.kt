@@ -16,6 +16,7 @@ import com.zinkel.survey.data.TextSurveyContentData
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.TestScope
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -73,7 +74,7 @@ class SurveyModelTest {
             )
         )
 
-        val surveyModel = SurveyModel(surveyConfig, File(""), mockk())
+        val surveyModel = SurveyModel(surveyConfig, File(""), TestScope())
 
         surveyModel.takeSurvey()
 
@@ -100,7 +101,7 @@ class SurveyModelTest {
             description = "Test Description",
             pages = listOf(SurveyPage("Page 1", "Page 1 Description", content = listOf()))
         )
-        val surveyModel = SurveyModel(surveyConfig, File(""), mockk())
+        val surveyModel = SurveyModel(surveyConfig, File(""), TestScope())
 
         surveyModel.takeSurvey()
         assertTrue(surveyModel.surveyUiState is SurveyModel.SurveyUiState.Content)

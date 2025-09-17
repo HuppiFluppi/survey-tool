@@ -26,6 +26,7 @@ import org.jetbrains.compose.resources.getString
 import surveytool.composeapp.generated.resources.Res
 import surveytool.composeapp.generated.resources.highscore_unknown_player
 import java.io.File
+import java.time.ZonedDateTime
 
 /**
  * Central state holder and controller for running a survey/quiz.
@@ -94,6 +95,34 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
 
     // Zero-based index
     private var currentPageIndex = 0
+
+    init {
+        coroutineScope.launch {
+            loadPreviousData()
+        }
+    }
+
+    /**
+     * Loads previous data, initializing [SurveyDataManager] and get highscore data from previous survey instances.
+     *
+     * This method retrieves the top survey instances based on the leaderboard score limit defined in the survey configuration.
+     * If no valid data is found, the method exits early. If data is available, it updates the highscore UI state
+     * with the retrieved scores.
+     */
+    private suspend fun loadPreviousData() {
+        val topScores = dataManager.fillSummaryAndInstanceIdFromPrevious(surveyConfig.score.leaderboard.limit)
+        if (topScores.isEmpty()) return
+        val userPlaceholder = getString(Res.string.highscore_unknown_player)
+
+        Snapshot.withMutableSnapshot {
+            // as the UI sorts and limits, simply adding works but might eventually become a problem with many highscore entries
+            highscoreUiState = highscoreUiState.copy(
+                scores = topScores.map {
+                    HighscoreEntry(it.user ?: userPlaceholder, it.score ?: 0, it.endTime ?: ZonedDateTime.now())
+                }
+            )
+        }
+    }
 
     /**
      * Starts a new survey run:
@@ -334,6 +363,7 @@ data class HighscoreUiState(
 data class HighscoreEntry(
     val name: String,
     val score: Int,
+    val time: ZonedDateTime = ZonedDateTime.now(),
 )
 
 /**

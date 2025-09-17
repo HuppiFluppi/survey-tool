@@ -1,8 +1,10 @@
 package com.zinkel.survey.data
 
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.zinkel.survey.config.SurveyType
 import java.io.File
+import java.time.ZonedDateTime
 
 class CSVAccess : SurveyDataAccess {
 
@@ -23,7 +25,8 @@ class CSVAccess : SurveyDataAccess {
             add(instance.instanceId)
             add(instance.startTime)
             add(instance.endTime)
-            if (instance.type == SurveyType.QUIZ) add(instance.getAllAnswers().sumOf { it.calculateScore() })
+            add(instance.type)
+            if (instance.type == SurveyType.QUIZ) add(instance.score)
             instance.getAllAnswers().forEach { answer ->
                 add(answer.question.id)
                 add(answer.question.title)
@@ -35,6 +38,7 @@ class CSVAccess : SurveyDataAccess {
         add("#")
         add("Start Time")
         add("End Time")
+        add("Survey Type")
         if (instance.type == SurveyType.QUIZ) add("Score")
         repeat(questionCount) {
             add("Question ID")
@@ -81,5 +85,29 @@ class CSVAccess : SurveyDataAccess {
                 }
             )
         }
+    }
+
+    override suspend fun loadHeadSurveyData(file: File): List<SurveyInstance> {
+        val inputFile = File(file.parent, file.name + ".csv")
+        if (!inputFile.exists()) return emptyList()
+
+        val instances = csvReader { autoRenameDuplicateHeaders = true; skipEmptyLine = true }.openAsync(inputFile) {
+            readAllWithHeaderAsSequence().map { row ->
+                try {
+                    SurveyInstance(
+                        instanceId = row["#"]?.toIntOrNull() ?: throw IllegalArgumentException("Survey data file malformed (no # or wrong format)"),
+                        startTime = row["Start Time"]?.let { ZonedDateTime.parse(it) }
+                            ?: throw IllegalArgumentException("Survey data file malformed (no startTime or wrong format)"),
+                        endTime = row["End Time"]?.let { ZonedDateTime.parse(it) },
+                        type = SurveyType.valueOf(row["Survey Type"]?.uppercase() ?: throw IllegalArgumentException("Survey data file malformed (no type)")),
+                        score = row["Score"]?.toIntOrNull()
+                    )
+                } catch (e: Exception) {
+                    println("Error loading survey data: ${e.message}")
+                    null
+                }
+            }.filterNotNull().toList()
+        }
+        return instances
     }
 }

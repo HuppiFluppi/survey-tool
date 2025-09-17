@@ -2,8 +2,13 @@ package com.zinkel.survey.data
 
 import com.zinkel.survey.config.SurveyConfig
 import com.zinkel.survey.config.SurveyType
+import com.zinkel.survey.data.SurveyDataManager.Companion.DATA_FILE_SUFFIX
+import com.zinkel.survey.data.SurveyDataManager.Companion.SUMMARY_FILE_SUFFIX
 import java.io.File
+import java.time.Instant
+import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -50,12 +55,59 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
         summary.firstSubmittedTime ?: run { summary.firstSubmittedTime = ZonedDateTime.now() }
         summary.lastSubmittedTime = ZonedDateTime.now()
         if (summary.type == SurveyType.QUIZ) {
-            val score = instance.getAllAnswers().sumOf { it.calculateScore() }
+            val score = instance.score ?: 0
             summary.minScore = min(summary.minScore ?: Int.MAX_VALUE, score)
             summary.maxScore = max(summary.maxScore ?: Int.MIN_VALUE, score)
         }
 
         dataAccess.saveSurveySummary(summaryFile, summary)
+    }
+
+    /**
+     * Tries to load previous survey runs ([SurveyInstance]s) from file to update the instanceId and summary.
+     *
+     * This method should be called once after creation, before any survey instances are created (via [newSurveyInstance]).
+     *
+     * @param limit Maximum number of instances to return; if there are fewer available, all will be returned.
+     * @return List of [SurveyInstance]s with highest score.
+     */
+    suspend fun fillSummaryAndInstanceIdFromPrevious(limit: Int): List<SurveyInstance> {
+        val list = dataAccess.loadHeadSurveyData(dataFile)
+        if (list.isEmpty()) return emptyList()
+
+        val submitCount: Int = list.size
+        var previousId = 0
+        var previousFirstTime: ZonedDateTime = ZonedDateTime.now()
+        val zeroTimeToken = Instant.ofEpochMilli(0).atZone(ZoneId.of("Europe/Paris"))
+        var previousLastTime: ZonedDateTime = zeroTimeToken
+        var previousHighScore: Int = Int.MIN_VALUE
+        var previousLowScore: Int = Int.MAX_VALUE
+
+        val topInstances = PriorityQueue<SurveyInstance>(limit + 1, compareBy { it.score ?: 0 })
+
+        list.forEach {
+            previousId = max(previousId, it.instanceId)
+
+            if (it.score != null) {
+                previousHighScore = max(previousHighScore, it.score!!)
+                previousLowScore = min(previousLowScore, it.score!!)
+            }
+
+            previousFirstTime = if (it.startTime.isBefore(previousFirstTime)) it.startTime else previousFirstTime
+            previousLastTime = if (it.endTime?.isAfter(previousLastTime) == true) it.endTime!! else previousLastTime
+
+            topInstances.add(it)
+            if (topInstances.size > limit) topInstances.poll()
+        }
+
+        instanceId = previousId
+        summary.submittedCount = submitCount
+        summary.firstSubmittedTime = previousFirstTime
+        summary.lastSubmittedTime = if (previousLastTime.isEqual(zeroTimeToken)) ZonedDateTime.now() else previousLastTime
+        summary.maxScore = if (previousHighScore == Int.MIN_VALUE) 0 else previousHighScore
+        summary.minScore = if (previousLowScore == Int.MAX_VALUE) 0 else previousLowScore
+
+        return topInstances.toList()
     }
 
     /**
@@ -70,18 +122,19 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
         if (instance.endTime == null) {
             instance.endTime = ZonedDateTime.now()
         }
+        instance.score = instance.getAllAnswers().sumOf { it.calculateScore() }
 
         updateSummary(instance)
 
         dataAccess.saveSurveyData(dataFile, instance)
     }
 
-    private var instanceId = 1
+    private var instanceId = 0
 
     /**
      * Creates a new [SurveyInstance] with a unique id and the current survey type.
      */
-    fun newSurveyInstance() = SurveyInstance(instanceId++, summary.type)
+    fun newSurveyInstance() = SurveyInstance(++instanceId, summary.type)
 
     companion object {
         /** Suffix appended to the base survey file name for the summary file. */
@@ -114,6 +167,11 @@ interface SurveyDataAccess {
      * Saves the aggregated [summary] to [file].
      */
     suspend fun saveSurveySummary(file: File, summary: SurveySummary)
+
+    /**
+     * Loads the header(w/o questions) survey instance data from file [file].
+     */
+    suspend fun loadHeadSurveyData(file: File): List<SurveyInstance>
 }
 
 /**
@@ -151,12 +209,15 @@ data class SurveySummary(
  * @property type Survey type; used e.g. for scoring behavior.
  * @property startTime Timestamp when the run started.
  * @property endTime Timestamp when the run ended; null until completion.
+ * @property score The score (only for QUIZ type) of the run; null until completion.
  */
 class SurveyInstance(
     val instanceId: Int,
     val type: SurveyType = SurveyType.SURVEY,
     val startTime: ZonedDateTime = ZonedDateTime.now(),
     var endTime: ZonedDateTime? = null,
+    var user: String? = null,
+    var score: Int? = null,
 ) {
     private val pageAnswers = mutableMapOf<Int, List<SurveyContentData>>()
 

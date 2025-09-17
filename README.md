@@ -58,17 +58,20 @@ Steps to use:
 - Leaderboard can be configured to display scores.
 
 ## Roadmap
-- [ ] Enable Android target
-- [ ] Refactor package structure and remedy some code smells
-- [ ] Add support for specifying the participant name question 
-- [ ] Add possibility to resume survey by loading existing data (highscore, instanceId, etc.)
-- [ ] Add remote configuration loading and data sending
-- [ ] Add support for more question types
-- [ ] Add multi survey languages support
+- [x] Add possibility to resume survey by loading existing data (highscore, instanceId, etc.)
+- [ ] Add support for specifying the participant name/mail/phone/address
+- [ ] Add content element with text+description+image
+- [ ] Extend question types (Date+TimePicker, ImageChoice, Dropdown, Configurable Rating(Icon, Color, Scale), LikertSlider)
+- [ ] Add Github build pipeline for release
 - [ ] Add support for images (Background, Summary, Page Header)
+- [ ] Add conditional pages/question
+- [ ] Refactor package structure and remedy some code smells
+- [ ] Add system test (load, fill, submit, check)
+- [ ] Add remote configuration loading and data sending
+- [ ] Enable Android target
 - [ ] Add support for custom color themes
+- [ ] Add multi survey languages support
 - [ ] Add fullscreen/kiosk mode (Desktop)
-- [ ] Add conditional pages
 
 ## Contributing
 Contributions are welcome! Please:
