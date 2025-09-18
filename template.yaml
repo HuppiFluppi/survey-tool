@@ -4,14 +4,14 @@ title: "Template Survey"
 
 # description: String (required)
 # Description of the survey
-description: > # '>' means to continue the description on the next line. You can also write all on one line. The quotation marks (") are then omitted.
+description: > # '>' means to continue the description on the next line. The quotation marks (") are then omitted. Alternatively, you can also write all on one line. 
   This survey configurations is a template.
   It's purpose is to help you get started.
   All options are explained and you can get an understanding of what is possible
 
 # image_path: String (optional): path to image file
-# Image to show at the top of the survey
-image_path: "survey_pic.png"
+# Image to show at the top of the survey. Please make sure to use single quotes(') or use slash (/), not backslash for path separation
+image_path: 'composeApp/src/commonMain/composeResources/drawable/app_icon.png'
 
 # type: SurveyType. Allowed values: "survey" or "quiz". default: "survey"
 # Type of the survey
@@ -48,8 +48,8 @@ title: "First Page"
 description: "This is a very lovely first page of the survey. This description adds not much value and indeed it could be omitted"
 
 # image_path: String (optional): path to image file
-# Image to show at the top of this page
-image_path: "page1_pic.png"
+# Image to show at the top of this page. Please make sure to use single quotes(') or use slash (/), not backslash for path separation
+image_path: 'composeApp/src/commonMain/composeResources/drawable/app_icon.png'
 
 # content: list (required)
 # The different questions to ask in this page
@@ -64,6 +64,12 @@ content:
   - type: name
     required: true
     title: "Give me your name"
+
+  # Information content are blocks of text. They are no questions and cannot be scored. You can use them to provide additional information or to show a picture.
+  - type: information
+    title: "This is non question content"
+    description: "This is a description that is shown below the title" # String (optional). Description of the content block
+    image_path: 'composeApp/src/commonMain/composeResources/drawable/app_icon.png' # String (optional). Path to an image file to show below the title and description. Please make sure to use single quotes(') or use slash (/) not backslash for path separation
 
   # Choice questions are questions which can be scored. You usually ask for things like favorite color or to pick the right answer
   # They can be multiple or single choice.
@@ -80,13 +86,10 @@ content:
         - title: "Rain"
           correct: false
         - title: "Snow"
-          correct: true
-          score: 5
+          correct: false
         - title: "Wind"
           correct: true
           score: 5
-        - title: "Cloudy"
-          correct: false
 
   # Text questions are asking for free text answers. They can be scored
   - type: text
@@ -100,7 +103,7 @@ content:
   # Rating questions are asking for a 1-5 rating. They cannot be scored
   - type: rating
     required: true
-    title: "what is your favorite weather?"
+    title: "How is your mood?"
 
   # Likert questions are to answer multiple statements with the same options. They can be scored
   - type: likert
@@ -121,9 +124,6 @@ content:
           score: 5
         - title: "Drama"
           correct_choice: "Nope"
-          score: 5
-        - title: "Documentary"
-          correct_choice: "Ok i guess"
           score: 5
         - title: "Action"
           correct_choice: "Love it"

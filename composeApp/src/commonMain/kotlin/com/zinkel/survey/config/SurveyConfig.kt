@@ -1,5 +1,7 @@
 package com.zinkel.survey.config
 
+import java.io.File
+
 /**
  * Root configuration model describing a single survey or quiz.
  *
@@ -94,12 +96,14 @@ data class SurveyPage(
  * @property title Human-readable label or question prompt.
  * @property id Stable identifier used to correlate answers and validations.
  * @property required Whether the question needs an answer.
+ * @property savable Whether this content should be saved.
  */
 sealed class SurveyPageContent(
     val type: SurveyContentType,
     val title: String,
     val id: String,
     val required: Boolean = true,
+    val savable: Boolean = true,
 )
 
 enum class SurveyContentType {
@@ -108,6 +112,7 @@ enum class SurveyContentType {
     NAME,
     RATING,
     LIKERT,
+    INFORMATION,
 }
 
 /**
@@ -212,3 +217,11 @@ data class LikertStatement(
     val score: Int? = null,
     val correctChoice: String? = null,
 )
+
+class InformationBlock(
+    title: String,
+    id: String,
+
+    val description: String? = null,
+    val image: File? = null,
+) : SurveyPageContent(SurveyContentType.INFORMATION, title, id, required = true, savable = false)

@@ -27,11 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zinkel.survey.config.*
 import com.zinkel.survey.data.ChoiceSurveyContentData
+import com.zinkel.survey.data.InformationSurveyContentData
 import com.zinkel.survey.data.LikertSurveyContentData
 import com.zinkel.survey.data.NameSurveyContentData
 import com.zinkel.survey.data.RatingSurveyContentData
 import com.zinkel.survey.data.TextSurveyContentData
 import com.zinkel.survey.ui.elements.ChoiceElement
+import com.zinkel.survey.ui.elements.InformationBlockElement
 import com.zinkel.survey.ui.elements.LikertElement
 import com.zinkel.survey.ui.elements.NameElement
 import com.zinkel.survey.ui.elements.PageHeader
@@ -120,7 +122,7 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
 
                 surveyContentUiState.content.forEach {
                     when (it) {
-                        is TextSurveyContentData   -> TextElement(
+                        is TextSurveyContentData        -> TextElement(
                             it.question,
                             surveyContentUiState.showQuestionScores,
                             { answer -> surveyModel.updateAnswer(it.question.id, answer) },
@@ -128,7 +130,7 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
                             surveyContentUiState.inputErrors[it.question.id]
                         )
 
-                        is ChoiceSurveyContentData -> ChoiceElement(
+                        is ChoiceSurveyContentData      -> ChoiceElement(
                             it.question,
                             surveyContentUiState.showQuestionScores,
                             { answer -> surveyModel.updateAnswer(it.question.id, answer) },
@@ -136,27 +138,29 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
                             surveyContentUiState.inputErrors[it.question.id]
                         )
 
-                        is NameSurveyContentData   -> NameElement(
+                        is NameSurveyContentData        -> NameElement(
                             it.question,
                             { answer -> surveyModel.updateAnswer(it.question.id, answer) },
                             it.answer ?: "",
                             surveyContentUiState.inputErrors[it.question.id]
                         )
 
-                        is RatingSurveyContentData -> RatingElement(
+                        is RatingSurveyContentData      -> RatingElement(
                             it.question,
                             { answer -> surveyModel.updateAnswer(it.question.id, answer) },
                             it.answer ?: 0,
                             surveyContentUiState.inputErrors[it.question.id]
                         )
 
-                        is LikertSurveyContentData -> LikertElement(
+                        is LikertSurveyContentData      -> LikertElement(
                             it.question,
                             surveyContentUiState.showQuestionScores,
                             { statement, choice -> surveyModel.updateAnswer(it.question.id, statement, choice) },
                             it.answer ?: emptyMap(),
                             surveyContentUiState.inputErrors[it.question.id]
                         )
+
+                        is InformationSurveyContentData -> InformationBlockElement(it.question)
                     }
                 }
             }

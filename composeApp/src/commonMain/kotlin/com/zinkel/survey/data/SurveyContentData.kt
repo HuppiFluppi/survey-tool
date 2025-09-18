@@ -1,6 +1,7 @@
 package com.zinkel.survey.data
 
 import com.zinkel.survey.config.ChoiceQuestion
+import com.zinkel.survey.config.InformationBlock
 import com.zinkel.survey.config.LikertQuestion
 import com.zinkel.survey.config.NameQuestion
 import com.zinkel.survey.config.RatingQuestion
@@ -55,7 +56,8 @@ sealed class SurveyContentData(
             is ChoiceQuestion -> ChoiceSurveyContentData(content, answer as? List<String>)
             is LikertQuestion -> LikertSurveyContentData(content, answer as? MutableMap<String, String>)
             is RatingQuestion -> RatingSurveyContentData(content, answer as? Int)
-            is TextQuestion   -> TextSurveyContentData(content, answer as? String)
+            is TextQuestion     -> TextSurveyContentData(content, answer as? String)
+            is InformationBlock -> InformationSurveyContentData(content)
         }
     }
 }
@@ -211,4 +213,17 @@ class LikertSurveyContentData(
             else 0
         }
     }
+}
+
+/**
+ * Information content data with dummy answer.
+ */
+class InformationSurveyContentData(
+    override val question: InformationBlock,
+    override val answer: Unit = Unit,
+) : SurveyContentData(question) {
+
+    override fun isAnswered() = true
+    override fun validate() = AnswerValidationResult(true)
+    override fun calculateScore(): Int = 0
 }

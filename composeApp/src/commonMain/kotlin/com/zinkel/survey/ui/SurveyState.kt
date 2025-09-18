@@ -289,7 +289,7 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
      * Writes the current page content answers into the active [SurveyInstance].
      */
     private fun syncPageToInstance() {
-        surveyInstance?.setPageAnswers(currentPageIndex, surveyContentPage.values.toList())
+        surveyInstance?.setPageAnswers(currentPageIndex, surveyContentPage.values.toList().filter { it.question.savable })
     }
 
     /**

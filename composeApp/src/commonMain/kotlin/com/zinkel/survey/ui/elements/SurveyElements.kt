@@ -16,6 +16,8 @@ package com.zinkel.survey.ui.elements
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -43,9 +45,11 @@ import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
@@ -53,6 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zinkel.survey.config.ChoiceItem
 import com.zinkel.survey.config.ChoiceQuestion
+import com.zinkel.survey.config.InformationBlock
 import com.zinkel.survey.config.LikertQuestion
 import com.zinkel.survey.config.LikertStatement
 import com.zinkel.survey.config.NameQuestion
@@ -65,6 +70,7 @@ import surveytool.composeapp.generated.resources.points
 import surveytool.composeapp.generated.resources.required
 import surveytool.composeapp.generated.resources.star_filled
 import surveytool.composeapp.generated.resources.star_unfilled
+import java.io.File
 
 /**
  * A composable function that displays a page header with an optional title and description.
@@ -148,7 +154,7 @@ fun ChoiceElementPreview() {
  * Renders a Choice question supporting single- or multi-select options.
  *
  * Displays each option with a checkbox. For single-select, selecting an option clears any previous
- * selection. For multi-select, an optional [limit] is enforced by UI logic in [handleChoiceChange].
+ * selection. For multi-select, an optional limit is enforced by UI logic in [handleChoiceChange].
  *
  * @param question The ChoiceQuestion configuration to render.
  * @param showQuestionScores If true, shows aggregate potential score in the title row.
@@ -347,6 +353,42 @@ fun TextElement(question: TextQuestion, showQuestionScores: Boolean, onValueChan
             }
         }
     }
+}
+
+@Composable
+@Preview
+fun InformationBlockElementPreview() {
+    InformationBlockElement(
+        InformationBlock(
+            title = "Mighty information block",
+            "1-1",
+            "The description is descriptive as such. Only a description like this brings true description joy. It's just so describable!",
+        )
+    )
+}
+
+/**
+ * A composable function that displays an information block with an optional description and image.
+ *
+ * @param block The [Information block] holding information about title, description and image of the element to be displayed.
+ */
+@Composable
+fun InformationBlockElement(block: InformationBlock) {
+    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            Text(text = block.title, fontWeight = FontWeight.Bold)
+            block.description?.let { Text(text = it, modifier = Modifier.padding(top = 8.dp)) }
+            block.image?.let {
+                val image = remember(block.image) { loadImageBitmap(it) }
+                Image(image, contentDescription = null, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
+            }
+        }
+    }
+}
+
+fun loadImageBitmap(file: File): ImageBitmap {
+    val bytes = file.readBytes()
+    return org.jetbrains.skia.Image.makeFromEncoded(bytes).toComposeImageBitmap()
 }
 
 /**

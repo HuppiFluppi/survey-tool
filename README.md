@@ -60,7 +60,7 @@ Steps to use:
 ## Roadmap
 - [x] Add possibility to resume survey by loading existing data (highscore, instanceId, etc.)
 - [ ] Add support for specifying the participant name/mail/phone/address
-- [ ] Add content element with text+description+image
+- [x] Add content element with text+description+image
 - [ ] Extend question types (Date+TimePicker, ImageChoice, Dropdown, Configurable Rating(Icon, Color, Scale), LikertSlider)
 - [ ] Add Github build pipeline for release
 - [ ] Add support for images (Background, Summary, Page Header)
