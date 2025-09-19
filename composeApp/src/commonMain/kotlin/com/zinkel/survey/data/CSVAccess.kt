@@ -26,6 +26,7 @@ class CSVAccess : SurveyDataAccess {
             add(instance.startTime)
             add(instance.endTime)
             add(instance.type)
+            if (instance.type == SurveyType.QUIZ) add(instance.user)
             if (instance.type == SurveyType.QUIZ) add(instance.score)
             instance.getAllAnswers().forEach { answer ->
                 add(answer.question.id)
@@ -39,6 +40,7 @@ class CSVAccess : SurveyDataAccess {
         add("Start Time")
         add("End Time")
         add("Survey Type")
+        if (instance.type == SurveyType.QUIZ) add("User")
         if (instance.type == SurveyType.QUIZ) add("Score")
         repeat(questionCount) {
             add("Question ID")
@@ -100,7 +102,8 @@ class CSVAccess : SurveyDataAccess {
                             ?: throw IllegalArgumentException("Survey data file malformed (no startTime or wrong format)"),
                         endTime = row["End Time"]?.let { ZonedDateTime.parse(it) },
                         type = SurveyType.valueOf(row["Survey Type"]?.uppercase() ?: throw IllegalArgumentException("Survey data file malformed (no type)")),
-                        score = row["Score"]?.toIntOrNull()
+                        score = row["Score"]?.toIntOrNull(),
+                        user = row["User"]
                     )
                 } catch (e: Exception) {
                     println("Error loading survey data: ${e.message}")

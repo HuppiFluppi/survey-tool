@@ -114,18 +114,11 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
      * Persists a completed survey [instance].
      *
      * Behavior:
-     * - Ensures [SurveyInstance.endTime] is set (uses now if not provided).
      * - Updates and saves the aggregated [SurveySummary].
      * - Saves per-run data via the configured [SurveyDataAccess].
      */
     suspend fun addSurveyData(instance: SurveyInstance) {
-        if (instance.endTime == null) {
-            instance.endTime = ZonedDateTime.now()
-        }
-        instance.score = instance.getAllAnswers().sumOf { it.calculateScore() }
-
         updateSummary(instance)
-
         dataAccess.saveSurveyData(dataFile, instance)
     }
 

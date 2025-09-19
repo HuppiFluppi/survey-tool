@@ -1,14 +1,19 @@
 package com.zinkel.survey.data
 
 import com.zinkel.survey.config.ChoiceQuestion
+import com.zinkel.survey.config.DataQuestion
+import com.zinkel.survey.config.DataQuestionType
 import com.zinkel.survey.config.InformationBlock
 import com.zinkel.survey.config.LikertQuestion
-import com.zinkel.survey.config.NameQuestion
 import com.zinkel.survey.config.RatingQuestion
 import com.zinkel.survey.config.SurveyPageContent
 import com.zinkel.survey.config.TextQuestion
 import org.jetbrains.compose.resources.StringResource
 import surveytool.composeapp.generated.resources.Res
+import surveytool.composeapp.generated.resources.validation_error_pattern_custom
+import surveytool.composeapp.generated.resources.validation_error_pattern_email
+import surveytool.composeapp.generated.resources.validation_error_pattern_name
+import surveytool.composeapp.generated.resources.validation_error_pattern_phone
 import surveytool.composeapp.generated.resources.validation_error_required
 
 /**
@@ -52,10 +57,10 @@ sealed class SurveyContentData(
          * The [answer] must match the expected type of the question, otherwise it is ignored.
          */
         fun fromSurveyPageContent(content: SurveyPageContent, answer: Any? = null): SurveyContentData = when (content) {
-            is NameQuestion   -> NameSurveyContentData(content, answer as? String)
-            is ChoiceQuestion -> ChoiceSurveyContentData(content, answer as? List<String>)
-            is LikertQuestion -> LikertSurveyContentData(content, answer as? MutableMap<String, String>)
-            is RatingQuestion -> RatingSurveyContentData(content, answer as? Int)
+            is DataQuestion     -> DataSurveyContentData(content, answer as? String)
+            is ChoiceQuestion   -> ChoiceSurveyContentData(content, answer as? List<String>)
+            is LikertQuestion   -> LikertSurveyContentData(content, answer as? MutableMap<String, String>)
+            is RatingQuestion   -> RatingSurveyContentData(content, answer as? Int)
             is TextQuestion     -> TextSurveyContentData(content, answer as? String)
             is InformationBlock -> InformationSurveyContentData(content)
         }
@@ -99,26 +104,42 @@ class TextSurveyContentData(
 }
 
 /**
- * "Name" question runtime model.
+ * Data question runtime model.
  *
- * Answer is a nullable [String]. Used for identifying participants (e.g., on leaderboards).
- * Validation enforces required semantics; scoring is always 0.
+ * Answer is a nullable [String]. Used for collecting participants details like name (e.g. on leaderboards).
+ * Validation enforces required semantics and pattern; scoring is always 0.
  */
-class NameSurveyContentData(
-    override val question: NameQuestion,
+class DataSurveyContentData(
+    override val question: DataQuestion,
     override var answer: String? = null,
 ) : SurveyContentData(question) {
+    private val validationRegex = question.validationPattern?.toRegex()
 
     override fun isAnswered() = !answer.isNullOrBlank()
 
-    override fun validate() =
-        if (question.required && answer.isNullOrBlank()) AnswerValidationResult(
-            false,
-            listOf(Res.string.validation_error_required)
-        )
-        else AnswerValidationResult(true)
+    override fun validate() = when {
+        question.required && answer.isNullOrBlank()  -> AnswerValidationResult(false, listOf(Res.string.validation_error_required))
+        !question.required && answer.isNullOrBlank() -> AnswerValidationResult(true)
+        question.dataType == DataQuestionType.NAME   -> checkPattern(answer, validationRegex ?: NAME_PATTERN, Res.string.validation_error_pattern_name)
+        question.dataType == DataQuestionType.PHONE  -> checkPattern(answer, validationRegex ?: PHONE_PATTERN, Res.string.validation_error_pattern_phone)
+        question.dataType == DataQuestionType.EMAIL  -> checkPattern(answer, validationRegex ?: EMAIL_PATTERN, Res.string.validation_error_pattern_email)
+        question.dataType == DataQuestionType.CUSTOM -> checkPattern(answer, validationRegex, Res.string.validation_error_pattern_custom)
+        else                                         -> AnswerValidationResult(true)
+    }
+
+    private fun checkPattern(answer: String?, validationPattern: Regex?, error: StringResource) = when {
+        answer.isNullOrBlank() || validationPattern == null -> AnswerValidationResult(true)
+        validationPattern.matches(answer)                   -> AnswerValidationResult(true)
+        else                                                -> AnswerValidationResult(false, listOf(error))
+    }
 
     override fun calculateScore(): Int = 0
+
+    companion object {
+        private val NAME_PATTERN = "^[a-zA-Z\\s]{3,40}$".toRegex()
+        private val PHONE_PATTERN = "^((\\+|00)[1-9]{1,2})?[0-9 \\-()./]{6,32}$".toRegex()
+        private val EMAIL_PATTERN = "^[a-zA-Z0-9+._%-]{1,256}@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}(.[a-zA-Z0-9][a-zA-Z0-9-]{0,25})+$".toRegex()
+    }
 }
 
 /**

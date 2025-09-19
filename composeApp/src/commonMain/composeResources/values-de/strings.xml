@@ -19,5 +19,12 @@
     <string name="required">Benötigt</string>
     <string name="points">Punkte: %1$d</string>
     <string name="validation_error_required">Pflichtfrage</string>
+    <string name="validation_error_pattern_name">Antwort muss valider Name sein</string>
+    <string name="validation_error_pattern_phone">Antwort muss valide Telefonnummer sein</string>
+    <string name="validation_error_pattern_email">Antwort muss valide Email sein</string>
+    <string name="validation_error_pattern_custom">Antwort muss zu pattern passen</string>
+    <string name="data_element_label_name">Name</string>
+    <string name="data_element_label_phone">Telefon</string>
+    <string name="data_element_label_email">Email</string>
     <string name="highscore_unknown_player">&lt;unbekannt&gt;</string>
 </resources>

@@ -30,6 +30,9 @@ object SurveyConfigLoader {
         }
     }
 
+    val validExtensions: Set<String>
+        get() = readers.keys.toSet()
+
     /**
      * Loads a [SurveyConfig] from the provided [file].
      *

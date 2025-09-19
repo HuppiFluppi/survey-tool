@@ -4,12 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
+import com.zinkel.survey.config.DataQuestionType
 import com.zinkel.survey.config.SurveyConfig
-import com.zinkel.survey.config.SurveyContentType
 import com.zinkel.survey.config.SurveyType
 import com.zinkel.survey.data.ChoiceSurveyContentData
+import com.zinkel.survey.data.DataSurveyContentData
 import com.zinkel.survey.data.LikertSurveyContentData
-import com.zinkel.survey.data.NameSurveyContentData
 import com.zinkel.survey.data.RatingSurveyContentData
 import com.zinkel.survey.data.SurveyContentData
 import com.zinkel.survey.data.SurveyDataManager
@@ -112,15 +112,18 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
     private suspend fun loadPreviousData() {
         val topScores = dataManager.fillSummaryAndInstanceIdFromPrevious(surveyConfig.score.leaderboard.limit)
         if (topScores.isEmpty()) return
-        val userPlaceholder = getString(Res.string.highscore_unknown_player)
 
-        Snapshot.withMutableSnapshot {
-            // as the UI sorts and limits, simply adding works but might eventually become a problem with many highscore entries
-            highscoreUiState = highscoreUiState.copy(
-                scores = topScores.map {
-                    HighscoreEntry(it.user ?: userPlaceholder, it.score ?: 0, it.endTime ?: ZonedDateTime.now())
-                }
-            )
+        if (surveyConfig.type == SurveyType.QUIZ && surveyConfig.score.showLeaderboard) {
+            val userPlaceholder = getString(Res.string.highscore_unknown_player)
+
+            Snapshot.withMutableSnapshot {
+                // as the UI sorts and limits, simply adding works but might eventually become a problem with many highscore entries
+                highscoreUiState = highscoreUiState.copy(
+                    scores = topScores.map {
+                        HighscoreEntry(it.user ?: userPlaceholder, it.score ?: 0, it.endTime ?: ZonedDateTime.now())
+                    }
+                )
+            }
         }
     }
 
@@ -204,6 +207,7 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
         if (currentPageIndex == surveyConfig.pages.size) { //finalized survey
             val instance4save = surveyInstance ?: throw RuntimeException("SurveyInstance is null")
             coroutineScope.launch {
+                completeInstance(instance4save)
                 dataManager.addSurveyData(instance4save)
                 updateHighscore(instance4save)
             }
@@ -224,20 +228,33 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
     }
 
     /**
+     * Completes the survey instance. Sets user, score and endtime.
+     *
+     * The user is derived from the first NAME-type data question if present; otherwise a localized fallback is used.
+     */
+    private suspend fun completeInstance(instance: SurveyInstance) {
+        val answers = instance.getAllAnswers()
+
+        val user = answers.find { it is DataSurveyContentData && it.question.dataType == DataQuestionType.NAME && it.question.useForLeaderboard }
+            ?.answer as? String ?: getString(Res.string.highscore_unknown_player)
+        val score = answers.sumOf { it.calculateScore() }
+
+        instance.user = user
+        instance.score = score
+        instance.endTime = ZonedDateTime.now()
+    }
+
+    /**
      * Adds a new highscore entry for the given [instance] and updates [highscoreUiState].
-     * The player's name is derived from the first NAME-type question if present; otherwise
-     * a localized fallback is used. Scores are computed by summing per-answer scores.
      *
      * Note: This operates in a mutable snapshot to avoid recomposition glitches.
      */
-    private suspend fun updateHighscore(instance: SurveyInstance) {
-        val answers = instance.getAllAnswers()
-        val newEntry = HighscoreEntry( //just taking the first name question is merely a hack for now
-            answers.find { it.question.type == SurveyContentType.NAME }?.answer as? String ?: getString(Res.string.highscore_unknown_player),
-            answers.sumOf { it.calculateScore() })
+    private fun updateHighscore(instance: SurveyInstance) {
+        if (surveyConfig.type != SurveyType.QUIZ || !surveyConfig.score.showLeaderboard) return
+
         Snapshot.withMutableSnapshot {
             // as the UI sorts and limits, simply adding works but might eventually become a problem with many highscore entries
-            highscoreUiState = highscoreUiState.copy(scores = highscoreUiState.scores + newEntry)
+            highscoreUiState = highscoreUiState.copy(scores = highscoreUiState.scores + HighscoreEntry(instance.user ?: "<unset>", instance.score ?: 0))
         }
     }
 
@@ -300,7 +317,7 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
      */
     fun updateAnswer(id: String, answer: String) {
         when (val content = surveyContentPage[id]) {
-            is NameSurveyContentData -> content.answer = answer
+            is DataSurveyContentData -> content.answer = answer
             is TextSurveyContentData -> content.answer = answer
             null                     -> throw RuntimeException("SurveyContentData <$id> not found")
             else                     -> throw RuntimeException("Unexpected content type: ${content::class}")

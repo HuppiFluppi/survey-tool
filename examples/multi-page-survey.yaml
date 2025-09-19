@@ -21,13 +21,13 @@ title: "First Page"
 # The different questions to ask in this page
 content:
   # All questions have 3 fields in common:
-  # * type: String (required). Specify the type of question. one of [name, choice, text, rating, likert]
+  # * type: String (required). Specify the type of question. one of [data, choice, text, rating, likert]
   # * required: Boolean (default: true). If true, the user must answer this question
   # * title: String (required). Question/Headline to show to the user
   # Configuration specific to each question type is specified in the 'config' area
 
-  # Name questions are simple text questions which cannot be scored. You usually ask for things like name or email
-  - type: name
+  # Data questions are simple text questions which cannot be scored. You usually ask for things like name or email
+  - type: data
     required: false
     title: "Give me your name"
 

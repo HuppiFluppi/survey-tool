@@ -27,15 +27,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zinkel.survey.config.*
 import com.zinkel.survey.data.ChoiceSurveyContentData
+import com.zinkel.survey.data.DataSurveyContentData
 import com.zinkel.survey.data.InformationSurveyContentData
 import com.zinkel.survey.data.LikertSurveyContentData
-import com.zinkel.survey.data.NameSurveyContentData
 import com.zinkel.survey.data.RatingSurveyContentData
 import com.zinkel.survey.data.TextSurveyContentData
 import com.zinkel.survey.ui.elements.ChoiceElement
+import com.zinkel.survey.ui.elements.DataElement
 import com.zinkel.survey.ui.elements.InformationBlockElement
 import com.zinkel.survey.ui.elements.LikertElement
-import com.zinkel.survey.ui.elements.NameElement
 import com.zinkel.survey.ui.elements.PageHeader
 import com.zinkel.survey.ui.elements.RatingElement
 import com.zinkel.survey.ui.elements.TextElement
@@ -57,7 +57,7 @@ fun SurveyContentScreenPreview() {
                     "page1", "this is page 1 description text describing what page one is about with words. It is very, very good.", content = listOf(
                         TextQuestion("text question", "1-5", score = 5), ChoiceQuestion(
                             "Choice question", "1-6", choices = listOf(ChoiceItem("first choice"), ChoiceItem("second choice"), ChoiceItem("third choice"))
-                        ), NameQuestion("whats your name?", "1-7"), RatingQuestion("how well do you rate this survey?", "1-8"), LikertQuestion(
+                        ), DataQuestion("whats your name?", "1-7"), RatingQuestion("how well do you rate this survey?", "1-8"), LikertQuestion(
                             "how well do you rate this survey?",
                             "1-1ß",
                             choices = listOf("very bad", "not so bad", "quite good", "excellent"),
@@ -138,7 +138,7 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
                             surveyContentUiState.inputErrors[it.question.id]
                         )
 
-                        is NameSurveyContentData        -> NameElement(
+                        is DataSurveyContentData        -> DataElement(
                             it.question,
                             { answer -> surveyModel.updateAnswer(it.question.id, answer) },
                             it.answer ?: "",

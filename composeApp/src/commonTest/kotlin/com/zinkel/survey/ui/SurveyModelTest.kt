@@ -6,14 +6,13 @@ import com.zinkel.survey.config.ChoiceItem
 import com.zinkel.survey.config.ChoiceQuestion
 import com.zinkel.survey.config.LikertQuestion
 import com.zinkel.survey.config.LikertStatement
-import com.zinkel.survey.config.NameQuestion
+import com.zinkel.survey.config.DataQuestion
 import com.zinkel.survey.config.RatingQuestion
 import com.zinkel.survey.config.SurveyConfig
 import com.zinkel.survey.config.SurveyPage
 import com.zinkel.survey.config.TextQuestion
 import com.zinkel.survey.data.LikertSurveyContentData
 import com.zinkel.survey.data.TextSurveyContentData
-import io.mockk.mockk
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestScope
@@ -67,7 +66,7 @@ class SurveyModelTest {
                     title = "Page 1",
                     description = "Page 1 Description",
                     content = listOf(
-                        NameQuestion("Q1", "Question 1"),
+                        DataQuestion("Q1", "Question 1"),
                         ChoiceQuestion("Q2", "Question 2", choices = listOf(ChoiceItem("Choice 1"), ChoiceItem("Choice 2")))
                     )
                 )

@@ -69,6 +69,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+
                         multiline = config?.get("multiline") as? Boolean ?: false,
                         score = config?.get("score") as? Int,
                         correctAnswer = config?.get("correct_answer") as? String,
@@ -82,6 +83,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+
                         multiple = config["multiple"] as? Boolean ?: false,
                         limit = config["limit"] as? Int ?: 2,
                         choices = (config["choices"] as? List<Map<String, Any>>)?.map {
@@ -94,11 +96,16 @@ class YamlReader : SurveyConfigReader {
                     )
                 }
 
-                SurveyContentType.NAME        -> {
-                    return NameQuestion(
+                SurveyContentType.DATA        -> {
+                    val config = content["config"] as? Map<String, Any>
+                    return DataQuestion(
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+
+                        dataType = (config?.get("data_type") as? String)?.let { DataQuestionType.valueOf(it.uppercase()) } ?: DataQuestionType.NAME,
+                        validationPattern = config?.get("validation_pattern") as? String,
+                        useForLeaderboard = config?.get("use_for_leaderboard") as? Boolean ?: true,
                     )
                 }
 
@@ -117,6 +124,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+
                         choices = (config["choices"] as? List<String>)
                             ?: throw IllegalArgumentException("Survey file malformed (no choices for likert content)"),
                         statements = (config["statements"] as? List<Map<String, Any>>)?.map {

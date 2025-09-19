@@ -109,7 +109,7 @@ sealed class SurveyPageContent(
 enum class SurveyContentType {
     TEXT,
     CHOICE,
-    NAME,
+    DATA,
     RATING,
     LIKERT,
     INFORMATION,
@@ -166,15 +166,30 @@ data class ChoiceItem(
 )
 
 /**
- * Question for capturing a participant’s name.
+ * Question for capturing participant’s details.
  *
  * Typically used to label results or leaderboard entries.
+ *
+ * @property dataType The type of data to capture (e.g., "Name", "Email", "Phone").
+ * @property validationPattern Optional regular expression to validate the input. If null, defaults for each dataType except CUSTOM are used.
+ * @property useForLeaderboard Whether this data should be used as highscore name.
  */
-class NameQuestion(
+class DataQuestion(
     title: String,
     id: String,
     required: Boolean = true,
-) : SurveyPageContent(SurveyContentType.NAME, title, id, required)
+
+    val dataType: DataQuestionType = DataQuestionType.NAME,
+    val validationPattern: String? = null,
+    val useForLeaderboard: Boolean = true,
+) : SurveyPageContent(SurveyContentType.DATA, title, id, required)
+
+enum class DataQuestionType {
+    NAME,
+    EMAIL,
+    PHONE,
+    CUSTOM,
+}
 
 /**
  * Numeric rating question.

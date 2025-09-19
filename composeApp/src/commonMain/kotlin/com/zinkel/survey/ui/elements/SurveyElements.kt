@@ -3,7 +3,7 @@
  *
  * Contents:
  * - Page building blocks (headers, error banners).
- * - Question composables for Name, Text, Choice, Rating, and Likert types.
+ * - Question composables for Data, Text, Choice, Rating, and Likert types.
  * - Utility functions for selection handling and a padding-adjusted TextField.
  *
  * Design notes:
@@ -17,7 +17,6 @@ package com.zinkel.survey.ui.elements
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -57,15 +56,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zinkel.survey.config.ChoiceItem
 import com.zinkel.survey.config.ChoiceQuestion
+import com.zinkel.survey.config.DataQuestion
+import com.zinkel.survey.config.DataQuestionType
 import com.zinkel.survey.config.InformationBlock
 import com.zinkel.survey.config.LikertQuestion
 import com.zinkel.survey.config.LikertStatement
-import com.zinkel.survey.config.NameQuestion
 import com.zinkel.survey.config.RatingQuestion
 import com.zinkel.survey.config.TextQuestion
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import surveytool.composeapp.generated.resources.Res
+import surveytool.composeapp.generated.resources.clear
+import surveytool.composeapp.generated.resources.data_element_label_email
+import surveytool.composeapp.generated.resources.data_element_label_name
+import surveytool.composeapp.generated.resources.data_element_label_phone
 import surveytool.composeapp.generated.resources.points
 import surveytool.composeapp.generated.resources.required
 import surveytool.composeapp.generated.resources.star_filled
@@ -107,23 +111,23 @@ fun ErrorHeader(inputError: String? = null) {
 
 @Composable
 @Preview
-fun NameElementPreview() {
-    NameElement(NameQuestion(title = "What is your name?", id = "1-1"), {}, inputError = "This is an error")
+fun DataElementPreview() {
+    DataElement(DataQuestion(title = "What is your name?", id = "1-1"), {}, inputError = "This is an error")
 }
 
 /**
- * Renders a Name question with a single-line text field.
+ * Renders a Data question with a single-line text field.
  *
  * Shows a title row with required indicator and an optional error banner.
  *
- * @param question The NameQuestion configuration to render.
+ * @param question The DataQuestion configuration to render.
  * @param onValueChange Callback invoked when the input changes.
  * @param savedValue Optional initial value to prefill the input.
  * @param inputError Optional error text to display above the card.
  */
 
 @Composable
-fun NameElement(question: NameQuestion, onValueChange: (String) -> Unit, savedValue: String = "", inputError: String? = null) {
+fun DataElement(question: DataQuestion, onValueChange: (String) -> Unit, savedValue: String = "", inputError: String? = null) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         ErrorHeader(inputError)
         Column(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
@@ -131,7 +135,24 @@ fun NameElement(question: NameQuestion, onValueChange: (String) -> Unit, savedVa
 
             Row {
                 var txt by remember(question.id) { mutableStateOf(savedValue) }
-                TextFieldWithoutPadding(value = txt, onValueChange = { txt = it; onValueChange(it) }, modifier = Modifier.weight(1f))
+                TextFieldWithoutPadding(
+                    value = txt,
+                    label = when (question.dataType) {
+                        DataQuestionType.NAME -> @Composable { -> Text(stringResource(Res.string.data_element_label_name)) }
+                        DataQuestionType.PHONE -> @Composable { -> Text(stringResource(Res.string.data_element_label_phone)) }
+                        DataQuestionType.EMAIL -> @Composable { -> Text(stringResource(Res.string.data_element_label_email)) }
+                        else -> null
+                    },
+                    trailingIcon = {
+                        if (txt.isNotEmpty()) {
+                            IconButton(onClick = { txt = ""; onValueChange("") }) {
+                                Icon(painterResource(Res.drawable.clear), null)
+                            }
+                        }
+                    },
+                    onValueChange = { txt = it; onValueChange(it) },
+                    modifier = Modifier.weight(1f)
+                )
                 Spacer(modifier = Modifier.weight(0.5f))
             }
         }
@@ -344,6 +365,13 @@ fun TextElement(question: TextQuestion, showQuestionScores: Boolean, onValueChan
                 TextFieldWithoutPadding(
                     value = txt,
                     onValueChange = { txt = it; onValueChange(it) },
+                    trailingIcon = {
+                        if (txt.isNotEmpty()) {
+                            IconButton(onClick = { txt = ""; onValueChange("") }) {
+                                Icon(painterResource(Res.drawable.clear), null)
+                            }
+                        }
+                    },
                     singleLine = !question.multiline,
                     minLines = if (question.multiline) 3 else 1,
                     maxLines = 6,

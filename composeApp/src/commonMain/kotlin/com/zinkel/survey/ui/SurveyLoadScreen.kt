@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zinkel.survey.FilePickerDialog
+import com.zinkel.survey.config.SurveyConfigLoader
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -55,7 +56,7 @@ import java.net.URI
  */
 @Composable
 fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File) -> Unit) {
-    val validExtensions = remember { setOf("yaml", "yml") }
+    val validExtensions = remember { SurveyConfigLoader.validExtensions }
     var showFilePicker by remember { mutableStateOf(false) }
     val showDragAndDropIndicatorState = remember { mutableStateOf(false) }
     var fileSelectionResult by remember { mutableStateOf<FileSelectionResult?>(null) }

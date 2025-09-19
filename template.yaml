@@ -55,15 +55,19 @@ image_path: 'composeApp/src/commonMain/composeResources/drawable/app_icon.png'
 # The different questions to ask in this page
 content:
   # All questions have 3 fields in common:
-  # * type: String (required). Specify the type of question. one of [name, choice, text, rating, likert]
+  # * type: String (required). Specify the type of question. one of [data, choice, text, rating, likert]
   # * required: Boolean (default: true). If true, the user must answer this question
   # * title: String (required). Question/Headline to show to the user
   # Configuration specific to each question type is specified in the 'config' area
 
-  # Name questions are simple text questions which cannot be scored. You usually ask for things like name or email
-  - type: name
+  # Data questions are simple text questions which cannot be scored. You usually ask for things like name or email
+  - type: data
     required: true
     title: "Give me your name"
+    config:
+      datatype: name # String (default: name). Type of the data. One of [name, email, phone, custom].
+      validation_pattern: '^[a-zA-Z\s]{3,40}$' # String (optional). Regex pattern to validate the input. If omitted, data types name, email and phone use default patterns. Please make sure to use single quotes(') to avoid loading errors.
+      use_for_leaderboard: true # Boolean (default: true). If true, this data will be used for the leaderboard. Only relevant for quizzes and data-type 'name'.
 
   # Information content are blocks of text. They are no questions and cannot be scored. You can use them to provide additional information or to show a picture.
   - type: information
