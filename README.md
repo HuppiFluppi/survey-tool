@@ -10,7 +10,7 @@ A lightweight tool for creating and running surveys or quizzes. Using Kotlin and
 - [Quick Start](#quick-start)
 - [Scoring & Leaderboard](#scoring--leaderboard)
 - [Development](#development)
-- [Roadmap](#roadmap)
+- [Roadmap](#planned-roadmap)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -57,11 +57,12 @@ Steps to use:
 - Points must be configured per question.
 - Leaderboard can be configured to display scores.
 
-## Roadmap
+## Planned Roadmap
 - [x] Add possibility to resume survey by loading existing data (highscore, instanceId, etc.)
 - [x] Add support for specifying the participant name/mail/phone
 - [x] Add content element with text+description+image
-- [ ] Extend question types (Date+TimePicker, ImageChoice, Dropdown, Configurable Rating(Icon, Color, Scale), LikertSlider)
+- [ ] Extend question types I (Date+TimePicker, Dropdown, Configurable Rating(Icon, Color, Scale))
+- [ ] Extend documentation (question types, survey config, etc.)
 - [ ] Add Github build pipeline for release
 - [ ] Add support for images (Background, Summary, Page Header)
 - [ ] Add conditional pages/question
@@ -69,9 +70,10 @@ Steps to use:
 - [ ] Add system test (load, fill, submit, check)
 - [ ] Add remote configuration loading and data sending
 - [ ] Enable Android target
-- [ ] Add support for custom color themes
-- [ ] Add multi survey languages support
 - [ ] Add fullscreen/kiosk mode (Desktop)
+- [ ] Add multi survey languages support
+- [ ] Add support for custom color themes
+- [ ] Extend question types II (ImageChoice, LikertSlider, ?)
 
 ## Contributing
 Contributions are welcome! Please:
