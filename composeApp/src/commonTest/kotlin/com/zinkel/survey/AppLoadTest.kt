@@ -13,7 +13,15 @@ import com.zinkel.survey.ui.SurveyApp
 import com.zinkel.survey.ui.SurveyLoadApp
 import com.zinkel.survey.ui.SurveyLoadModel
 import com.zinkel.survey.ui.SurveyLoadUiState
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.DensityQualifier
+import org.jetbrains.compose.resources.InternalResourceApi
+import org.jetbrains.compose.resources.LanguageQualifier
+import org.jetbrains.compose.resources.RegionQualifier
+import org.jetbrains.compose.resources.ResourceEnvironment
+import org.jetbrains.compose.resources.ThemeQualifier
 import org.jetbrains.compose.resources.getString
 import surveytool.composeapp.generated.resources.Res
 import surveytool.composeapp.generated.resources.app_name
@@ -22,15 +30,29 @@ import surveytool.composeapp.generated.resources.finish
 import surveytool.composeapp.generated.resources.load_file
 import surveytool.composeapp.generated.resources.take_survey
 import java.io.File
+import java.util.*
 import kotlin.test.Test
 
-@OptIn(ExperimentalTestApi::class)
+@OptIn(ExperimentalTestApi::class, InternalResourceApi::class)
 class AppLoadTest {
+
+    // getString() fetches the current ResourceEnvironment to know which language to load.
+    // This crashes on environments w/o GUI (e.g. pipelines, containers, etc.)
+    // While the getString() can be given a own ResourceEnvironment, this class is internal. Hence the mocking and init block.
+    @OptIn(InternalResourceApi::class)
+    val testEnv = mockk<ResourceEnvironment>()
+
+    init {
+        every { testEnv getProperty "language" } returns LanguageQualifier(Locale.getDefault().language)
+        every { testEnv getProperty "region" } returns RegionQualifier("US")
+        every { testEnv getProperty "theme" } returns ThemeQualifier.DARK
+        every { testEnv getProperty "density" } returns DensityQualifier.HDPI
+    }
 
     @Test
     fun `SurveyLoadApp can be instantiated`() = runBlocking {
-        val appName = getString(Res.string.app_name)
-        val loadButtonText = getString(Res.string.load_file)
+        val appName = getString(testEnv, Res.string.app_name)
+        val loadButtonText = getString(testEnv, Res.string.load_file)
 
         runComposeUiTest {
             val surveyLoadUiState = SurveyLoadModel.surveyLoadUiState
@@ -46,7 +68,7 @@ class AppLoadTest {
 
     @Test
     fun `SurveyApp summary can be instantiated`() = runBlocking {
-        val startSurveyText = getString(Res.string.take_survey)
+        val startSurveyText = getString(testEnv, Res.string.take_survey)
 
         runComposeUiTest {
             val surveyLoadUiState = SurveyLoadUiState.Loaded(
@@ -68,9 +90,9 @@ class AppLoadTest {
 
     @Test
     fun `SurveyApp content can be instantiated`() = runBlocking {
-        val startSurveyText = getString(Res.string.take_survey)
-        val cancelButtonText = getString(Res.string.cancel)
-        val finishButtonText = getString(Res.string.finish)
+        val startSurveyText = getString(testEnv, Res.string.take_survey)
+        val cancelButtonText = getString(testEnv, Res.string.cancel)
+        val finishButtonText = getString(testEnv, Res.string.finish)
 
         runComposeUiTest {
             val surveyLoadUiState = SurveyLoadUiState.Loaded(
