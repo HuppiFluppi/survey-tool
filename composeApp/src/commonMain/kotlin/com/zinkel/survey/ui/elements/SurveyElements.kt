@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -36,6 +37,7 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +46,7 @@ import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
@@ -54,15 +57,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zinkel.survey.config.ChoiceItem
-import com.zinkel.survey.config.ChoiceQuestion
-import com.zinkel.survey.config.DataQuestion
-import com.zinkel.survey.config.DataQuestionType
-import com.zinkel.survey.config.InformationBlock
-import com.zinkel.survey.config.LikertQuestion
-import com.zinkel.survey.config.LikertStatement
-import com.zinkel.survey.config.RatingQuestion
-import com.zinkel.survey.config.TextQuestion
+import com.zinkel.survey.config.*
+import com.zinkel.survey.data.DateTimePick
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import surveytool.composeapp.generated.resources.Res
@@ -75,6 +71,9 @@ import surveytool.composeapp.generated.resources.required
 import surveytool.composeapp.generated.resources.star_filled
 import surveytool.composeapp.generated.resources.star_unfilled
 import java.io.File
+import java.time.Instant
+import java.time.LocalTime
+import java.time.ZoneId
 
 /**
  * A composable function that displays a page header with an optional title and description.
@@ -378,6 +377,89 @@ fun TextElement(question: TextQuestion, showQuestionScores: Boolean, onValueChan
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.weight(0.5f))
+            }
+        }
+    }
+}
+
+@Composable
+@Preview
+fun DateTimeElementPreview() {
+    DateTimeElement(DateTimeQuestion(title = "Pick a date and time", "1-1", score = 5), true, {})
+}
+
+/**
+ * Renders a DateTime question.
+ *
+ * Displays a title row with optional score hint together with a date and/or time input.
+ *
+ * @param question The DateTimeQuestion configuration to render.
+ * @param showQuestionScores If true, shows the potential score in the header (quizzes).
+ * @param onValueChange Callback invoked when the input changes.
+ * @param savedValue Optional initial value.
+ * @param inputError Optional error text to display above the card.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DateTimeElement(
+    question: DateTimeQuestion,
+    showQuestionScores: Boolean,
+    onValueChange: (DateTimePick) -> Unit,
+    savedValue: DateTimePick? = null,
+    inputError: String? = null,
+) {
+    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        ErrorHeader(inputError)
+
+        Column(modifier = Modifier.padding(8.dp)) {
+            TitleRow(question.title, question.required, showQuestionScores, question.score)
+
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+                val datePick by remember(question.id) { mutableStateOf(savedValue ?: DateTimePick(question.initialSelectedDate, question.initialSelectedTime)) }
+
+                // Date
+                if (question.inputType == DateTimeType.DATE || question.inputType == DateTimeType.DATETIME) {
+                    val datePickerState = rememberDatePickerState(
+                        initialSelectedDateMillis = datePick.date?.atStartOfDay(ZoneId.systemDefault())?.toInstant()?.toEpochMilli(),
+                        initialDisplayMode = DisplayMode.Input,
+                    )
+
+                    DatePicker(
+                        state = datePickerState,
+                        modifier = Modifier.weight(1f, false).clip(MaterialTheme.shapes.medium),
+                        title = null
+                    )
+
+                    LaunchedEffect(datePickerState.selectedDateMillis) {
+                        datePick.date = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
+                        onValueChange(datePick)
+                    }
+                }
+
+                if (question.inputType == DateTimeType.DATETIME) Spacer(modifier = Modifier.width(32.dp))
+
+                // Time
+                if (question.inputType == DateTimeType.TIME || question.inputType == DateTimeType.DATETIME) {
+                    val timePickerState = rememberTimePickerState(
+                        initialHour = datePick.time?.hour ?: 0,
+                        initialMinute = datePick.time?.minute ?: 0,
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                            .weight(1.5f, false)
+                    ) {
+                        TimeInput(state = timePickerState)
+                    }
+
+                    LaunchedEffect(timePickerState.hour, timePickerState.minute) {
+                        datePick.time = LocalTime.of(timePickerState.hour, timePickerState.minute)
+                        onValueChange(datePick)
+                    }
+                }
             }
         }
     }

@@ -43,14 +43,14 @@ And maybe help others who come across this repo, having the same need I had year
 Steps to use:
 
 1) Define a survey configuration
-- Check the [template](template.yaml) for a documented configuration
-- Check the [examples folder](examples) for different kind of survey and quiz configurations
-- Add questions to your like
-- Configure settings as needed
-
+   - Check the [template](template.yaml) for a documented configuration
+   - Check the [examples folder](examples) for different kind of survey and quiz configurations
+   - Add questions to your like
+   - Configure settings as needed
+   
 2) Run the survey
-- Run the survey tool
-- Load the survey configuration
+   - Run the survey tool
+   - Load the survey configuration
 
 ## Scoring & Leaderboard
 - Scoring is optional and typically enabled for quiz-type surveys.
@@ -61,7 +61,7 @@ Steps to use:
 - [x] Add possibility to resume survey by loading existing data (highscore, instanceId, etc.)
 - [x] Add support for specifying the participant name/mail/phone
 - [x] Add content element with text+description+image
-- [ ] Extend question types I (Date+TimePicker, Dropdown, Configurable Rating(Icon, Color, Scale))
+- [ ] Extend question types I (DateTimePicker, Dropdown, Configurable Rating(Icon, Color, Scale))
 - [ ] Extend documentation (question types, survey config, etc.)
 - [ ] Add Github build pipeline for release
 - [ ] Add support for images (Background, Summary, Page Header)

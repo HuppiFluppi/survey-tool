@@ -1,13 +1,6 @@
 package com.zinkel.survey.data
 
-import com.zinkel.survey.config.ChoiceQuestion
-import com.zinkel.survey.config.DataQuestion
-import com.zinkel.survey.config.DataQuestionType
-import com.zinkel.survey.config.InformationBlock
-import com.zinkel.survey.config.LikertQuestion
-import com.zinkel.survey.config.RatingQuestion
-import com.zinkel.survey.config.SurveyPageContent
-import com.zinkel.survey.config.TextQuestion
+import com.zinkel.survey.config.*
 import org.jetbrains.compose.resources.StringResource
 import surveytool.composeapp.generated.resources.Res
 import surveytool.composeapp.generated.resources.validation_error_pattern_custom
@@ -15,6 +8,9 @@ import surveytool.composeapp.generated.resources.validation_error_pattern_email
 import surveytool.composeapp.generated.resources.validation_error_pattern_name
 import surveytool.composeapp.generated.resources.validation_error_pattern_phone
 import surveytool.composeapp.generated.resources.validation_error_required
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 /**
  * Runtime model for a single question (content item) on a survey page.
@@ -63,6 +59,7 @@ sealed class SurveyContentData(
             is RatingQuestion   -> RatingSurveyContentData(content, answer as? Int)
             is TextQuestion     -> TextSurveyContentData(content, answer as? String)
             is InformationBlock -> InformationSurveyContentData(content)
+            is DateTimeQuestion -> DateTimeSurveyContentData(content, answer as? DateTimePick)
         }
     }
 }
@@ -247,4 +244,56 @@ class InformationSurveyContentData(
     override fun isAnswered() = true
     override fun validate() = AnswerValidationResult(true)
     override fun calculateScore(): Int = 0
+}
+
+/**
+ * Date+Time question runtime model.
+ *
+ * Answer is a nullable [LocalDateTime]. If question is required, blank answers are invalid.
+ * NOTE: It is important to only set answer when the user has selected a complete date+time (if both should be entered).
+ * Due to the possibility of giving initial values, the user can accept these without active selection.
+ *
+ * Scoring (for quizzes) awards [DateTimeQuestion.score] when [DateTimeQuestion.correctTimeAnswer] and [DateTimeQuestion.correctDateAnswer] matches.
+ */
+class DateTimeSurveyContentData(
+    override val question: DateTimeQuestion,
+    override var answer: DateTimePick?,
+) : SurveyContentData(question) {
+
+    init {
+        //prefill answer with given initial values. Hence, allowing the user to just take defaults
+        if (question.initialSelectedTime != null || question.initialSelectedDate != null) {
+            answer = DateTimePick(question.initialSelectedDate, question.initialSelectedTime)
+        }
+    }
+
+    override fun isAnswered() = answer != null
+            && (answer!!.date != null || question.inputType == DateTimeType.TIME)
+            && (answer!!.time != null || question.inputType == DateTimeType.DATE)
+
+    override fun validate() =
+        if (question.required && !isAnswered()) AnswerValidationResult(
+            false,
+            listOf(Res.string.validation_error_required)
+        )
+        else AnswerValidationResult(true)
+
+    override fun calculateScore(): Int {
+        if (!isAnswered()) return 0
+        val (date, time) = answer!!
+        if (time?.equals(question.correctTimeAnswer) ?: true && date?.equals(question.correctDateAnswer) ?: true) return question.score ?: 0
+        return 0
+    }
+}
+
+data class DateTimePick(
+    var date: LocalDate? = null,
+    var time: LocalTime? = null,
+) {
+    override fun toString(): String {
+        if (date == null && time == null) return ""
+        if (date != null && time == null) return date.toString()
+        if (time != null && date == null) return time.toString()
+        return "$date $time"
+    }
 }

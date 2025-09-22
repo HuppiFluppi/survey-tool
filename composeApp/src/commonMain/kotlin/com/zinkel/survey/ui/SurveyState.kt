@@ -7,14 +7,7 @@ import androidx.compose.runtime.snapshots.Snapshot
 import com.zinkel.survey.config.DataQuestionType
 import com.zinkel.survey.config.SurveyConfig
 import com.zinkel.survey.config.SurveyType
-import com.zinkel.survey.data.ChoiceSurveyContentData
-import com.zinkel.survey.data.DataSurveyContentData
-import com.zinkel.survey.data.LikertSurveyContentData
-import com.zinkel.survey.data.RatingSurveyContentData
-import com.zinkel.survey.data.SurveyContentData
-import com.zinkel.survey.data.SurveyDataManager
-import com.zinkel.survey.data.SurveyInstance
-import com.zinkel.survey.data.TextSurveyContentData
+import com.zinkel.survey.data.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.filterNot
@@ -348,13 +341,23 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
      * Method to set an answer for the question with the given [id].
      *
      * @param id Question identifier.
-     * @param statement The statement this the answer is for.
+     * @param statement The statement the answer is for.
      * @param choice The new answer value.
      */
     fun updateAnswer(id: String, statement: String, choice: String) {
         val content = surveyContentPage[id] as? LikertSurveyContentData
         if (content?.answer == null) content?.answer = mutableMapOf()
         content?.answer?.set(statement, choice)
+    }
+
+    /**
+     * Method to set an answer for the question with the given [id].
+     *
+     * @param id Question identifier.
+     * @param answer The new date/time answer value.
+     */
+    fun updateAnswer(id: String, answer: DateTimePick) {
+        (surveyContentPage[id] as? DateTimeSurveyContentData)?.answer = answer
     }
 }
 

@@ -3,6 +3,8 @@ package com.zinkel.survey.config
 import org.snakeyaml.engine.v2.api.Load
 import org.snakeyaml.engine.v2.api.LoadSettings
 import java.io.File
+import java.time.LocalDate
+import java.time.LocalTime
 import kotlin.io.path.Path
 
 class YamlReader : SurveyConfigReader {
@@ -143,6 +145,24 @@ class YamlReader : SurveyConfigReader {
                         id = getContentId(pageNumber, contentNumber),
                         description = content["description"] as? String,
                         image = checkFile(content["image_path"] as? String, title, type),
+                    )
+                }
+
+                SurveyContentType.DATETIME   -> {
+                    val config = content["config"] as? Map<String, Any>
+
+                    return DateTimeQuestion(
+                        title = title,
+                        id = getContentId(pageNumber, contentNumber),
+                        required = required,
+
+                        inputType = (config?.get("input_type") as? String)?.let { DateTimeType.valueOf(it.uppercase()) } ?: DateTimeType.DATETIME,
+                        initialSelectedTime = (config?.get("initial_selected_time") as? String)?.let { LocalTime.parse(it) },
+                        initialSelectedDate = (config?.get("initial_selected_date") as? String)?.let { LocalDate.parse(it) },
+
+                        score = config?.get("score") as? Int,
+                        correctTimeAnswer = (config?.get("correct_time_answer") as? String)?.let { LocalTime.parse(it) },
+                        correctDateAnswer = (config?.get("correct_date_answer") as? String)?.let { LocalDate.parse(it) },
                     )
                 }
             }

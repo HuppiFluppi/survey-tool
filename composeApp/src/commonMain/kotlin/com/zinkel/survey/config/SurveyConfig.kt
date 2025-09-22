@@ -1,6 +1,8 @@
 package com.zinkel.survey.config
 
 import java.io.File
+import java.time.LocalDate
+import java.time.LocalTime
 
 /**
  * Root configuration model describing a single survey or quiz.
@@ -113,6 +115,7 @@ enum class SurveyContentType {
     RATING,
     LIKERT,
     INFORMATION,
+    DATETIME,
 }
 
 /**
@@ -189,6 +192,38 @@ enum class DataQuestionType {
     EMAIL,
     PHONE,
     CUSTOM,
+}
+
+/**
+ * DateTime question.
+ *
+ * Question a date and/or time input from participant.
+ *
+ * @property inputType The type of input to show (date, time, date & time).
+ * @property initialSelectedTime Optional initial time value to pre-select.
+ * @property initialSelectedDate Optional initial date value to pre-select.
+ * @property score Optional numeric score to award for a correct answer (relevant in quizzes).
+ * @property correctTimeAnswer Optional correct time answer for scoring/validation in quizzes.
+ * @property correctDateAnswer Optional correct date answer for scoring/validation in quizzes.
+ */
+class DateTimeQuestion(
+    title: String,
+    id: String,
+    required: Boolean = true,
+
+    val inputType: DateTimeType = DateTimeType.DATETIME,
+    val initialSelectedTime: LocalTime? = null,
+    val initialSelectedDate: LocalDate? = null,
+
+    val score: Int? = null,
+    val correctTimeAnswer: LocalTime? = null,
+    val correctDateAnswer: LocalDate? = null,
+) : SurveyPageContent(SurveyContentType.DATETIME, title, id, required)
+
+enum class DateTimeType {
+    DATE,
+    TIME,
+    DATETIME,
 }
 
 /**

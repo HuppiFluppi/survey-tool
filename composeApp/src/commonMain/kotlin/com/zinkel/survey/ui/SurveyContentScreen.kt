@@ -28,12 +28,14 @@ import androidx.compose.ui.unit.dp
 import com.zinkel.survey.config.*
 import com.zinkel.survey.data.ChoiceSurveyContentData
 import com.zinkel.survey.data.DataSurveyContentData
+import com.zinkel.survey.data.DateTimeSurveyContentData
 import com.zinkel.survey.data.InformationSurveyContentData
 import com.zinkel.survey.data.LikertSurveyContentData
 import com.zinkel.survey.data.RatingSurveyContentData
 import com.zinkel.survey.data.TextSurveyContentData
 import com.zinkel.survey.ui.elements.ChoiceElement
 import com.zinkel.survey.ui.elements.DataElement
+import com.zinkel.survey.ui.elements.DateTimeElement
 import com.zinkel.survey.ui.elements.InformationBlockElement
 import com.zinkel.survey.ui.elements.LikertElement
 import com.zinkel.survey.ui.elements.PageHeader
@@ -161,6 +163,14 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
                         )
 
                         is InformationSurveyContentData -> InformationBlockElement(it.question)
+
+                        is DateTimeSurveyContentData    -> DateTimeElement(
+                            it.question,
+                            surveyContentUiState.showQuestionScores,
+                            { answer -> surveyModel.updateAnswer(it.question.id, answer) },
+                            it.answer,
+                            surveyContentUiState.inputErrors[it.question.id]
+                        )
                     }
                 }
             }

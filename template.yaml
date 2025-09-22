@@ -55,7 +55,7 @@ image_path: 'composeApp/src/commonMain/composeResources/drawable/app_icon.png'
 # The different questions to ask in this page
 content:
   # All questions have 3 fields in common:
-  # * type: String (required). Specify the type of question. one of [data, choice, text, rating, likert]
+  # * type: String (required). Specify the type of question. one of [data, choice, text, rating, likert, datetime]
   # * required: Boolean (default: true). If true, the user must answer this question
   # * title: String (required). Question/Headline to show to the user
   # Configuration specific to each question type is specified in the 'config' area
@@ -101,8 +101,20 @@ content:
     title: "What is your favorite ice cream?"
     config:
       multiline: true # Boolean (default: false). If you expect lengthy answers, set this to true
-      score: 5 # Int (optional). Points to award for this choice. Used in quiz mode
-      correct_answer: "Any" # String (required when scored). Correct answer to the question. Used in quiz mode
+      score: 5 # Int (optional). Points to award for this question. Used in quiz mode
+      correct_answer: "Any" # String (optional). Correct answer to the question. Used in quiz mode
+
+  # Datetime questions are asking for a date and/or time. They can be scored. If initial values are given, the user does not have to actively answer the question. Instead, the initial values are used.
+  - type: datetime
+    required: true
+    title: "When was this feature created?"
+    config:
+      input_type: datetime # String (default: datetime). Type of the input. Either [date], [time] or [datetime]
+      initial_selected_time: "21:33" # String (optional). If given, sets the initial selected time. Format: HH:mm
+      initial_selected_date: "2025-09-21" # String (optional). If given, sets the initial selected date. Format: YYYY-MM-DD
+      score: 50 # Int (optional). Points to award for this question. Used in quiz mode
+      correct_time_answer: "21:33" # String (optional). Correct time answer to the question. Used in quiz mode. Format: HH:mm
+      correct_date_answer: "2025-09-21" # String (optional). Correct date answer to the question. Used in quiz mode. Format: YYYY-MM-DD
 
   # Rating questions are asking for a 1-5 rating. They cannot be scored
   - type: rating
@@ -121,7 +133,7 @@ content:
         - "Nope"
       statements: #List<LikertStatement> (rows)
         - title: "Horror" # String (required). Title of the statement
-          correct_choice: "Sometimes" # String (required when scored). Correct choice for this statement. Needs to match one of the choices
+          correct_choice: "Sometimes" # String (optional). Correct choice for this statement. Needs to match one of the choices. Used in quiz mode
           score: 5 # Int (optional). Points to award for this choice. Used in quiz mode
         - title: "Comedy"
           correct_choice: "Sometimes"
