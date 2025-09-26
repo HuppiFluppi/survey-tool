@@ -15,7 +15,8 @@
 package com.zinkel.survey.ui.elements
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,11 +48,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.decodeToImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.takeOrElse
-import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
@@ -61,15 +62,8 @@ import com.zinkel.survey.config.*
 import com.zinkel.survey.data.DateTimePick
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import surveytool.composeapp.generated.resources.Res
-import surveytool.composeapp.generated.resources.clear
-import surveytool.composeapp.generated.resources.data_element_label_email
-import surveytool.composeapp.generated.resources.data_element_label_name
-import surveytool.composeapp.generated.resources.data_element_label_phone
-import surveytool.composeapp.generated.resources.points
-import surveytool.composeapp.generated.resources.required
-import surveytool.composeapp.generated.resources.star_filled
-import surveytool.composeapp.generated.resources.star_unfilled
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import surveytool.composeapp.generated.resources.*
 import java.io.File
 import java.time.Instant
 import java.time.LocalTime
@@ -195,13 +189,31 @@ fun ChoiceElement(
         Column(modifier = Modifier.padding(8.dp)) {
             TitleRow(question.title, question.required, showQuestionScores, question.choices.sumOf { it.score ?: 0 })
 
-            val checkStates = remember(question.id) { question.choices.map { it.title to (it.title in savedValues) }.toMutableStateMap() }
-            question.choices.forEach { choice ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = checkStates[choice.title]!!,
-                        onCheckedChange = { handleChoiceChange(it, choice, question.multiple, question.limit, checkStates, onValueChange) })
-                    Text(text = choice.title)
+            if (question.dropdown && !question.multiple) { //Dropdown ui
+                val chooseTxt = stringResource(Res.string.choice_element_choose)
+                var expanded by remember(question.id) { mutableStateOf(false) }
+                var choice by remember(question.id) { mutableStateOf(chooseTxt) }
+                val dropDownRotate by animateFloatAsState(targetValue = if (expanded) 180f else 0f, animationSpec = tween())
+
+                Row(modifier = Modifier.clickable { expanded = !expanded }) {
+                    Text(choice)
+                    Icon(painterResource(Res.drawable.drop_down), null, modifier = Modifier.graphicsLayer { rotationZ = dropDownRotate })
+
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        question.choices.forEach {
+                            DropdownMenuItem(text = { Text(it.title) }, onClick = { expanded = false; choice = it.title; onValueChange(listOf(it.title)) })
+                        }
+                    }
+                }
+            } else { // default checkbox ui
+                val checkStates = remember(question.id) { question.choices.map { it.title to (it.title in savedValues) }.toMutableStateMap() }
+                question.choices.forEach { choice ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(
+                            checked = checkStates[choice.title]!!,
+                            onCheckedChange = { handleChoiceChange(it, choice, question.multiple, question.limit, checkStates, onValueChange) })
+                        Text(text = choice.title)
+                    }
                 }
             }
         }
@@ -496,10 +508,7 @@ fun InformationBlockElement(block: InformationBlock) {
     }
 }
 
-fun loadImageBitmap(file: File): ImageBitmap {
-    val bytes = file.readBytes()
-    return org.jetbrains.skia.Image.makeFromEncoded(bytes).toComposeImageBitmap()
-}
+fun loadImageBitmap(file: File) = file.readBytes().decodeToImageBitmap()
 
 /**
  * Renders the title row for a question card.

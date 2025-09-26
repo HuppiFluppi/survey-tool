@@ -26,5 +26,6 @@
     <string name="data_element_label_name">Name</string>
     <string name="data_element_label_phone">Telefon</string>
     <string name="data_element_label_email">Email</string>
-    <string name="highscore_unknown_player">&lt;unbekannt&gt;</string>
+    <string name="highscore_unknown_player">&lt;Unbekannt&gt;</string>
+    <string name="choice_element_choose">&lt;Auswahl&gt;</string>
 </resources>

@@ -79,8 +79,9 @@ class YamlReader : SurveyConfigReader {
                 }
 
                 SurveyContentType.CHOICE      -> {
-                    val config =
-                        content["config"] as? Map<String, Any> ?: throw IllegalArgumentException("Survey file malformed (no config for choice content)")
+                    val config = content["config"] as? Map<String, Any>
+                        ?: throw IllegalArgumentException("Survey file malformed (no config for choice content)")
+
                     return ChoiceQuestion(
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
@@ -88,6 +89,7 @@ class YamlReader : SurveyConfigReader {
 
                         multiple = config["multiple"] as? Boolean ?: false,
                         limit = config["limit"] as? Int ?: 2,
+                        dropdown = config["dropdown"] as? Boolean ?: false,
                         choices = (config["choices"] as? List<Map<String, Any>>)?.map {
                             ChoiceItem(
                                 title = it["title"] as? String ?: throw IllegalArgumentException("Survey file malformed (no title for choice content)"),
@@ -148,7 +150,7 @@ class YamlReader : SurveyConfigReader {
                     )
                 }
 
-                SurveyContentType.DATETIME   -> {
+                SurveyContentType.DATETIME    -> {
                     val config = content["config"] as? Map<String, Any>
 
                     return DateTimeQuestion(

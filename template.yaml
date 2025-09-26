@@ -1,3 +1,5 @@
+# This template file explains all options for a survey.
+
 # title: String (required)
 # Title of the survey
 title: "Template Survey"
@@ -38,7 +40,6 @@ score:
     limit: 10
 
 --- # Each '---' starts a new page document. Pages help structure your survey. At least one page is required
-
 # title: String (optional)
 # Title of this page
 title: "First Page"
@@ -52,10 +53,10 @@ description: "This is a very lovely first page of the survey. This description a
 image_path: 'composeApp/src/commonMain/composeResources/drawable/app_icon.png'
 
 # content: list (required)
-# The different questions to ask in this page
+# The different questions/information to show on this page
 content:
   # All questions have 3 fields in common:
-  # * type: String (required). Specify the type of question. one of [data, choice, text, rating, likert, datetime]
+  # * type: String (required). Specify the type of question. one of [data, choice, text, rating, likert, datetime, information]
   # * required: Boolean (default: true). If true, the user must answer this question
   # * title: String (required). Question/Headline to show to the user
   # Configuration specific to each question type is specified in the 'config' area
@@ -83,6 +84,7 @@ content:
     config:
       multiple: false # Boolean (default: false) — allow multiple selections
       limit: 2 # Int (default: 2) — max selections when multiple == true; if 0, no limit
+      dropdown: true # Boolean (default: false). If true, show a dropdown instead of checklist items. Only relevant if multiple == false
       choices: # list of choices
         - title: "Sun" # String (required). Title of the choice
           correct: true # Boolean (default: false). If true, this choice is correct. Used in quiz mode
@@ -112,7 +114,7 @@ content:
       input_type: datetime # String (default: datetime). Type of the input. Either [date], [time] or [datetime]
       initial_selected_time: "21:33" # String (optional). If given, sets the initial selected time. Format: HH:mm
       initial_selected_date: "2025-09-21" # String (optional). If given, sets the initial selected date. Format: YYYY-MM-DD
-      score: 50 # Int (optional). Points to award for this question. Used in quiz mode
+      score: 10 # Int (optional). Points to award for this question. Used in quiz mode
       correct_time_answer: "21:33" # String (optional). Correct time answer to the question. Used in quiz mode. Format: HH:mm
       correct_date_answer: "2025-09-21" # String (optional). Correct date answer to the question. Used in quiz mode. Format: YYYY-MM-DD
 
