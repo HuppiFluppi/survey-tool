@@ -69,7 +69,7 @@ import surveytool.composeapp.generated.resources.*
 import java.io.File
 import java.time.Instant
 import java.time.LocalTime
-import java.time.ZoneId
+import java.time.ZoneOffset
 
 /**
  * A composable function that displays a page header with an optional title and description.
@@ -351,7 +351,7 @@ fun RatingElement(question: RatingQuestion, onValueChange: (Int) -> Unit, savedV
                         image,
                         contentDescription = null,
                         modifier = Modifier.padding(8.dp).clickable { rating = i; onValueChange(i) },
-                        tint = colorList?.get(i-1) ?: LocalContentColor.current
+                        tint = colorList?.get(i - 1) ?: LocalContentColor.current
                     )
                 }
             }
@@ -459,7 +459,8 @@ fun DateTimeElement(
                 // Date
                 if (question.inputType == DateTimeType.DATE || question.inputType == DateTimeType.DATETIME) {
                     val datePickerState = rememberDatePickerState(
-                        initialSelectedDateMillis = datePick.date?.atStartOfDay(ZoneId.systemDefault())?.toInstant()?.toEpochMilli(),
+                        //initialSelectedDateMillis = datePick.date?.atStartOfDay()?.toInstant()?.toEpochMilli(),
+                        initialSelectedDateMillis = datePick.date?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli(),
                         initialDisplayMode = DisplayMode.Input,
                     )
 
@@ -470,7 +471,8 @@ fun DateTimeElement(
                     )
 
                     LaunchedEffect(datePickerState.selectedDateMillis) {
-                        datePick.date = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
+                        datePick.date = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC).toLocalDate() }
+                        //datePick.date = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
                         onValueChange(datePick)
                     }
                 }
