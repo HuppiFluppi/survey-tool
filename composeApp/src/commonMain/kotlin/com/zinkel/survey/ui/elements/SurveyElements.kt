@@ -43,11 +43,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.decodeToImageBitmap
@@ -131,10 +133,10 @@ fun DataElement(question: DataQuestion, onValueChange: (String) -> Unit, savedVa
                 TextFieldWithoutPadding(
                     value = txt,
                     label = when (question.dataType) {
-                        DataQuestionType.NAME -> @Composable { -> Text(stringResource(Res.string.data_element_label_name)) }
+                        DataQuestionType.NAME  -> @Composable { -> Text(stringResource(Res.string.data_element_label_name)) }
                         DataQuestionType.PHONE -> @Composable { -> Text(stringResource(Res.string.data_element_label_phone)) }
                         DataQuestionType.EMAIL -> @Composable { -> Text(stringResource(Res.string.data_element_label_email)) }
-                        else -> null
+                        else                   -> null
                     },
                     trailingIcon = {
                         if (txt.isNotEmpty()) {
@@ -334,16 +336,41 @@ fun RatingElement(question: RatingQuestion, onValueChange: (Int) -> Unit, savedV
             TitleRow(question.title, question.required, false, null)
 
             var rating by remember(question.id) { mutableStateOf(savedValue) }
-            val filledStar = painterResource(Res.drawable.star_filled)
-            val unfilledStar = painterResource(Res.drawable.star_unfilled)
+            val (filledIcon, unfilledIcon) = when (question.symbol) {
+                RatingSymbol.STAR  -> painterResource(Res.drawable.star_filled) to painterResource(Res.drawable.star_unfilled)
+                RatingSymbol.HEART -> painterResource(Res.drawable.heart_filled) to painterResource(Res.drawable.heart_unfilled)
+                RatingSymbol.LIKE  -> painterResource(Res.drawable.thumb_filled) to painterResource(Res.drawable.thumb_unfilled)
+                RatingSymbol.SMILE -> painterResource(Res.drawable.smile_filled) to painterResource(Res.drawable.smile_unfilled)
+            }
+            val colorList = if (question.colorGradient != RatingColorGradient.NONE) rememberColorList(question.colorGradient, question.level) else null
+
             Row {
-                for (i in 1..5) {
-                    val image = if (i <= rating) filledStar else unfilledStar
-                    Icon(image, contentDescription = null, modifier = Modifier.padding(8.dp).clickable { rating = i; onValueChange(i) })
+                for (i in 1..question.level) {
+                    val image = if (i <= rating) filledIcon else unfilledIcon
+                    Icon(
+                        image,
+                        contentDescription = null,
+                        modifier = Modifier.padding(8.dp).clickable { rating = i; onValueChange(i) },
+                        tint = colorList?.get(i-1) ?: LocalContentColor.current
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+fun rememberColorList(colorGradient: RatingColorGradient, level: Int) = remember(colorGradient, level) {
+    val (start, end) = when (colorGradient) {
+        RatingColorGradient.RED2GREEN -> Color.Red to Color.Green
+        else                          -> throw IllegalArgumentException()
+    }
+
+    val redstep = (end.red - start.red) / (level - 1)
+    val greenstep = (end.green - start.green) / (level - 1)
+    val bluestep = (end.blue - start.blue) / (level - 1)
+
+    (0..<level).map { Color(start.red + redstep * it, start.green + greenstep * it, start.blue + bluestep * it) }.toMutableStateList()
 }
 
 @Composable

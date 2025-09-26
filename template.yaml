@@ -122,6 +122,10 @@ content:
   - type: rating
     required: true
     title: "How is your mood?"
+    config:
+      level: 6 # Int (default: 5, max: 10). Number of rating options to show
+      symbol: heart # String (default: star). Icon type for rating. One of [like, star, heart, smile]
+      color_gradient: red2green # String (default: none). Color scheme of the rating. One of [none, red2green]
 
   # Likert questions are to answer multiple statements with the same options. They can be scored
   - type: likert

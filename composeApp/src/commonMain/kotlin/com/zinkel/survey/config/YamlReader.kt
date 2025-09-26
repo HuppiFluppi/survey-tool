@@ -114,10 +114,18 @@ class YamlReader : SurveyConfigReader {
                 }
 
                 SurveyContentType.RATING      -> {
+                    val config = content["config"] as? Map<String, Any>
                     return RatingQuestion(
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+
+                        level = (config?.get("level") as? Int)
+                            ?.also { if (it !in 3..10) throw IllegalArgumentException("Survey file malformed (rating level valid 3 to 10)") }
+                            ?: 5,
+                        symbol = (config?.get("symbol") as? String)?.let { RatingSymbol.valueOf(it.uppercase()) } ?: RatingSymbol.STAR,
+                        colorGradient = (config?.get("color_gradient") as? String)?.let { RatingColorGradient.valueOf(it.uppercase()) }
+                            ?: RatingColorGradient.NONE,
                     )
                 }
 

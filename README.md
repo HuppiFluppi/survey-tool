@@ -61,7 +61,7 @@ Steps to use:
 - [x] Add possibility to resume survey by loading existing data (highscore, instanceId, etc.)
 - [x] Add support for specifying the participant name/mail/phone
 - [x] Add content element with text+description+image
-- [ ] Extend question types I (DateTimePicker, Dropdown, Configurable Rating(Icon, Color, Scale))
+- [x] Extend question types I (DateTimePicker, Dropdown, Configurable Rating(Icon, Color, Scale))
 - [ ] Extend documentation (question types, survey config, etc.)
 - [ ] Add Github build pipeline for release
 - [ ] Add support for images (Background, Summary, Page Header)

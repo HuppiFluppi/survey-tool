@@ -236,7 +236,23 @@ class RatingQuestion(
     title: String,
     id: String,
     required: Boolean = true,
+
+    val level: Int = 5,
+    val symbol: RatingSymbol = RatingSymbol.STAR,
+    val colorGradient: RatingColorGradient = RatingColorGradient.NONE,
 ) : SurveyPageContent(SurveyContentType.RATING, title, id, required)
+
+enum class RatingSymbol {
+    STAR,
+    HEART,
+    LIKE,
+    SMILE
+}
+
+enum class RatingColorGradient {
+    NONE,
+    RED2GREEN
+}
 
 /**
  * Likert scale question.
