@@ -40,7 +40,7 @@ class SurveyModelTest {
             )
         )
         val testScope = CoroutineScope(Dispatchers.Unconfined)
-        val surveyModel = SurveyModel(surveyConfig, File(""), testScope)
+        val surveyModel = SurveyModel(surveyConfig, File("build/tmp/test"), testScope)
 
         // Start the survey
         surveyModel.takeSurvey()
@@ -73,7 +73,7 @@ class SurveyModelTest {
             )
         )
 
-        val surveyModel = SurveyModel(surveyConfig, File(""), TestScope())
+        val surveyModel = SurveyModel(surveyConfig, File("build/tmp/test"), TestScope())
 
         surveyModel.takeSurvey()
 
@@ -100,7 +100,7 @@ class SurveyModelTest {
             description = "Test Description",
             pages = listOf(SurveyPage("Page 1", "Page 1 Description", content = listOf()))
         )
-        val surveyModel = SurveyModel(surveyConfig, File(""), TestScope())
+        val surveyModel = SurveyModel(surveyConfig, File("build/tmp/test"), TestScope())
 
         surveyModel.takeSurvey()
         assertTrue(surveyModel.surveyUiState is SurveyModel.SurveyUiState.Content)
@@ -123,7 +123,7 @@ class SurveyModelTest {
             )
         )
         val testScope = CoroutineScope(Dispatchers.Unconfined)
-        val surveyModel = SurveyModel(surveyConfig, File(""), testScope)
+        val surveyModel = SurveyModel(surveyConfig, File("build/tmp/test"), testScope)
 
         surveyModel.takeSurvey()
         surveyModel.advanceSurvey() // Move to Page 2
@@ -149,7 +149,7 @@ class SurveyModelTest {
             )
         )
         val testScope = CoroutineScope(Dispatchers.Unconfined)
-        val surveyModel = SurveyModel(surveyConfig, File(""), testScope)
+        val surveyModel = SurveyModel(surveyConfig, File("build/tmp/test"), testScope)
 
         surveyModel.takeSurvey()
         surveyModel.advanceSurvey() // Should move to Page 2
@@ -181,7 +181,7 @@ class SurveyModelTest {
             )
         )
         val testScope = CoroutineScope(Dispatchers.Unconfined)
-        val surveyModel = SurveyModel(surveyConfig, File(""), testScope)
+        val surveyModel = SurveyModel(surveyConfig, File("build/tmp/test"), testScope)
 
         surveyModel.takeSurvey()
         surveyModel.updateAnswer("Q4", "Sample Answer")
@@ -219,7 +219,7 @@ class SurveyModelTest {
             )
         )
         val testScope = CoroutineScope(Dispatchers.Unconfined)
-        val surveyModel = SurveyModel(surveyConfig, File(""), testScope)
+        val surveyModel = SurveyModel(surveyConfig, File("build/tmp/test"), testScope)
 
         surveyModel.takeSurvey()
         surveyModel.updateAnswer("Q5", "Statement 1", "Agree")
@@ -258,7 +258,7 @@ class SurveyModelTest {
             )
         )
         val testScope = CoroutineScope(Dispatchers.Unconfined)
-        val surveyModel = SurveyModel(surveyConfig, File(""), testScope)
+        val surveyModel = SurveyModel(surveyConfig, File("build/tmp/test"), testScope)
 
         surveyModel.takeSurvey()
 

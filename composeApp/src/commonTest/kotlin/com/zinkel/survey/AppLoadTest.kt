@@ -55,7 +55,7 @@ class AppLoadTest {
                     description = "Test Description",
                     pages = listOf()
                 ),
-                File("")
+                File("build/tmp/test")
             )
 
             setContent { SurveyApp(surveyLoadUiState) }
@@ -81,7 +81,7 @@ class AppLoadTest {
                         SurveyPage(content = listOf(TextQuestion("Question 1", "Q1"), RatingQuestion("Rating Question", "Q2")))
                     )
                 ),
-                File("")
+                File("build/tmp/test")
             )
 
             setContent { SurveyApp(surveyLoadUiState) }

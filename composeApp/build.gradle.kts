@@ -35,8 +35,8 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
             implementation(libs.snakeyaml)
             implementation(libs.kotlin.csv)
         }
@@ -95,8 +95,8 @@ tasks.register("fillAppInfoXml") {
         appInfoFile.writeText(
             """
             <resources>
-                <string name="app_version">v${version}</string>
-                <string name="app_build">${timestamp}</string>
+                <string name="app_version">v$version</string>
+                <string name="app_build">$timestamp</string>
             </resources>
         """.trimIndent()
         )
@@ -114,9 +114,9 @@ compose.desktop {
         }
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.zinkel.survey"
-            packageVersion = "1.0.0"
+            packageVersion = "$version"
         }
     }
 }
