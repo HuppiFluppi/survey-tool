@@ -82,6 +82,17 @@ class YamlReader : SurveyConfigReader {
                     val config = content["config"] as? Map<String, Any>
                         ?: throw IllegalArgumentException("Survey file malformed (no config for choice content)")
 
+                    val choices = (config["choices"] as? List<*>)?.map {
+                        when (it) {
+                            is String -> ChoiceItem(it)
+                            is Map<*, *> -> ChoiceItem(title = it["title"] as? String ?: throw IllegalArgumentException("Survey file malformed (no title for choice content)"),
+                                                       score = it["score"] as? Int,
+                                                       correct = it["correct"] as? Boolean ?: false,
+                                                       )
+                            else -> throw IllegalArgumentException("Survey file malformed (no title for choice content)")
+                        }
+                    } ?: throw IllegalArgumentException("Survey file malformed (no choices for choice content)")
+
                     return ChoiceQuestion(
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
@@ -90,13 +101,7 @@ class YamlReader : SurveyConfigReader {
                         multiple = config["multiple"] as? Boolean ?: false,
                         limit = config["limit"] as? Int ?: 2,
                         dropdown = config["dropdown"] as? Boolean ?: false,
-                        choices = (config["choices"] as? List<Map<String, Any>>)?.map {
-                            ChoiceItem(
-                                title = it["title"] as? String ?: throw IllegalArgumentException("Survey file malformed (no title for choice content)"),
-                                score = it["score"] as? Int,
-                                correct = it["correct"] as? Boolean ?: false,
-                            )
-                        } ?: throw IllegalArgumentException("Survey file malformed (no choices for choice content)")
+                        choices = choices
                     )
                 }
 
@@ -107,7 +112,7 @@ class YamlReader : SurveyConfigReader {
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
 
-                        dataType = (config?.get("data_type") as? String)?.let { DataQuestionType.valueOf(it.uppercase()) } ?: DataQuestionType.NAME,
+                        dataType = (config?.get("datatype") as? String)?.let { DataQuestionType.valueOf(it.uppercase()) } ?: DataQuestionType.NAME,
                         validationPattern = config?.get("validation_pattern") as? String,
                         useForLeaderboard = config?.get("use_for_leaderboard") as? Boolean ?: true,
                     )
