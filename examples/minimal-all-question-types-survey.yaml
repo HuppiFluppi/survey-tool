@@ -1,0 +1,44 @@
+# This template file configures a survey with all available question/content types but without any additional configuration
+title: "Minimal all question types survey"
+description: "This template file configures a survey with all available question/content types but without any additional configuration"
+
+---
+
+content:
+  - type: data
+    title: "Give me your name"
+
+  - type: information
+    title: "This is non question content"
+
+  - type: choice
+    title: "What is your favorite weather?"
+    config:
+      choices:
+        - title: "Sun"
+        - title: "Rain"
+        - title: "Snow"
+        - title: "Wind"
+
+  - type: text
+    title: "What is your favorite ice cream?"
+
+  - type: datetime
+    title: "When was this feature created?"
+
+  - type: rating
+    title: "How is your mood?"
+
+  - type: likert
+    title: "What tv/movie genres you like?"
+    config:
+      choices:
+        - "Love it"
+        - "Ok i guess"
+        - "Sometimes"
+        - "Nope"
+      statements:
+        - title: "Horror"
+        - title: "Comedy"
+        - title: "Drama"
+        - title: "Action"

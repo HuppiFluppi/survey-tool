@@ -82,6 +82,7 @@ content:
   - type: choice
     title: "Look at this! A third page! How surprised are you?"
     config:
+      dropdown: true
       choices:
         - title: "Very surprised"
         - title: "Surprised"

@@ -1,0 +1,136 @@
+# This example shows a simple trivia quiz #
+###########################################
+title: "General Knowledge Trivia Quiz"
+description: "Test your knowledge with these 10 trivia questions! Get up to 100 points!"
+type: "quiz"
+
+---
+title: "Player information"
+content:
+  - type: data
+    title: "Player name"
+
+  - type: choice
+    title: "What age are you?"
+    config:
+      choices:
+        - "10-18"
+        - "19-29"
+        - "30-50"
+        - "50+"
+
+---
+title: "Round 1"
+content:
+  - type: choice
+    title: "Which planet is known as the Red Planet?"
+    config:
+      choices:
+        - title: "Venus"
+        - title: "Mars"
+          correct: true
+          score: 10
+        - title: "Jupiter"
+        - title: "Saturn"
+
+  - type: choice
+    title: "What is the largest mammal in the world?"
+    config:
+      choices:
+        - title: "African Elephant"
+        - title: "Blue Whale"
+          correct: true
+          score: 10
+        - title: "Giraffe"
+        - title: "Hippopotamus"
+
+  - type: choice
+    title: "Who painted the Mona Lisa?"
+    config:
+      choices:
+        - title: "Vincent van Gogh"
+        - title: "Pablo Picasso"
+        - title: "Leonardo da Vinci"
+          correct: true
+          score: 10
+        - title: "Michelangelo"
+
+  - type: choice
+    title: "What is the capital of Japan?"
+    config:
+      choices:
+        - title: "Seoul"
+        - title: "Beijing"
+        - title: "Bangkok"
+        - title: "Tokyo"
+          correct: true
+          score: 10
+
+  - type: choice
+    title: "Which element has the chemical symbol 'Au'?"
+    config:
+      choices:
+        - title: "Silver"
+        - title: "Copper"
+        - title: "Gold"
+          correct: true
+          score: 10
+        - title: "Aluminum"
+
+---
+title: "Round 2"
+content:
+  - type: choice
+    title: "Who wrote 'Romeo and Juliet'?"
+    config:
+      choices:
+        - title: "Charles Dickens"
+        - title: "William Shakespeare"
+          correct: true
+          score: 10
+        - title: "Jane Austen"
+        - title: "Mark Twain"
+
+  - type: choice
+    title: "What is the largest ocean on Earth?"
+    config:
+      choices:
+        - title: "Atlantic Ocean"
+        - title: "Indian Ocean"
+        - title: "Pacific Ocean"
+          correct: true
+          score: 10
+        - title: "Arctic Ocean"
+
+  - type: choice
+    title: "In which year did World War II end?"
+    config:
+      choices:
+        - title: "1939"
+        - title: "1942"
+        - title: "1945"
+          correct: true
+          score: 10
+        - title: "1946"
+
+  - type: choice
+    title: "What is the hardest natural substance on Earth?"
+    config:
+      choices:
+        - title: "Platinum"
+        - title: "Diamond"
+          correct: true
+          score: 10
+        - title: "Iron"
+        - title: "Gold"
+
+  - type: choice
+    title: "Which country is home to the kangaroo?"
+    config:
+      choices:
+        - title: "Australia"
+          correct: true
+          score: 10
+        - title: "New Zealand"
+        - title: "South Africa"
+        - title: "Brazil"

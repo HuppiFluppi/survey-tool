@@ -1,0 +1,121 @@
+# This example depicts a customer satisfaction survey #
+#######################################################
+title: "Customer Satisfaction Survey"
+description: >
+  This example shows a typical customer satisfaction survey. 
+  It has multiple questions on different pages. 
+  It asks the user for overall satisfaction and improvement/feedback. 
+  It also collects some data about the user itself.
+
+---
+title: "Overall Satisfaction"
+content:
+  - type: rating
+    title: "On a scale of 1 to 10, how satisfied are you with your recent experience with our product?"
+    config:
+      level: 10
+      symbol: smile
+
+  - type: choice
+    title: "How likely are you to recommend our product to a friend or colleague?"
+    config:
+      choices:
+        - "Very Likely"
+        - "Likely"
+        - "Neutral"
+        - "Unlikely"
+        - "Very Unlikely"
+
+  - type: choice
+    title: "Would you buy the product again?"
+    config:
+      choices:
+        - "Yes"
+        - "No"
+        - "I don't know"
+---
+title: "Product/Service Specifics"
+content:
+  - type: choice
+    title: "How easy is it to use our product?"
+    config:
+      choices:
+        - "Very Easy"
+        - "Easy"
+        - "Neutral"
+        - "Difficult"
+        - "Very Difficult"
+
+  - type: choice
+    title: "How responsive is our product?"
+    config:
+      choices:
+        - "Very Responsive"
+        - "Responsive"
+        - "Neutral"
+        - "Unresponsive"
+        - "Very Unresponsive"
+
+  - type: text
+    title: "What features of our product do you find the most useful?"
+    config:
+      multiline: true
+
+  - type: text
+    title: "What features of our product do you find the least useful?"
+    config:
+      multiline: true
+
+---
+title: "Improvement & Feedback"
+content:
+  - type: text
+    title: "What is one thing we could do to improve your experience with our product?"
+
+  - type: text
+    title: "What is one thing that you dont use or need in our product?"
+
+  - type: text
+    required: false
+    title: "Is there anything else you'd like to share about your experience with us?"
+    config:
+      multiline: true
+
+---
+title: "About you"
+description: "Please answer some questions about you. These questions are voluntary and can be skipped."
+content:
+  - type: data
+    required: false
+    title: "What is your name?"
+
+  - type: data
+    required: false
+    title: "Under which email can we reach you?"
+    config:
+      datatype: email
+
+  - type: text
+    required: false
+    title: "What is your age?"
+
+  - type: choice
+    required: false
+    title: "What is your gender?"
+    config:
+      choices:
+        - "Male"
+        - "Female"
+        - "Other"
+
+  - type: text
+    required: false
+    title: "What country do you live in?"
+
+  - type: choice
+    required: false
+    title: "Is it ok to contact you for follow up questions?"
+    config:
+      choices:
+        - "Yes"
+        - "No"
