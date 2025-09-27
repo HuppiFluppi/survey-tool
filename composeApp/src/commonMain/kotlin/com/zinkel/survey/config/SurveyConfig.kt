@@ -64,10 +64,12 @@ data class ScoreSettings(
  * Leaderboard configuration details.
  *
  * @property showScores Whether numeric scores are displayed next to participant names.
+ * @property showPlaceholder Whether the leaderboard should be filled with placeholder lines if not enough quiz runs are available
  * @property limit Maximum number of entries to display in the leaderboard.
  */
 data class LeaderboardSettings(
     val showScores: Boolean = true,
+    val showPlaceholder: Boolean = true,
     val limit: Int = 10,
 )
 

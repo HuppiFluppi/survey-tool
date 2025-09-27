@@ -83,7 +83,14 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
      * Current highscore UI state. Only meaningful for quiz-type surveys.
      * Will be updated when a survey run is completed successfully.
      */
-    var highscoreUiState by mutableStateOf(HighscoreUiState(surveyConfig.score.leaderboard.limit, surveyConfig.score.leaderboard.showScores, emptyList()))
+    var highscoreUiState by mutableStateOf(
+        HighscoreUiState(
+            surveyConfig.score.leaderboard.limit,
+            surveyConfig.score.leaderboard.showScores,
+            surveyConfig.score.leaderboard.showPlaceholder,
+            emptyList()
+        )
+    )
         private set
 
     // Zero-based index
@@ -366,11 +373,13 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
  *
  * @param limit Maximum number of entries to display.
  * @param showScores Whether to show numeric scores next to names.
+ * @param showPlaceholder Whether empty lines should be filled up to limit.
  * @param scores Current list of entries, newest appended at the end.
  */
 data class HighscoreUiState(
     val limit: Int,
     val showScores: Boolean,
+    val showPlaceholder: Boolean,
     val scores: List<HighscoreEntry>,
 )
 

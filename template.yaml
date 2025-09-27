@@ -35,6 +35,10 @@ score:
     # Show scored points at each entry in the leaderboard
     show_scores: true
 
+    # showPlaceholder: Boolean (default: true)
+    # Show placeholder rows to fill the leaderboard up to limit
+    show_placeholder: true
+
     # limit: Int (default: 10)
     # Number of entries to show in the leaderboard
     limit: 10

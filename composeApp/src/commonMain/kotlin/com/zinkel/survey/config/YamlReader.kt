@@ -48,6 +48,7 @@ class YamlReader : SurveyConfigReader {
 
         private fun mapLeaderboard(leaderboard: Map<String, Any>) = LeaderboardSettings(
             showScores = leaderboard["show_scores"] as? Boolean ?: true,
+            showPlaceholder = leaderboard["show_placeholder"] as? Boolean ?: true,
             limit = leaderboard["limit"] as? Int ?: 10,
         )
 
@@ -84,12 +85,14 @@ class YamlReader : SurveyConfigReader {
 
                     val choices = (config["choices"] as? List<*>)?.map {
                         when (it) {
-                            is String -> ChoiceItem(it)
-                            is Map<*, *> -> ChoiceItem(title = it["title"] as? String ?: throw IllegalArgumentException("Survey file malformed (no title for choice content)"),
-                                                       score = it["score"] as? Int,
-                                                       correct = it["correct"] as? Boolean ?: false,
-                                                       )
-                            else -> throw IllegalArgumentException("Survey file malformed (no title for choice content)")
+                            is String    -> ChoiceItem(it)
+                            is Map<*, *> -> ChoiceItem(
+                                title = it["title"] as? String ?: throw IllegalArgumentException("Survey file malformed (no title for choice content)"),
+                                score = it["score"] as? Int,
+                                correct = it["correct"] as? Boolean ?: false,
+                            )
+
+                            else         -> throw IllegalArgumentException("Survey file malformed (no title for choice content)")
                         }
                     } ?: throw IllegalArgumentException("Survey file malformed (no choices for choice content)")
 
