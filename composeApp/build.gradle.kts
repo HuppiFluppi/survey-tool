@@ -114,8 +114,8 @@ compose.desktop {
         }
 
         nativeDistributions {
-            targetFormats(TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.zinkel.survey"
+            targetFormats(TargetFormat.Msi, TargetFormat.Deb, TargetFormat.AppImage)
+            packageName = "survey-tool"
             packageVersion = "$version"
         }
     }
