@@ -4,19 +4,25 @@ package com.zinkel.survey.ui
 
 import com.zinkel.survey.config.ChoiceItem
 import com.zinkel.survey.config.ChoiceQuestion
+import com.zinkel.survey.config.DataQuestion
 import com.zinkel.survey.config.LikertQuestion
 import com.zinkel.survey.config.LikertStatement
-import com.zinkel.survey.config.DataQuestion
 import com.zinkel.survey.config.RatingQuestion
 import com.zinkel.survey.config.SurveyConfig
 import com.zinkel.survey.config.SurveyPage
 import com.zinkel.survey.config.TextQuestion
 import com.zinkel.survey.data.LikertSurveyContentData
 import com.zinkel.survey.data.TextSurveyContentData
+import io.mockk.coEvery
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.TestScope
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 import java.io.File
+import kotlin.reflect.KSuspendFunction1
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -46,7 +52,12 @@ class SurveyModelTest {
         surveyModel.takeSurvey()
 
         // Attempt to proceed without answering the Rating question
+        // mocking getString function to allow tests in headless environments (w/o GUI)
+        val getStringRef: KSuspendFunction1<StringResource, String> = ::getString
+        mockkStatic(getStringRef)
+        coEvery { getString(any()) } returns "Test"
         surveyModel.advanceSurvey()
+        unmockkStatic(getStringRef)
 
         // Assert that input validation error is present
         val uiState = surveyModel.surveyUiState

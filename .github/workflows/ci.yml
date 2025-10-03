@@ -22,13 +22,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: |
-          ./gradlew --version
+          ./gradlew -Dorg.gradle.welcome=never --version
           ./gradlew clean assemble
       - name: Test
-        run: ./gradlew test
+        run: ./gradlew allTests
       - name: Upload Test results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Test results
-          path: composeApp\build\reports\tests\allTests
-          
+          path: composeApp/build/reports/tests/
