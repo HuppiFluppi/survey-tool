@@ -22,7 +22,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: |
-          ./gradlew -Dorg.gradle.welcome=never --version
+          ./gradlew --version
           ./gradlew clean assemble
       - name: Test
         run: ./gradlew allTests
