@@ -86,10 +86,10 @@ kotlin {
 //}
 
 tasks.register("fillAppInfoXml") {
-    val version = project.version
+    val version = version
     val appInfoFile = file("src/commonMain/composeResources/values/appinfo.xml")
 
-    doLast {
+    doFirst {
         val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMdd.HHmmss"))
 
         appInfoFile.writeText(
@@ -102,7 +102,7 @@ tasks.register("fillAppInfoXml") {
         )
     }
 }
-tasks.getByName("generateResourceAccessorsForCommonMain").dependsOn("fillAppInfoXml")
+tasks.getByName("generateComposeResClass").dependsOn("fillAppInfoXml")
 
 compose.desktop {
     application {
