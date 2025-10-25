@@ -1,6 +1,7 @@
 # Survey Tool
 
-A lightweight tool for creating and running surveys or quizzes. Using Kotlin and Compose Multiplatform. 
+A lightweight tool for running surveys or quizzes. Whether you're collecting customer feedback, running a trivia night, or conducting research, Survey Tool provides an easy-to-use interface for participants to answer questions.
+The tool loads a configuration file (YAML format) that defines your survey questions, and then presents them to participants in a clean, intuitive interface. It uses Kotlin and Compose Multiplatform. 
 
 ## Table of Contents
 
@@ -8,7 +9,6 @@ A lightweight tool for creating and running surveys or quizzes. Using Kotlin and
 - [Features](#features)
 - [Tech stack](#tech-stack)
 - [Quick Start](#quick-start)
-- [Scoring & Leaderboard](#scoring--leaderboard)
 - [Development](#development)
 - [Roadmap](#planned-roadmap)
 - [Contributing](#contributing)
@@ -40,8 +40,9 @@ And maybe help others who come across this repo, having the same need I had year
 
 ## Quick Start
 
-Steps to use:
+See [User Guide](docs/usage.md) for more details on how to create and run a survey.
 
+Steps to use:
 1) Define a survey configuration
    - Check the [template](template.yaml) for a documented configuration
    - Check the [examples folder](examples) for different kind of survey and quiz configurations
@@ -52,20 +53,18 @@ Steps to use:
    - Run the survey tool
    - Load the survey configuration
 
-## Scoring & Leaderboard
-- Scoring is optional and typically enabled for quiz-type surveys.
-- Points must be configured per question.
-- Leaderboard can be configured to display scores.
-
-## Planned Roadmap
+## Roadmap
 - [x] Add possibility to resume survey by loading existing data (highscore, instanceId, etc.)
 - [x] Add support for specifying the participant name/mail/phone
 - [x] Add content element with text+description+image
 - [x] Extend question types I (DateTimePicker, Dropdown, Configurable Rating(Icon, Color, Scale))
-- [ ] Extend documentation (question types, survey config, etc.)
-- [ ] Add Github build pipeline for release
+- [x] Extend documentation (question types, survey config, etc.)
+- [x] Add Github build pipeline for release
+- [ ] Add Slider/Range, number rating & horizontal choice question type
+- [ ] Add support for text input validation and more data patterns (age, birthday)
 - [ ] Add support for images (Background, Summary, Page Header)
 - [ ] Add conditional pages/question
+- [ ] Add command line arguments to load configuration
 - [ ] Refactor package structure and remedy some code smells
 - [ ] Add system test (load, fill, submit, check)
 - [ ] Add remote configuration loading and data sending
@@ -81,38 +80,14 @@ Contributions are welcome! Please:
 - Submit Pull Requests with concise descriptions, tests (where applicable), and clean commit history
 - Follow the project’s coding style and patterns
 
+See [Developer Guide](docs/development.md#contributing) for more details.
+
 ## Disclaimer
 This software is provided "as is", without warranty of any kind. The author is certain, parts of this software could be done better.
 The todos are plenty and bugs are likely hiding. Use at your own risk and have fun. This is a learning and experiment project.
 
 ## Development
-
-### Flow & State of loaded survey
-- Initial: Summary (overview with metadata and actions)
-- Start: Transition into the first content page
-- Advance: Move to the next page until completion
-- Cancel: Return to the summary at any time
-
-The model tracks:
-- Survey metadata (title, type, page count)
-- Current page and total progress
-- Page content and optional per-question score visibility
-- Leaderboard configuration (if enabled)
-
-### Build
-Gradle tasks:
-- Build: `./gradlew assemble`
-- Run (Desktop): `./gradlew run`
-
-### Test
-- Run tests in Gradle (force rerun): `./gradlew cleanAllTests allTests --no-build-cache`
-- Lint/Static analysis: Use your preferred tools (e.g., IDE inspections, Detekt, Ktlint)
-- Consider CI integration to enforce checks
-
-### Release
-- Release as uber jar: `./gradlew packageUberJarForCurrentOS`
-- Create installables: `./gradlew package*`  
-  `package[Release](Deb|Msi|Dmb|DistributionForCurrentOS)`
+See [Developer Guide](docs/development.md) for development information.
 
 ## License
 This project is provided under MIT license. See [license file](LICENSE)
