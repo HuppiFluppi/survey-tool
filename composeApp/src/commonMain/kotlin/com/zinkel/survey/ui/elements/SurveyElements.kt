@@ -317,6 +317,16 @@ fun RatingElementPreview() {
     RatingElement(RatingQuestion(title = "How are you feeling today?", "1-1"), {})
 }
 
+@Composable
+@Preview
+fun RatingElementNumberPreview() {
+    RatingElement(
+        RatingQuestion(title = "How are you feeling today?", "1-1", symbol = RatingSymbol.NUMBER, colorGradient = RatingColorGradient.RED2GREEN),
+        {},
+        savedValue = 2
+    )
+}
+
 /**
  * Renders a 1..5 star rating ui component for a Rating question.
  *
@@ -336,23 +346,44 @@ fun RatingElement(question: RatingQuestion, onValueChange: (Int) -> Unit, savedV
             TitleRow(question.title, question.required, false, null)
 
             var rating by remember(question.id) { mutableStateOf(savedValue) }
-            val (filledIcon, unfilledIcon) = when (question.symbol) {
-                RatingSymbol.STAR  -> painterResource(Res.drawable.star_filled) to painterResource(Res.drawable.star_unfilled)
-                RatingSymbol.HEART -> painterResource(Res.drawable.heart_filled) to painterResource(Res.drawable.heart_unfilled)
-                RatingSymbol.LIKE  -> painterResource(Res.drawable.thumb_filled) to painterResource(Res.drawable.thumb_unfilled)
-                RatingSymbol.SMILE -> painterResource(Res.drawable.smile_filled) to painterResource(Res.drawable.smile_unfilled)
-            }
             val colorList = if (question.colorGradient != RatingColorGradient.NONE) rememberColorList(question.colorGradient, question.level) else null
 
-            Row {
-                for (i in 1..question.level) {
-                    val image = if (i <= rating) filledIcon else unfilledIcon
-                    Icon(
-                        image,
-                        contentDescription = null,
-                        modifier = Modifier.padding(8.dp).clickable { rating = i; onValueChange(i) },
-                        tint = colorList?.get(i - 1) ?: LocalContentColor.current
-                    )
+            if (question.symbol == RatingSymbol.NUMBER) { // using segmented button for number rating
+                MultiChoiceSegmentedButtonRow {
+                    for (i in 1..question.level) {
+                        val checked = i <= rating
+                        val containerColor = colorList?.get(i - 1) ?: Color.Unspecified
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = i - 1,
+                                count = question.level
+                            ),
+                            colors = SegmentedButtonDefaults.colors(activeContainerColor = containerColor, inactiveContainerColor = containerColor),
+                            checked = checked,
+                            onCheckedChange = { rating = i; onValueChange(i) },
+                            label = { Text(i.toString(), fontWeight = if (checked) FontWeight.Bold else FontWeight.Normal) }
+                        )
+                    }
+                }
+            } else {
+                val (filledIcon, unfilledIcon) = when (question.symbol) {
+                    RatingSymbol.STAR   -> painterResource(Res.drawable.star_filled) to painterResource(Res.drawable.star_unfilled)
+                    RatingSymbol.HEART  -> painterResource(Res.drawable.heart_filled) to painterResource(Res.drawable.heart_unfilled)
+                    RatingSymbol.LIKE   -> painterResource(Res.drawable.thumb_filled) to painterResource(Res.drawable.thumb_unfilled)
+                    RatingSymbol.SMILE  -> painterResource(Res.drawable.smile_filled) to painterResource(Res.drawable.smile_unfilled)
+                    RatingSymbol.NUMBER -> throw RuntimeException("RatingSymbol.NUMBER should never reach here")
+                }
+
+                Row {
+                    for (i in 1..question.level) {
+                        val image = if (i <= rating) filledIcon else unfilledIcon
+                        Icon(
+                            image,
+                            contentDescription = null,
+                            modifier = Modifier.padding(8.dp).clickable { rating = i; onValueChange(i) },
+                            tint = colorList?.get(i - 1) ?: LocalContentColor.current
+                        )
+                    }
                 }
             }
         }
@@ -362,7 +393,7 @@ fun RatingElement(question: RatingQuestion, onValueChange: (Int) -> Unit, savedV
 @Composable
 fun rememberColorList(colorGradient: RatingColorGradient, level: Int) = remember(colorGradient, level) {
     val (start, end) = when (colorGradient) {
-        RatingColorGradient.RED2GREEN -> Color.Red to Color.Green
+        RatingColorGradient.RED2GREEN -> Color.Red to Color(0xFF00B200)
         else                          -> throw IllegalArgumentException()
     }
 
@@ -459,7 +490,6 @@ fun DateTimeElement(
                 // Date
                 if (question.inputType == DateTimeType.DATE || question.inputType == DateTimeType.DATETIME) {
                     val datePickerState = rememberDatePickerState(
-                        //initialSelectedDateMillis = datePick.date?.atStartOfDay()?.toInstant()?.toEpochMilli(),
                         initialSelectedDateMillis = datePick.date?.atStartOfDay()?.toInstant(ZoneOffset.UTC)?.toEpochMilli(),
                         initialDisplayMode = DisplayMode.Input,
                     )
@@ -472,7 +502,6 @@ fun DateTimeElement(
 
                     LaunchedEffect(datePickerState.selectedDateMillis) {
                         datePick.date = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC).toLocalDate() }
-                        //datePick.date = datePickerState.selectedDateMillis?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate() }
                         onValueChange(datePick)
                     }
                 }

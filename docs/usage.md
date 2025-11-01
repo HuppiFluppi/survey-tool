@@ -235,7 +235,7 @@ Each serves a specific purpose:
 **How to use**:
 - Click on the rating symbols to select your rating
 - Ratings typically range from 1 to 10 (most common: 1-5)
-- Different symbols may be used: stars ⭐, hearts ❤️, thumbs up 👍, or smileys 😊
+- Different symbols may be used: stars ⭐, hearts ❤️, thumbs up 👍, smileys 😊 or numbers #️⃣
 - Icons can have different colors (e.g., red to green gradient)
 - Click a symbol to select that rating level
 

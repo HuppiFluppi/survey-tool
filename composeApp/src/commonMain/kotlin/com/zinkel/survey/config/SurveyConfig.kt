@@ -248,7 +248,8 @@ enum class RatingSymbol {
     STAR,
     HEART,
     LIKE,
-    SMILE
+    SMILE,
+    NUMBER,
 }
 
 enum class RatingColorGradient {
