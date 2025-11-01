@@ -1,4 +1,4 @@
-# This template file configures a survey with all available question/content types but without any additional configuration
+# This template file configures a survey with all available question/content types but without any additional/unneeded configuration
 title: "Minimal all question types survey"
 description: "This template file configures a survey with all available question/content types but without any additional configuration"
 

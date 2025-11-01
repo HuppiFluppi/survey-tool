@@ -88,7 +88,8 @@ content:
     config:
       multiple: false # Boolean (default: false) — allow multiple selections
       limit: 2 # Int (default: 2) — max selections when multiple == true; if 0, no limit
-      dropdown: true # Boolean (default: false). If true, show a dropdown instead of checklist items. Only relevant if multiple == false
+      dropdown: false # Boolean (default: false). If true, show a dropdown instead of checklist items. Only relevant if multiple == false. Not compatible with horizontal
+      horizontal: true # Boolean (default: false). Show choices horizontally. Use only with short choice titles. Only relevant if multiple == false. Not compatible with dropdown
       choices: # list of choices
         - title: "Sun" # String (required). Title of the choice
           correct: true # Boolean (default: false). If true, this choice is correct. Used in quiz mode

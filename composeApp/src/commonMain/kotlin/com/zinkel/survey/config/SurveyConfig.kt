@@ -155,6 +155,7 @@ class ChoiceQuestion(
     val multiple: Boolean = false,
     val limit: Int = 2,
     val dropdown: Boolean = false,
+    val horizontal: Boolean = false,
     val choices: List<ChoiceItem>,
 ) : SurveyPageContent(SurveyContentType.CHOICE, title, id, required)
 

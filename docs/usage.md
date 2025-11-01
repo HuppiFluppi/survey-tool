@@ -179,7 +179,10 @@ Each serves a specific purpose:
 **How to use**:
 - **Single choice**: Click one option (radio buttons or dropdown)
 - **Multiple choice**: Check multiple boxes (limited by maximum selections if specified)
+- **Dropdown**: For a compact view, choose dropdown to show options (single choice)
+- **Horizontal**: Another compact view option. Shows the answers in a horizontal line (single choice). 
 - Selected options are highlighted
+- Check on the best option for choice representation, long options might not be suitable for dropdown or horizontal.
 
 **Example**: 
 - "What is your favorite color?" (single choice)

@@ -37,6 +37,7 @@ content:
     required: false
     title: "What is your favorite weather?"
     config:
+      horizontal: true # Boolean (default: false). If true, choices will be shown horizontally
       choices: # list of choices
         - title: "Sun" # String (required). Title of the choice
         - title: "Rain"

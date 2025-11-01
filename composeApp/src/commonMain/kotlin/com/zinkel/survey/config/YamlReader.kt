@@ -104,6 +104,7 @@ class YamlReader : SurveyConfigReader {
                         multiple = config["multiple"] as? Boolean ?: false,
                         limit = config["limit"] as? Int ?: 2,
                         dropdown = config["dropdown"] as? Boolean ?: false,
+                        horizontal = config["horizontal"] as? Boolean ?: false,
                         choices = choices
                     )
                 }

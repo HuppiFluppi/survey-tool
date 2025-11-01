@@ -59,6 +59,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zinkel.survey.config.*
 import com.zinkel.survey.data.DateTimePick
@@ -207,6 +208,29 @@ fun ChoiceElement(
                         }
                     }
                 }
+            } else if (question.horizontal && !question.multiple) { // horizontal ui
+                var choice by remember(question.id) { mutableStateOf(savedValues.firstOrNull()) }
+
+                SingleChoiceSegmentedButtonRow {
+                    question.choices.forEachIndexed { i, item ->
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = i,
+                                count = question.choices.size
+                            ),
+                            onClick = { choice = item.title; onValueChange(listOf(item.title)) },
+                            selected = item.title == choice,
+                            label = {
+                                Text(
+                                    item.title,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontWeight = if (choice == item.title) FontWeight.Bold else FontWeight.Normal
+                                )
+                            }
+                        )
+                    }
+                }
             } else { // default checkbox ui
                 val checkStates = remember(question.id) { question.choices.map { it.title to (it.title in savedValues) }.toMutableStateMap() }
                 question.choices.forEach { choice ->
@@ -353,6 +377,7 @@ fun RatingElement(question: RatingQuestion, onValueChange: (Int) -> Unit, savedV
                     for (i in 1..question.level) {
                         val checked = i <= rating
                         val containerColor = colorList?.get(i - 1) ?: Color.Unspecified
+
                         SegmentedButton(
                             shape = SegmentedButtonDefaults.itemShape(
                                 index = i - 1,
