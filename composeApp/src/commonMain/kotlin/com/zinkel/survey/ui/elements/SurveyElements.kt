@@ -191,10 +191,10 @@ fun ChoiceElement(
         Column(modifier = Modifier.padding(8.dp)) {
             TitleRow(question.title, question.required, showQuestionScores, question.choices.sumOf { it.score ?: 0 })
 
-            if (question.dropdown && !question.multiple) { //Dropdown ui
+            if (question.dropdown && !question.multiple) { // dropdown ui
                 val chooseTxt = stringResource(Res.string.choice_element_choose)
                 var expanded by remember(question.id) { mutableStateOf(false) }
-                var choice by remember(question.id) { mutableStateOf(chooseTxt) }
+                var choice by remember(question.id) { mutableStateOf(savedValues.firstOrNull() ?: chooseTxt) }
                 val dropDownRotate by animateFloatAsState(targetValue = if (expanded) 180f else 0f, animationSpec = tween())
 
                 Row(modifier = Modifier.clickable { expanded = !expanded }) {
