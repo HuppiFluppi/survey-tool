@@ -582,6 +582,33 @@ Include:
 
 ---
 
+## HowTo
+
+### Add or extend a question
+
+To add a new question or extend an existing one, several steps must be taken.
+There are two main approaches for this. First, one could go from the configuration yaml and follow the chain till the ui element.
+Second approach is to create the ui element and then work backwards to make all necessary changes in the surrounding classes.
+
+Following steps need to be taken.
+1. Add the new configuration to `template.yaml` together with a description of the option and settings
+2. Add the new configuration to `SurveyConfig.kt` to add your new question or add to existing one
+3. Alter `YamlReader.kt` to reflect the changes (might not be needed depending on the changes)
+4. For new questions, alter `SurveyContentData.kt` to add the question
+5. Alter `SurveyElements.kt` to make sure the new question or configuration changes are visible in UI
+6. For new questions, add an `updateAnswer` overload in `SurveyState.kt`
+7. For new questions, add a branch for when in `SurveyContentScreen.kt`
+8. Add to [User Guide](usage.md) documentation and check if examples need update (e.g. besides the template.yaml, all questions should be in `minimal-all-question-types-survey.yaml`) 
+
+Make sure to not hardcode string and use the compose resource handling.
+
+Examples:
+- Addition of Slider question: [Commit](https://github.com/HuppiFluppi/survey-tool/commit/17ea42e633f4db9022b60ae2bd49a7137889ceb6)
+- Extension of Choice question to allow horizontal ui: [Commit](https://github.com/HuppiFluppi/survey-tool/commit/64e69a2daaf1c2b07435d26bf60a220cdbf3c929)
+- Extension of Rating question to allow numbers: [Commit](https://github.com/HuppiFluppi/survey-tool/commit/f3938e4b83008ac935a9a773b81fb30a1adf7393)
+
+---
+
 ## Additional Resources
 
 - **Compose Multiplatform**: https://www.jetbrains.com/lp/compose-multiplatform/
