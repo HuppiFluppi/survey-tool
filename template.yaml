@@ -123,6 +123,20 @@ content:
       correct_time_answer: "21:33" # String (optional). Correct time answer to the question. Used in quiz mode. Format: HH:mm
       correct_date_answer: "2025-09-21" # String (optional). Correct date answer to the question. Used in quiz mode. Format: YYYY-MM-DD
 
+  # Slider questions allow to select a value from a range. They can be scored
+  - type: slider
+    required: true
+    title: "What is your favorite temperature?"
+    config:
+      range: false # Boolean (default: false). If true, the user can select a range (two values) on the slider
+      start: -10 # Number (default: 0). Together with 'end', defines first number of slider
+      end: 30 # Number (default: 1). Together with 'start', defines last number of slider
+      steps: 19 # Int (default: 0). Steps between start and end that can be chosen (start & end always add two steps). If 0, a continuous slider is created without any fixed steps.
+      show_decimals: false # Boolean (default: false). If true, the slider will show decimal values. Internally, the values are always decimals
+      unit: "°C" # String (optional). If given, will be shown next to start, end and current value
+      score: 5 # Int (optional). Points to award for this question. Used in quiz mode
+      correct_answer: 24 # Number (optional). Correct answer to the question. For ranges, this number must be in the chosen range. Used in quiz mode
+
   # Rating questions are asking for a 1-5 rating. They cannot be scored
   - type: rating
     required: true

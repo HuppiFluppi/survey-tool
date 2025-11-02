@@ -118,6 +118,7 @@ enum class SurveyContentType {
     LIKERT,
     INFORMATION,
     DATETIME,
+    SLIDER,
 }
 
 /**
@@ -233,7 +234,15 @@ enum class DateTimeType {
 /**
  * Numeric rating question.
  *
- * UI can decide the specific scale (e.g., 1..5) based on surrounding configuration.
+ * Presents a discrete rating scale where participants select one value from a fixed set of options.
+ * Common use cases include satisfaction ratings, quality assessments, or preference indicators.
+ *
+ * The rating is displayed as clickable symbols (stars, hearts, etc.) that participants can select.
+ * Unlike slider-based questions, this provides a different user experience.
+ *
+ * @param level The number of rating levels/steps (e.g., 5 for a 1-5 star rating). Must be positive.
+ * @param symbol The visual symbol used to represent each rating level (star, heart, like, smile, or number).
+ * @param colorGradient Optional color gradient applied across the rating scale (e.g., red to green).
  */
 class RatingQuestion(
     title: String,
@@ -257,6 +266,36 @@ enum class RatingColorGradient {
     NONE,
     RED2GREEN
 }
+
+/**
+ * Slider question.
+ *
+ * Presents a slider control where participants select a numeric value or range within defined bounds.
+ * Useful for capturing continuous or stepped numeric input like temperature, age, or satisfaction levels.
+ *
+ * @param range Whether the slider allows selecting a range (start and end values) instead of a single value.
+ * @param start The minimum value of the slider range.
+ * @param end The maximum value of the slider range.
+ * @param steps The steps between start and end values. If 0, allows continuous selection.
+ * @param showDecimals Whether to display decimal places on the slider.
+ * @param unit Optional unit label to display with the value (e.g., "cm", "°C", "%").
+ * @param score Optional numeric score to award for a correct answer (relevant in quizzes).
+ * @param correctAnswer Optional correct answer for scoring/validation in quizzes.
+ */
+class SliderQuestion(
+    title: String,
+    id: String,
+    required: Boolean = true,
+
+    val range: Boolean = false,
+    val start: Float = 0f,
+    val end: Float = 1f,
+    val steps: Int = 0,
+    val showDecimals: Boolean = false,
+    val unit: String? = null,
+    val score: Int? = null,
+    val correctAnswer: Float? = null,
+) : SurveyPageContent(SurveyContentType.SLIDER, title, id, required)
 
 /**
  * Likert scale question.

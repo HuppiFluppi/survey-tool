@@ -184,7 +184,32 @@ class YamlReader : SurveyConfigReader {
                         correctDateAnswer = (config?.get("correct_date_answer") as? String)?.let { LocalDate.parse(it) },
                     )
                 }
+
+                SurveyContentType.SLIDER      -> {
+                    val config = content["config"] as? Map<String, Any>
+
+                    return SliderQuestion(
+                        title = title,
+                        id = getContentId(pageNumber, contentNumber),
+                        required = required,
+
+                        range = config?.get("range") as? Boolean ?: false,
+                        start = getFloat(config?.get("start")) ?: 0f,
+                        end = getFloat(config?.get("end")) ?: 1f,
+                        steps = config?.get("steps") as? Int ?: 0,
+                        showDecimals = config?.get("show_decimals") as? Boolean ?: false,
+                        unit = config?.get("unit") as? String,
+                        score = config?.get("score") as? Int,
+                        correctAnswer = getFloat(config?.get("correct_answer")),
+                    )
+                }
             }
+        }
+
+        private fun getFloat(element: Any?): Float? = when (element) {
+            is Int    -> element.toFloat()
+            is Double -> element.toFloat()
+            else      -> null
         }
 
         private fun checkFile(filePath: String?, title: String, type: SurveyContentType): File? {

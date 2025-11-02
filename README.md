@@ -60,7 +60,7 @@ Steps to use:
 - [x] Extend question types I (DateTimePicker, Dropdown, Configurable Rating(Icon, Color, Scale))
 - [x] Extend documentation (question types, survey config, etc.)
 - [x] Add Github build pipeline for release
-- [ ] Add Slider/Range, number rating & horizontal choice question type
+- [x] Add Slider/Range, number rating & horizontal choice question type
 - [ ] Add support for text input validation and more data patterns (age, birthday)
 - [ ] Add support for images (Background, Summary, Page Header)
 - [ ] Add conditional pages/question

@@ -32,6 +32,7 @@ import com.zinkel.survey.data.DateTimeSurveyContentData
 import com.zinkel.survey.data.InformationSurveyContentData
 import com.zinkel.survey.data.LikertSurveyContentData
 import com.zinkel.survey.data.RatingSurveyContentData
+import com.zinkel.survey.data.SliderSurveyContentData
 import com.zinkel.survey.data.TextSurveyContentData
 import com.zinkel.survey.ui.elements.ChoiceElement
 import com.zinkel.survey.ui.elements.DataElement
@@ -40,6 +41,7 @@ import com.zinkel.survey.ui.elements.InformationBlockElement
 import com.zinkel.survey.ui.elements.LikertElement
 import com.zinkel.survey.ui.elements.PageHeader
 import com.zinkel.survey.ui.elements.RatingElement
+import com.zinkel.survey.ui.elements.SliderElement
 import com.zinkel.survey.ui.elements.TextElement
 import org.jetbrains.compose.resources.stringResource
 import surveytool.composeapp.generated.resources.Res
@@ -165,6 +167,14 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
                         is InformationSurveyContentData -> InformationBlockElement(it.question)
 
                         is DateTimeSurveyContentData    -> DateTimeElement(
+                            it.question,
+                            surveyContentUiState.showQuestionScores,
+                            { answer -> surveyModel.updateAnswer(it.question.id, answer) },
+                            it.answer,
+                            surveyContentUiState.inputErrors[it.question.id]
+                        )
+
+                        is SliderSurveyContentData      -> SliderElement(
                             it.question,
                             surveyContentUiState.showQuestionScores,
                             { answer -> surveyModel.updateAnswer(it.question.id, answer) },

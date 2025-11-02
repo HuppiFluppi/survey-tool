@@ -366,6 +366,16 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
     fun updateAnswer(id: String, answer: DateTimePick) {
         (surveyContentPage[id] as? DateTimeSurveyContentData)?.answer = answer
     }
+
+    /**
+     * Method to set an answer for the question with the given [id].
+     *
+     * @param id Question identifier.
+     * @param answer The new answer value.
+     */
+    fun updateAnswer(id: String, answer: Pair<Float, Float?>) {
+        (surveyContentPage[id] as? SliderSurveyContentData)?.answer = answer
+    }
 }
 
 /**

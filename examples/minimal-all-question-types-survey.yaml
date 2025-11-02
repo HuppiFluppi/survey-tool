@@ -26,6 +26,12 @@ content:
   - type: datetime
     title: "When was this feature created?"
 
+  - type: slider
+    title: "What is your height?"
+    config:
+      start: 120
+      end: 220
+
   - type: rating
     title: "How is your mood?"
 

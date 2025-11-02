@@ -266,6 +266,24 @@ Each serves a specific purpose:
 
 ---
 
+### 6. Slider Question
+
+![usage_content_rating.png](images/usage_content_slider.png)
+
+**Purpose**: Select an answer from a range of values.
+
+**How to use**:
+- **Normal**: Click on the slider to select your answer
+- **Range**: If enabled, the user can make a selection with start and end (two values)
+- Start and end of the slider can be configured
+- Internally, floats are used and saved for answers
+- However by default, decimal places are not shown
+- This question type can be scores to either match (range: false) or be in range (range: true)
+
+**Example**: "What is your height?"
+
+---
+
 ## Leaderboard
 
 In a quiz, the scoring and leaderboard can be enabled.

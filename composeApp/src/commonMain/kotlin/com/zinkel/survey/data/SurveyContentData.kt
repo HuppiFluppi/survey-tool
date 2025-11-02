@@ -11,6 +11,7 @@ import surveytool.composeapp.generated.resources.validation_error_required
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlin.math.abs
 
 /**
  * Runtime model for a single question (content item) on a survey page.
@@ -60,6 +61,7 @@ sealed class SurveyContentData(
             is TextQuestion     -> TextSurveyContentData(content, answer as? String)
             is InformationBlock -> InformationSurveyContentData(content)
             is DateTimeQuestion -> DateTimeSurveyContentData(content, answer as? DateTimePick)
+            is SliderQuestion   -> SliderSurveyContentData(content, answer as? Pair<Float, Float?>)
         }
     }
 }
@@ -160,6 +162,42 @@ class RatingSurveyContentData(
         else AnswerValidationResult(true)
 
     override fun calculateScore(): Int = 0
+}
+
+/**
+ * Slider question runtime model.
+ *
+ * Answer is a nullable [Pair<Float, Float?>], first entry holding begin or only value, second entry holding end for range slider.
+ * - Validation enforces required semantics.
+ * - Scoring ensures [question.correctAnswer] is same or in the range of [answer].
+ */
+class SliderSurveyContentData(
+    override val question: SliderQuestion,
+    override var answer: Pair<Float, Float?>? = null,
+) : SurveyContentData(question) {
+
+    override fun isAnswered() = answer != null
+
+    override fun validate() =
+        if (question.required && (answer == null)) AnswerValidationResult(
+            false,
+            listOf(Res.string.validation_error_required)
+        )
+        else AnswerValidationResult(true)
+
+    override fun calculateScore(): Int {
+        if (!isAnswered()) return 0
+        if (question.correctAnswer == null) return 0
+
+        // calculation for range
+        if (question.range && (question.correctAnswer in (answer!!.first..answer!!.second!!))) return question.score ?: 0
+
+        // calculation for single value
+        val div = abs(question.correctAnswer - answer!!.first)
+        if (div < 0.000001f) return question.score ?: 0
+
+        return 0
+    }
 }
 
 /**

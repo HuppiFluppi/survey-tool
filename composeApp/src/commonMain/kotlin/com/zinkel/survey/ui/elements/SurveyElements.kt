@@ -61,6 +61,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zinkel.survey.config.*
 import com.zinkel.survey.data.DateTimePick
 import org.jetbrains.compose.resources.painterResource
@@ -427,6 +428,89 @@ fun rememberColorList(colorGradient: RatingColorGradient, level: Int) = remember
     val bluestep = (end.blue - start.blue) / (level - 1)
 
     (0..<level).map { Color(start.red + redstep * it, start.green + greenstep * it, start.blue + bluestep * it) }.toMutableStateList()
+}
+
+@Composable
+@Preview
+fun SliderElementPreview() {
+    SliderElement(SliderQuestion(title = "What is your height?", "1-1"), true, {})
+}
+
+/**
+ * Renders a slider question.
+ *
+ * Displays a title row and a slider to select a single value or a range.
+ *
+ * @param question The SliderQuestion configuration to render.
+ * @param onValueChange Callback invoked with the selected slider position or range.
+ * @param savedValues Optional saved slider values.
+ * @param inputError Optional error text to display above the card.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SliderElement(
+    question: SliderQuestion,
+    showQuestionScores: Boolean,
+    onValueChange: (Pair<Float, Float?>) -> Unit,
+    savedValues: Pair<Float, Float?>? = null,
+    inputError: String? = null,
+) {
+    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        ErrorHeader(inputError)
+        Column(modifier = Modifier.padding(8.dp)) {
+            TitleRow(question.title, question.required, showQuestionScores, question.score)
+
+            val questionvalueRange = question.start..question.end
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                val startTxt = buildString {
+                    if (question.showDecimals) append(question.start) else append(question.start.toInt())
+                    if (!question.unit.isNullOrBlank()) append(" ${question.unit}")
+                }
+                val endTxt = buildString {
+                    if (question.showDecimals) append(question.end) else append(question.end.toInt())
+                    if (!question.unit.isNullOrBlank()) append(" ${question.unit}")
+                }
+
+                Text(startTxt, fontSize = 12.sp)
+                Text(endTxt, fontSize = 12.sp)
+            }
+
+            if (!question.range) { // simple slider
+                val sliderState = rememberSliderState(value = savedValues?.first ?: question.start, valueRange = questionvalueRange, steps = question.steps)
+                sliderState.onValueChangeFinished = { onValueChange(Pair(sliderState.value, null)) }
+
+                Slider(state = sliderState)
+
+                val txtValue = buildString {
+                    if (question.showDecimals) append(sliderState.value) else append(sliderState.value.toInt())
+                    if (!question.unit.isNullOrBlank()) append(" ${question.unit}")
+                }
+                Text(text = txtValue, fontSize = 12.sp, modifier = Modifier.align(Alignment.CenterHorizontally))
+            } else { // range slider
+                val sliderState = rememberRangeSliderState(
+                    activeRangeStart = savedValues?.first ?: question.start,
+                    activeRangeEnd = savedValues?.second ?: question.end,
+                    steps = question.steps,
+                    valueRange = questionvalueRange,
+                )
+                sliderState.onValueChangeFinished = { onValueChange(Pair(sliderState.activeRangeStart, sliderState.activeRangeEnd)) }
+
+                RangeSlider(state = sliderState)
+                Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                    val txtStartValue = if (question.showDecimals) sliderState.activeRangeStart.toString() else sliderState.activeRangeStart.toInt().toString()
+                    val txtEndValue = buildString {
+                        if (question.showDecimals) append(sliderState.activeRangeEnd) else append(sliderState.activeRangeEnd.toInt())
+                        if (!question.unit.isNullOrBlank()) append(" ${question.unit}")
+                    }
+
+                    Text(text = txtStartValue, fontSize = 12.sp)
+                    Text(text = " - ", fontSize = 12.sp, modifier = Modifier.padding(horizontal = 4.dp))
+                    Text(text = txtEndValue, fontSize = 12.sp)
+                }
+            }
+        }
+    }
 }
 
 @Composable
