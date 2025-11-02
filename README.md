@@ -61,7 +61,7 @@ Steps to use:
 - [x] Extend documentation (question types, survey config, etc.)
 - [x] Add Github build pipeline for release
 - [x] Add Slider/Range, number rating & horizontal choice question type
-- [ ] Add support for text input validation and more data patterns (age, birthday)
+- [ ] Add support for text input validation and more data patterns (age, birthday, nickname)
 - [ ] Add support for images (Background, Summary, Page Header)
 - [ ] Add conditional pages/question
 - [ ] Add command line arguments to load configuration

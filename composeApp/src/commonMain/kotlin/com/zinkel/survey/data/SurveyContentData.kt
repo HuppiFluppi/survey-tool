@@ -135,7 +135,7 @@ class DataSurveyContentData(
     override fun calculateScore(): Int = 0
 
     companion object {
-        private val NAME_PATTERN = "^[a-zA-Z\\s]{3,40}$".toRegex()
+        private val NAME_PATTERN = "^\\p{L}[\\p{L}\\s]{2,40}$".toRegex()
         private val PHONE_PATTERN = "^((\\+|00)[1-9]{1,2})?[0-9 \\-()./]{6,32}$".toRegex()
         private val EMAIL_PATTERN = "^[a-zA-Z0-9+._%-]{1,256}@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}(.[a-zA-Z0-9][a-zA-Z0-9-]{0,25})+$".toRegex()
     }
