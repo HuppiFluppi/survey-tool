@@ -26,6 +26,7 @@
     <string name="validation_error_pattern_nickname">Antwort muss valider Name sein</string>
     <string name="validation_error_pattern_age">Antwort muss valides Alter sein</string>
     <string name="validation_error_pattern_birthday">Antwort muss valides Geburtsdatum sein (TT.MM.JJJJ)</string>
+    <string name="validation_error_pattern_text">Antwort muss vorgegebenem Schema entsprechen</string>
     <string name="data_element_label_name">Name</string>
     <string name="data_element_label_phone">Telefon</string>
     <string name="data_element_label_email">Email</string>

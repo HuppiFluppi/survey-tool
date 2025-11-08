@@ -125,8 +125,11 @@ enum class SurveyContentType {
  * Free-text question.
  *
  * @param multiline Whether the text field should allow multiple lines.
+ * @param pattern Optional regular expression to validate the input.
  * @param score Optional numeric score to award for a correct answer (relevant in quizzes).
  * @param correctAnswer Optional correct answer for scoring/validation in quizzes.
+ * @param correctAnswerPattern Optional regular expression to validate the correct answer.
+ * @param correctAnswerList Optional list of correct answers for scoring/validation in quizzes.
  */
 class TextQuestion(
     title: String,
@@ -134,8 +137,11 @@ class TextQuestion(
     required: Boolean = true,
 
     val multiline: Boolean = false,
+    val pattern: Regex? = null,
     val score: Int? = null,
     val correctAnswer: String? = null,
+    val correctAnswerPattern: Regex? = null,
+    val correctAnswerList: List<String>? = null,
 ) : SurveyPageContent(SurveyContentType.TEXT, title, id, required)
 
 /**

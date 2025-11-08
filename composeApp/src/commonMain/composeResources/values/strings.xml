@@ -26,6 +26,7 @@
     <string name="validation_error_pattern_nickname">Answer needs to be valid name</string>
     <string name="validation_error_pattern_age">Answer needs to be valid age</string>
     <string name="validation_error_pattern_birthday">Answer needs to be valid birthday (M/d/yy)</string>
+    <string name="validation_error_pattern_text">Answer needs to follow given pattern</string>
     <string name="data_element_label_name">Name</string>
     <string name="data_element_label_phone">Phone</string>
     <string name="data_element_label_email">Email</string>

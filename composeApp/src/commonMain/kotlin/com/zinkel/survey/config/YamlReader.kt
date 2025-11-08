@@ -74,8 +74,11 @@ class YamlReader : SurveyConfigReader {
                         required = required,
 
                         multiline = config?.get("multiline") as? Boolean ?: false,
+                        pattern = (config?.get("pattern") as? String)?.toRegex(),
                         score = config?.get("score") as? Int,
                         correctAnswer = config?.get("correct_answer") as? String,
+                        correctAnswerPattern = (config?.get("correct_answer_pattern") as? String)?.toRegex(),
+                        correctAnswerList = config?.get("correct_answer_list") as? List<String>,
                     )
                 }
 

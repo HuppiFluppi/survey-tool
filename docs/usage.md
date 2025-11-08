@@ -201,6 +201,7 @@ Each serves a specific purpose:
 - **Multi-line**: Type longer responses in the text area
 - No character limit
 - Can be used for open-ended feedback
+- Can be validated(scored) based on direct match, list of correct answers and answer pattern
 
 **Example**: 
 - "What is your favorite ice cream flavor?" (short answer)

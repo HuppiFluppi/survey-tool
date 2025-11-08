@@ -2,15 +2,7 @@ package com.zinkel.survey.data
 
 import com.zinkel.survey.config.*
 import org.jetbrains.compose.resources.StringResource
-import surveytool.composeapp.generated.resources.Res
-import surveytool.composeapp.generated.resources.validation_error_pattern_age
-import surveytool.composeapp.generated.resources.validation_error_pattern_birthday
-import surveytool.composeapp.generated.resources.validation_error_pattern_custom
-import surveytool.composeapp.generated.resources.validation_error_pattern_email
-import surveytool.composeapp.generated.resources.validation_error_pattern_name
-import surveytool.composeapp.generated.resources.validation_error_pattern_nickname
-import surveytool.composeapp.generated.resources.validation_error_pattern_phone
-import surveytool.composeapp.generated.resources.validation_error_required
+import surveytool.composeapp.generated.resources.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -100,11 +92,19 @@ class TextSurveyContentData(
             false,
             listOf(Res.string.validation_error_required)
         )
+        else if (isAnswered()
+            && question.pattern != null
+            && answer != null
+            && !answer!!.matches(question.pattern)
+        ) AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_text))
         else AnswerValidationResult(true)
 
-    override fun calculateScore(): Int =
-        if (isAnswered() && question.correctAnswer == answer) question.score ?: 0
-        else 0
+    override fun calculateScore(): Int = when {
+        isAnswered() && question.correctAnswer != null        -> if (question.correctAnswer == answer!!.trim()) question.score ?: 0 else 0
+        isAnswered() && question.correctAnswerPattern != null -> if (answer!!.trim().matches(question.correctAnswerPattern)) question.score ?: 0 else 0
+        isAnswered() && question.correctAnswerList != null    -> if (answer!!.trim() in question.correctAnswerList) question.score ?: 0 else 0
+        else                                                  -> 0
+    }
 }
 
 /**

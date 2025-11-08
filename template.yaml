@@ -108,8 +108,14 @@ content:
     title: "What is your favorite ice cream?"
     config:
       multiline: true # Boolean (default: false). If you expect lengthy answers, set this to true
+      pattern: '.*' # String (optional). Regex pattern to match the input against. Not used for scoring.
       score: 5 # Int (optional). Points to award for this question. Used in quiz mode
       correct_answer: "Any" # String (optional). Correct answer to the question. Used in quiz mode
+      correct_answer_pattern: '.*berry' # String (optional). Regex pattern to match the correct answer against. Used in quiz mode. Ignored if 'correct_answer' present.
+      correct_answer_list: # list of correct answers. Ignored if 'correct_answer' or 'correct_answer_pattern' present. Used in quiz mode.
+        - "Chocolate" # String (required). Correct answer to the question.
+        - "Strawberry"
+        - "Any"
 
   # Datetime questions are asking for a date and/or time. They can be scored. If initial values are given, the user does not have to actively answer the question. Instead, the initial values are used.
   - type: datetime
