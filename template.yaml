@@ -70,9 +70,9 @@ content:
     required: true
     title: "Give me your name"
     config:
-      datatype: name # String (default: name). Type of the data. One of [name, email, phone, custom].
-      validation_pattern: '^\p{L}[\p{L}\s]{2,40}$' # String (optional). Regex pattern to validate the input. If omitted, data types name, email and phone use default patterns. Please make sure to use single quotes(') to avoid loading errors.
-      use_for_leaderboard: true # Boolean (default: true). If true, this data will be used for the leaderboard. Only relevant for quizzes and datatype 'name'.
+      datatype: name # String (default: name). Type of the data. One of [name, nickname, email, phone, age, birthday, custom].
+      validation_pattern: '^\p{L}[\p{L}\s]{2,40}$' # String (optional). Regex pattern to validate the input. Not used for age and birthday. If omitted, data types name, nickname, email and phone use default patterns. Please make sure to use single quotes(') to avoid loading errors.
+      use_for_leaderboard: true # Boolean (default: true). If true, this data will be used for the leaderboard. Only relevant for quizzes and datatype 'name' or 'nickname'.
 
   # Information content are blocks of text. They are no questions and cannot be scored. You can use them to provide additional information or to show a picture.
   - type: information

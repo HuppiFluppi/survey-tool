@@ -149,7 +149,7 @@ Each serves a specific purpose:
 **How to use**:
 - Enter your information in the text field
 - The field validates your input based on the data type (e.g., email format)
-- Common uses: Name, email address, phone number, or custom text
+- Common uses: Name, nickname, email address, phone number, age, birthday or custom text
 
 **Example**: "What is your name?"
 

@@ -135,10 +135,12 @@ fun DataElement(question: DataQuestion, onValueChange: (String) -> Unit, savedVa
                 TextFieldWithoutPadding(
                     value = txt,
                     label = when (question.dataType) {
-                        DataQuestionType.NAME  -> @Composable { -> Text(stringResource(Res.string.data_element_label_name)) }
-                        DataQuestionType.PHONE -> @Composable { -> Text(stringResource(Res.string.data_element_label_phone)) }
-                        DataQuestionType.EMAIL -> @Composable { -> Text(stringResource(Res.string.data_element_label_email)) }
-                        else                   -> null
+                        DataQuestionType.NAME     -> @Composable { -> Text(stringResource(Res.string.data_element_label_name)) }
+                        DataQuestionType.PHONE    -> @Composable { -> Text(stringResource(Res.string.data_element_label_phone)) }
+                        DataQuestionType.EMAIL    -> @Composable { -> Text(stringResource(Res.string.data_element_label_email)) }
+                        DataQuestionType.AGE      -> @Composable { -> Text(stringResource(Res.string.data_element_label_age)) }
+                        DataQuestionType.BIRTHDAY -> @Composable { -> Text(stringResource(Res.string.data_element_label_birthday)) }
+                        else                      -> null
                     },
                     trailingIcon = {
                         if (txt.isNotEmpty()) {
@@ -147,7 +149,11 @@ fun DataElement(question: DataQuestion, onValueChange: (String) -> Unit, savedVa
                             }
                         }
                     },
-                    onValueChange = { txt = it; onValueChange(it) },
+                    onValueChange = {
+                        if (question.dataType == DataQuestionType.AGE && it.any { char -> !char.isDigit() }) return@TextFieldWithoutPadding
+                        txt = it;
+                        onValueChange(it)
+                    },
                     modifier = Modifier.weight(1f)
                 )
                 Spacer(modifier = Modifier.weight(0.5f))

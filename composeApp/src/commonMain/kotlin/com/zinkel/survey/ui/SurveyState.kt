@@ -230,13 +230,18 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
     /**
      * Completes the survey instance. Sets user, score and endtime.
      *
-     * The user is derived from the first NAME-type data question if present; otherwise a localized fallback is used.
+     * The user is derived from the first NAME or NICKNAME-type data question if present; otherwise a localized fallback is used.
      */
     private suspend fun completeInstance(instance: SurveyInstance) {
         val answers = instance.getAllAnswers()
 
-        val user = answers.find { it is DataSurveyContentData && it.question.dataType == DataQuestionType.NAME && it.question.useForLeaderboard }
-            ?.answer as? String ?: getString(Res.string.highscore_unknown_player)
+        val user =
+            answers.find {
+                it is DataSurveyContentData
+                        && (it.question.dataType == DataQuestionType.NAME || it.question.dataType == DataQuestionType.NICKNAME)
+                        && it.question.useForLeaderboard
+            }
+                ?.answer as? String ?: getString(Res.string.highscore_unknown_player)
         val score = answers.sumOf { it.calculateScore() }
 
         instance.user = user

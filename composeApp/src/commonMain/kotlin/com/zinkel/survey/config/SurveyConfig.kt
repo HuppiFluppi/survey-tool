@@ -197,6 +197,9 @@ enum class DataQuestionType {
     EMAIL,
     PHONE,
     CUSTOM,
+    NICKNAME,
+    AGE,
+    BIRTHDAY,
 }
 
 /**

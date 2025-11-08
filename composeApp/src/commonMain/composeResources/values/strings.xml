@@ -23,9 +23,14 @@
     <string name="validation_error_pattern_phone">Answer needs to be valid phone number</string>
     <string name="validation_error_pattern_email">Answer needs to be valid email address</string>
     <string name="validation_error_pattern_custom">Answer needs to match pattern</string>
+    <string name="validation_error_pattern_nickname">Answer needs to be valid name</string>
+    <string name="validation_error_pattern_age">Answer needs to be valid age</string>
+    <string name="validation_error_pattern_birthday">Answer needs to be valid birthday (M/d/yy)</string>
     <string name="data_element_label_name">Name</string>
     <string name="data_element_label_phone">Phone</string>
     <string name="data_element_label_email">Email</string>
+    <string name="data_element_label_age">Age</string>
+    <string name="data_element_label_birthday">Birthday</string>
     <string name="highscore_unknown_player">&lt;unknown&gt;</string>
     <string name="choice_element_choose">&lt;choose&gt;</string>
 </resources>

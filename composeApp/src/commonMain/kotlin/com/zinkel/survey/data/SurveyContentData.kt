@@ -3,14 +3,19 @@ package com.zinkel.survey.data
 import com.zinkel.survey.config.*
 import org.jetbrains.compose.resources.StringResource
 import surveytool.composeapp.generated.resources.Res
+import surveytool.composeapp.generated.resources.validation_error_pattern_age
+import surveytool.composeapp.generated.resources.validation_error_pattern_birthday
 import surveytool.composeapp.generated.resources.validation_error_pattern_custom
 import surveytool.composeapp.generated.resources.validation_error_pattern_email
 import surveytool.composeapp.generated.resources.validation_error_pattern_name
+import surveytool.composeapp.generated.resources.validation_error_pattern_nickname
 import surveytool.composeapp.generated.resources.validation_error_pattern_phone
 import surveytool.composeapp.generated.resources.validation_error_required
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.FormatStyle
 import kotlin.math.abs
 
 /**
@@ -117,25 +122,55 @@ class DataSurveyContentData(
     override fun isAnswered() = !answer.isNullOrBlank()
 
     override fun validate() = when {
-        question.required && answer.isNullOrBlank()  -> AnswerValidationResult(false, listOf(Res.string.validation_error_required))
-        !question.required && answer.isNullOrBlank() -> AnswerValidationResult(true)
-        question.dataType == DataQuestionType.NAME   -> checkPattern(answer, validationRegex ?: NAME_PATTERN, Res.string.validation_error_pattern_name)
-        question.dataType == DataQuestionType.PHONE  -> checkPattern(answer, validationRegex ?: PHONE_PATTERN, Res.string.validation_error_pattern_phone)
-        question.dataType == DataQuestionType.EMAIL  -> checkPattern(answer, validationRegex ?: EMAIL_PATTERN, Res.string.validation_error_pattern_email)
-        question.dataType == DataQuestionType.CUSTOM -> checkPattern(answer, validationRegex, Res.string.validation_error_pattern_custom)
-        else                                         -> AnswerValidationResult(true)
+        answer.isNullOrBlank() && question.required    -> AnswerValidationResult(false, listOf(Res.string.validation_error_required))
+        answer.isNullOrBlank() && !question.required   -> AnswerValidationResult(true)
+        question.dataType == DataQuestionType.NAME     -> checkPattern(answer!!, validationRegex ?: NAME_PATTERN, Res.string.validation_error_pattern_name)
+        question.dataType == DataQuestionType.PHONE    -> checkPattern(answer!!, validationRegex ?: PHONE_PATTERN, Res.string.validation_error_pattern_phone)
+        question.dataType == DataQuestionType.EMAIL    -> checkPattern(answer!!, validationRegex ?: EMAIL_PATTERN, Res.string.validation_error_pattern_email)
+        question.dataType == DataQuestionType.CUSTOM   -> checkPattern(answer!!, validationRegex, Res.string.validation_error_pattern_custom)
+        question.dataType == DataQuestionType.NICKNAME -> checkPattern(
+            answer!!,
+            validationRegex ?: NICKNAME_PATTERN,
+            Res.string.validation_error_pattern_nickname
+        )
+
+        question.dataType == DataQuestionType.AGE      -> checkAge(answer!!)
+        question.dataType == DataQuestionType.BIRTHDAY -> checkBirthday(answer!!)
+        else                                           -> AnswerValidationResult(true)
     }
 
-    private fun checkPattern(answer: String?, validationPattern: Regex?, error: StringResource) = when {
-        answer.isNullOrBlank() || validationPattern == null -> AnswerValidationResult(true)
-        validationPattern.matches(answer)                   -> AnswerValidationResult(true)
-        else                                                -> AnswerValidationResult(false, listOf(error))
+    private fun checkBirthday(answer: String): AnswerValidationResult {
+        try {
+            val dtf = DateTimeFormatterBuilder().parseLenient().appendLocalized(FormatStyle.SHORT, null).toFormatter()
+            val birthday = LocalDate.parse(answer, dtf)
+            val today = LocalDate.now()
+            if ((today.year - birthday.year) in 0..100) return AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_birthday))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_birthday))
+        }
+        return AnswerValidationResult(true)
+    }
+
+    private fun checkAge(answer: String): AnswerValidationResult {
+        val age = answer.toIntOrNull() ?: return AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_age))
+        return when {
+            age in 1..100 -> AnswerValidationResult(true)
+            else          -> AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_age))
+        }
+    }
+
+    private fun checkPattern(answer: String, validationPattern: Regex?, error: StringResource) = when {
+        answer.isBlank() || validationPattern == null -> AnswerValidationResult(true)
+        validationPattern.matches(answer)             -> AnswerValidationResult(true)
+        else                                          -> AnswerValidationResult(false, listOf(error))
     }
 
     override fun calculateScore(): Int = 0
 
     companion object {
-        private val NAME_PATTERN = "^\\p{L}[\\p{L}\\s]{2,40}$".toRegex()
+        private val NAME_PATTERN = "^\\p{L}[\\p{L} ]{2,40}$".toRegex()
+        private val NICKNAME_PATTERN = "^[\\p{L} \\d._-]{3,40}$".toRegex()
         private val PHONE_PATTERN = "^((\\+|00)[1-9]{1,2})?[0-9 \\-()./]{6,32}$".toRegex()
         private val EMAIL_PATTERN = "^[a-zA-Z0-9+._%-]{1,256}@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}(.[a-zA-Z0-9][a-zA-Z0-9-]{0,25})+$".toRegex()
     }
