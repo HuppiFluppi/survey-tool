@@ -32,7 +32,11 @@ import androidx.compose.ui.draganddrop.DragData
 import androidx.compose.ui.draganddrop.dragData
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zinkel.survey.FilePickerDialog
@@ -79,7 +83,8 @@ fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(top = 32.dp)
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.padding(top = 32.dp, bottom = 8.dp)
             )
             Icon(
                 painter = painterResource(Res.drawable.app_icon),
@@ -94,7 +99,12 @@ fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File
             Text(
                 text = "${stringResource(Res.string.app_version)} (${stringResource(Res.string.app_build)})",
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                fontSize = 10.sp,
+                fontSize = 10.sp
+            )
+            Text(
+                buildAnnotatedString {
+                    withLink(LinkAnnotation.Url("https://github.com/HuppiFluppi/survey-tool")) { append("Website") }
+                }, fontSize = 12.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
         }
