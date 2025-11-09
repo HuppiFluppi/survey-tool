@@ -64,7 +64,7 @@ Steps to use:
 - [x] Add support for text input validation and more data patterns (age, birthday, nickname)
 - [ ] Add support for images (Background, Summary, Page Header)
 - [ ] Add conditional pages/question
-- [ ] Add command line arguments to load configuration
+- [x] Add command line arguments to load configuration
 - [ ] Refactor package structure and remedy some code smells
 - [ ] Add system test (load, fill, submit, check)
 - [ ] Add remote configuration loading and data sending

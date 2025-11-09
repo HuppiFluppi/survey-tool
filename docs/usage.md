@@ -6,6 +6,7 @@ A complete guide for using the Survey Tool to create and run surveys or quizzes.
 
 - [Getting Started](#getting-started)
 - [Running a Survey](#running-a-survey)
+- [Using the Command Line](#cmd-line-usage)
 - [Survey vs Quiz Mode](#survey-vs-quiz-mode)
 - [Create your own survey](#create-your-own-survey)
 - [Results](#results)
@@ -27,7 +28,7 @@ A complete guide for using the Survey Tool to create and run surveys or quizzes.
 ### Run the app
 
 1. Download the Survey Tool jar for your operating system (https://github.com/HuppiFluppi/survey-tool/releases/latest)
-2. Run the downloaded jar
+2. Run the downloaded jar (e.g. by double-click)
 
 ---
 
@@ -68,6 +69,18 @@ After completing all pages, review your answers and click "Submit" to finish.
 
 You will be brought back to the summary screen from the beginning.
 For **Quizzes**, you'll see your score and ranking on the leaderboard (if enabled)
+
+---
+
+## Cmd line Usage
+
+The tool can be started with command line arguments to directly load a survey configuration. 
+This skips the loading screen and might be useful in automated setups. 
+Run the jar (self build or downloaded from release) in your local cmd line:
+
+`> java -jar survey-tool.jar <path-to-config>`
+
+For more information about command line usage and available options, run `java -jar survey-tool.jar -h`
 
 ---
 
