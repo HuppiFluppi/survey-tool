@@ -337,6 +337,14 @@ data class LikertStatement(
     val correctChoice: String? = null,
 )
 
+/**
+ * Information block content. Not a question.
+ *
+ * Presents information to the user.
+ *
+ * @param description Information text (besides [title]) to show.
+ * @param image Image to show.
+ */
 class InformationBlock(
     title: String,
     id: String,

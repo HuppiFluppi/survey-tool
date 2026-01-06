@@ -1,6 +1,5 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/HuppiFluppi/survey-tool/survey.schema.json",
   "title": "Survey/Quiz configuration file schema",
   "type": "object",
   "anyOf": [
@@ -13,7 +12,6 @@
   ],
   "$defs": {
     "SurveyConfig": {
-      "title": "Survey configuration",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -51,13 +49,9 @@
       }
     },
     "PageConfig": {
-      "title": "Page",
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "content",
-        "title"
-      ],
+      "required": [ "content" ],
       "properties": {
         "title": {
           "type": "string",
@@ -121,25 +115,46 @@
         }
       }
     },
-    "QuestionBase": {
+    "Question": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DataQuestion"
+        },
+        {
+          "$ref": "#/$defs/InformationQuestion"
+        },
+        {
+          "$ref": "#/$defs/ChoiceQuestion"
+        },
+        {
+          "$ref": "#/$defs/TextQuestion"
+        },
+        {
+          "$ref": "#/$defs/DatetimeQuestion"
+        },
+        {
+          "$ref": "#/$defs/SliderQuestion"
+        },
+        {
+          "$ref": "#/$defs/RatingQuestion"
+        },
+        {
+          "$ref": "#/$defs/LikertQuestion"
+        }
+      ]
+    },
+    "DataQuestion": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "type",
         "title"
       ],
       "properties": {
         "type": {
+          "const": "data",
           "type": "string",
-          "description": "Specify the type of question",
-          "enum": [
-            "data",
-            "choice",
-            "text",
-            "rating",
-            "likert",
-            "datetime",
-            "information"
-          ]
+          "description": "Specify the type of question"
         },
         "required": {
           "type": "boolean",
@@ -150,40 +165,6 @@
           "type": "string",
           "description": "Question/Headline to show to the user",
           "minLength": 5
-        }
-      }
-    },
-    "InformationContent": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/QuestionBase"
-        }
-      ],
-      "properties": {
-        "type": {
-          "const": "information"
-        },
-        "description": {
-          "type": "string",
-          "description": "Optional description of the content block",
-          "minLength": 20
-        },
-        "image_path": {
-          "type": "string",
-          "description": "Path to an image file to show below the title and description. Please make sure to use single quotes(') or use slash (/) not backslash for path separation",
-          "minLength": 6
-        }
-      }
-    },
-    "DataQuestion": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/QuestionBase"
-        }
-      ],
-      "properties": {
-        "type": {
-          "const": "data"
         },
         "config": {
           "type": "object",
@@ -191,13 +172,16 @@
           "properties": {
             "datatype": {
               "type": "string",
-              "description": "Type of the data",
               "enum": [
                 "name",
+                "nickname",
                 "email",
                 "phone",
+                "age",
+                "birthday",
                 "custom"
               ],
+              "description": "Type of the data",
               "default": "name"
             },
             "validation_pattern": {
@@ -213,18 +197,64 @@
         }
       }
     },
-    "ChoiceQuestion": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/QuestionBase"
-        }
-      ],
+    "InformationQuestion": {
+      "type": "object",
+      "additionalProperties": false,
       "required": [
+        "type",
+        "title"
+      ],
+      "properties": {
+        "type": {
+          "const": "information",
+          "type": "string",
+          "description": "Specify the type of question"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "If true, the user must answer this question",
+          "default": true
+        },
+        "title": {
+          "type": "string",
+          "description": "Question/Headline to show to the user",
+          "minLength": 5
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the content block",
+          "minLength": 20
+        },
+        "image_path": {
+          "type": "string",
+          "description": "Path to an image file to show below the title and description. Please make sure to use single quotes(') or use slash (/) not backslash for path separation",
+          "minLength": 6
+        }
+      }
+    },
+    "ChoiceQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title",
         "config"
       ],
       "properties": {
         "type": {
-          "const": "choice"
+          "const": "choice",
+          "type": "string",
+          "description": "Specify the type of question"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "If true, the user must answer this question",
+          "default": true
+        },
+        "title": {
+          "type": "string",
+          "description": "Question/Headline to show to the user",
+          "minLength": 5
         },
         "config": {
           "type": "object",
@@ -249,31 +279,44 @@
               "description": "Show a dropdown instead of checklist items. Only relevant if multiple == false",
               "default": false
             },
+            "horizontal": {
+              "type": "boolean",
+              "description": "Show choices horizontally. Use only with short choice titles. Only relevant if multiple == false",
+              "default": false
+            },
             "choices": {
               "type": "array",
               "minItems": 1,
               "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "title"
-                ],
-                "properties": {
-                  "title": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "title"
+                    ],
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "description": "Title of the choice",
+                        "minLength": 1
+                      },
+                      "correct": {
+                        "type": "boolean",
+                        "description": "If true, this choice is correct. Used in quiz mode",
+                        "default": false
+                      },
+                      "score": {
+                        "type": "integer",
+                        "description": "Points to award for this choice. Used in quiz mode"
+                      }
+                    }
+                  },
+                  {
                     "type": "string",
-                    "description": "Title of the choice",
-                    "minLength": 1
-                  },
-                  "correct": {
-                    "type": "boolean",
-                    "description": "If true, this choice is correct. Used in quiz mode",
-                    "default": false
-                  },
-                  "score": {
-                    "type": "integer",
-                    "description": "Points to award for this choice. Used in quiz mode"
+                    "description": "Choice item"
                   }
-                }
+                ]
               }
             }
           }
@@ -281,14 +324,27 @@
       }
     },
     "TextQuestion": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/QuestionBase"
-        }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title"
       ],
       "properties": {
         "type": {
-          "const": "text"
+          "const": "text",
+          "type": "string",
+          "description": "Specify the type of question"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "If true, the user must answer this question",
+          "default": true
+        },
+        "title": {
+          "type": "string",
+          "description": "Question/Headline to show to the user",
+          "minLength": 5
         },
         "config": {
           "type": "object",
@@ -299,6 +355,10 @@
               "description": "If you expect lengthy answers, set this to true",
               "default": false
             },
+            "pattern": {
+              "type": "string",
+              "description": "Regex pattern to match the input against. Not used for scoring"
+            },
             "score": {
               "type": "integer",
               "description": "Points to award for this question. Used in quiz mode",
@@ -307,20 +367,44 @@
             "correct_answer": {
               "type": "string",
               "description": "Correct answer to the question. Used in quiz mode"
+            },
+            "correct_answer_pattern": {
+              "type": "string",
+              "description": "Regex pattern to match the correct answer against. Used in quiz mode. Ignored if 'correct_answer' present"
+            },
+            "correct_answer_list": {
+              "type": "array",
+              "description": "list of correct answers. Ignored if 'correct_answer' or 'correct_answer_pattern' present",
+              "items": {
+                "type": "string"
+              }
             }
           }
         }
       }
     },
     "DatetimeQuestion": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/QuestionBase"
-        }
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title"
       ],
       "properties": {
         "type": {
-          "const": "datetime"
+          "const": "datetime",
+          "type": "string",
+          "description": "Specify the type of question"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "If true, the user must answer this question",
+          "default": true
+        },
+        "title": {
+          "type": "string",
+          "description": "Question/Headline to show to the user",
+          "minLength": 5
         },
         "config": {
           "type": "object",
@@ -365,21 +449,104 @@
         }
       }
     },
-    "RatingQuestion": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/QuestionBase"
-        }
+    "SliderQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title"
       ],
       "properties": {
         "type": {
-          "const": "rating"
+          "const": "slider",
+          "type": "string",
+          "description": "Specify the type of question"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "If true, the user must answer this question",
+          "default": true
+        },
+        "title": {
+          "type": "string",
+          "description": "Question/Headline to show to the user",
+          "minLength": 5
         },
         "config": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "levels": {
+            "range": {
+              "type": "boolean",
+              "description": "If true, the user can select a range (two values) on the slider",
+              "default": false
+            },
+            "start": {
+              "type": "number",
+              "description": "Together with 'end', defines first number of slider",
+              "default": 0
+            },
+            "end": {
+              "type": "number",
+              "description": "Together with 'start', defines last number of slider",
+              "default": 1
+            },
+            "steps": {
+              "type": "integer",
+              "description": "Steps between start and end that can be chosen (start & end always add two steps). If 0, a continuous slider is created without any fixed steps",
+              "default": 0,
+              "minimum": 0
+            },
+            "show_decimals": {
+              "type": "boolean",
+              "description": "If true, the slider will show decimal values. Internally, the values are always decimals",
+              "default": false
+            },
+            "unit": {
+              "type": "string",
+              "description": "If given, will be shown next to start, end and current value"
+            },
+            "score": {
+              "type": "integer",
+              "description": "Points to award for this question. Used in quiz mode",
+              "minimum": 0
+            },
+            "correct_answer": {
+              "type": "number",
+              "description": "Correct answer to the question. For ranges, this number must be in the chosen range. Used in quiz mode"
+            }
+          }
+        }
+      }
+    },
+    "RatingQuestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "title"
+      ],
+      "properties": {
+        "type": {
+          "const": "rating",
+          "type": "string",
+          "description": "Specify the type of question"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "If true, the user must answer this question",
+          "default": true
+        },
+        "title": {
+          "type": "string",
+          "description": "Question/Headline to show to the user",
+          "minLength": 5
+        },
+        "config": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "level": {
               "type": "integer",
               "description": "Number of rating options to show",
               "minimum": 3,
@@ -393,7 +560,8 @@
                 "like",
                 "star",
                 "heart",
-                "smile"
+                "smile",
+                "number"
               ],
               "default": "star"
             },
@@ -411,17 +579,28 @@
       }
     },
     "LikertQuestion": {
-      "allOf": [
-        {
-          "$ref": "#/$defs/QuestionBase"
-        }
-      ],
+      "type": "object",
+      "additionalProperties": false,
       "required": [
+        "type",
+        "title",
         "config"
       ],
       "properties": {
         "type": {
-          "const": "likert"
+          "const": "likert",
+          "type": "string",
+          "description": "Specify the type of question"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "If true, the user must answer this question",
+          "default": true
+        },
+        "title": {
+          "type": "string",
+          "description": "Question/Headline to show to the user",
+          "minLength": 5
         },
         "config": {
           "type": "object",
@@ -432,70 +611,53 @@
           ],
           "properties": {
             "choices": {
-              "title": "Likert scale options (columns)",
               "type": "array",
               "minItems": 2,
+              "description": "Likert scale options (columns)",
               "items": {
                 "type": "string",
                 "minLength": 1
               }
             },
             "statements": {
-              "title": "Likert statements (rows)",
               "type": "array",
               "minItems": 1,
+              "description": "Likert statements (rows)",
               "items": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": [
-                  "title"
-                ],
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "description": "Title of the statement",
-                    "minLength": 1
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "title"
+                    ],
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "description": "Title of the statement",
+                        "minLength": 1
+                      },
+                      "correct_choice": {
+                        "type": "string",
+                        "description": "Correct choice for this statement. Needs to match one of the choices. Used in quiz mode"
+                      },
+                      "score": {
+                        "type": "integer",
+                        "description": "Points to award for this choice. Used in quiz mode",
+                        "minimum": 0
+                      }
+                    }
                   },
-                  "correct_choice": {
+                  {
                     "type": "string",
-                    "description": "Correct choice for this statement. Needs to match one of the choices. Used in quiz mode"
-                  },
-                  "score": {
-                    "type": "integer",
-                    "description": "Points to award for this choice. Used in quiz mode",
-                    "minimum": 0
+                    "description": "Title of the statement"
                   }
-                }
+                ]
               }
             }
           }
         }
       }
-    },
-    "Question": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/InformationContent"
-        },
-        {
-          "$ref": "#/$defs/DataQuestion"
-        },
-        {
-          "$ref": "#/$defs/ChoiceQuestion"
-        },
-        {
-          "$ref": "#/$defs/TextQuestion"
-        },
-        {
-          "$ref": "#/$defs/DatetimeQuestion"
-        },
-        {
-          "$ref": "#/$defs/RatingQuestion"
-        },
-        {
-          "$ref": "#/$defs/LikertQuestion"
-        }
-      ]
     }
   }
 }

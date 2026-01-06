@@ -10,8 +10,9 @@ The tool loads a configuration file (YAML format) that defines your survey quest
 - [Tech stack](#tech-stack)
 - [Quick Start](#quick-start)
 - [Development](#development)
-- [Roadmap](#planned-roadmap)
+- [Roadmap](#roadmap)
 - [Contributing](#contributing)
+- [Disclaimer](#disclaimer)
 - [License](#license)
 
 ## Overview

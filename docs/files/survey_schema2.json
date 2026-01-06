@@ -1,6 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/HuppiFluppi/survey-tool/survey_schema.json",
+  "$comment": "Deprecated/Outdated version of schema. Not maintained",
+  "deprecated": true,
   "title": "Survey/Quiz configuration file schema",
   "type": "array",
   "minItems": 2,
