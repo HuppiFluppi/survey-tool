@@ -151,12 +151,17 @@ class YamlReader : SurveyConfigReader {
 
                         choices = (config["choices"] as? List<String>)
                             ?: throw IllegalArgumentException("Survey file malformed (no choices for likert content)"),
-                        statements = (config["statements"] as? List<Map<String, Any>>)?.map {
-                            LikertStatement(
-                                title = it["title"] as? String ?: throw IllegalArgumentException("Survey file malformed (no title for likert statement)"),
-                                score = it["score"] as? Int,
-                                correctChoice = it["correct_choice"] as? String,
-                            )
+                        statements = (config["statements"] as? List<Any>)?.map {
+                            when (it) {
+                                is String    -> LikertStatement(it)
+                                is Map<*, *> -> LikertStatement(
+                                    title = it["title"] as? String ?: throw IllegalArgumentException("Survey file malformed (no title for likert statement)"),
+                                    score = it["score"] as? Int,
+                                    correctChoice = it["correct_choice"] as? String,
+                                )
+
+                                else         -> throw IllegalArgumentException("Survey file malformed (no title for choice content)")
+                            }
                         } ?: throw IllegalArgumentException("Survey file malformed (no statements for likert content)")
                     )
                 }
