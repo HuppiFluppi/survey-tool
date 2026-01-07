@@ -11,9 +11,14 @@ description: > # '>' means to continue the description on the next line. The quo
   It's purpose is to help you get started.
   All options are explained and you can get an understanding of what is possible
 
-# image_path: String (optional): path to image file
-# Image to show at the top of the survey. Please make sure to use single quotes(') or use slash (/), not backslash for path separation
-image_path: 'composeApp/src/commonMain/composeResources/drawable/app_icon.png'
+# background_image: String (optional): path to image file
+# Image to show as background of the survey start page (summary). Please make sure to use single quotes(') or use slash (/), not backslash for path separation
+background_image: 'examples/images/black_white_forest.jpg'
+
+# image: String (optional): path to image file
+# Image to show with the survey description (after title and description text)
+# Please make sure to use single quotes(') or use slash (/), not backslash for path separation
+image: 'examples/images/friendly_robot.png'
 
 # type: SurveyType. Allowed values: "survey" or "quiz". default: "survey"
 # Type of the survey
@@ -43,6 +48,10 @@ score:
     # Number of entries to show in the leaderboard
     limit: 10
 
+    # background_image: String (optional): path to image file
+    # Image to show as highscore background. Please make sure to use single quotes(') or use slash (/), not backslash for path separation
+    background_image: 'examples/images/dark_ocean.jpg'
+
 --- # Each '---' starts a new page document. Pages help structure your survey. At least one page is required
 # title: String (optional)
 # Title of this page
@@ -50,11 +59,12 @@ title: "First Page"
 
 # description: String (optional)
 # Description of this page
-description: "This is a very lovely first page of the survey. This description adds not much value and indeed it could be omitted"
+description: "This is a very lovely first page of the survey. This description adds not much value and indeed it could be omitted. And look! There is an image as well!"
 
-# image_path: String (optional): path to image file
-# Image to show at the top of this page. Please make sure to use single quotes(') or use slash (/), not backslash for path separation
-image_path: 'composeApp/src/commonMain/composeResources/drawable/app_icon.png'
+# image: String (optional): path to image file
+# Image to show as part of the page header (with title and description)
+# Please make sure to use single quotes(') or use slash (/), not backslash for path separation
+image: 'examples/images/mountains.png'
 
 # content: list (required)
 # The different questions/information to show on this page
@@ -78,7 +88,7 @@ content:
   - type: information
     title: "This is non question content"
     description: "This is a description that is shown below the title" # String (optional). Description of the content block
-    image_path: 'composeApp/src/commonMain/composeResources/drawable/app_icon.png' # String (optional). Path to an image file to show below the title and description. Please make sure to use single quotes(') or use slash (/) not backslash for path separation
+    image: 'examples/images/friendly_robot.png' # String (optional). Path to an image file to show below the title and description. Please make sure to use single quotes(') or use slash (/) not backslash for path separation
 
   # Choice questions are questions which can be scored. You usually ask for things like favorite color or to pick the right answer
   # They can be multiple or single choice.

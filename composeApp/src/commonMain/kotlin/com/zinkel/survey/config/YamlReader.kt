@@ -37,6 +37,8 @@ class YamlReader : SurveyConfigReader {
             description = document["description"] as? String ?: throw IllegalArgumentException("Survey file malformed (no description)"),
             type = (document["type"] as? String)?.let { SurveyType.valueOf(it.uppercase()) } ?: SurveyType.SURVEY,
             score = (document["score"] as? Map<String, Any>)?.let { mapScore(it) } ?: ScoreSettings(),
+            image = checkFile(document["image"] as? String, "Survey::image"),
+            backgroundImage = checkFile(document["background_image"] as? String, "Survey::background_image"),
             pages = emptyList()
         )
 
@@ -50,12 +52,14 @@ class YamlReader : SurveyConfigReader {
             showScores = leaderboard["show_scores"] as? Boolean ?: true,
             showPlaceholder = leaderboard["show_placeholder"] as? Boolean ?: true,
             limit = leaderboard["limit"] as? Int ?: 10,
+            backgroundImage = checkFile(leaderboard["background_image"] as? String, "Survey::score::leaderboard::background_image"),
         )
 
-        private fun mapPage(document: Map<String, Any>, pageNumber: Int) = SurveyPage(
-            title = document["title"] as? String,
-            description = document["description"] as? String,
-            content = (document["content"] as? List<Map<String, Any>>)?.mapIndexed { index, it -> mapContent(it, pageNumber, index) }
+        private fun mapPage(page: Map<String, Any>, pageNumber: Int) = SurveyPage(
+            title = page["title"] as? String,
+            description = page["description"] as? String,
+            image = checkFile(page["image"] as? String, "Page${pageNumber + 1}::image"),
+            content = (page["content"] as? List<Map<String, Any>>)?.mapIndexed { index, it -> mapContent(it, pageNumber, index) }
                 ?: throw IllegalArgumentException("Survey file malformed (document without content)")
         )
 
@@ -171,7 +175,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         description = content["description"] as? String,
-                        image = checkFile(content["image_path"] as? String, title, type),
+                        image = checkFile(content["image"] as? String, "Page${contentNumber + 1}::$title($type)::image"),
                     )
                 }
 
@@ -220,16 +224,16 @@ class YamlReader : SurveyConfigReader {
             else      -> null
         }
 
-        private fun checkFile(filePath: String?, title: String, type: SurveyContentType): File? {
+        private fun checkFile(filePath: String?, section: String): File? {
             if (filePath == null) return null
 
             // find file
             val file = File(filePath).takeIf { it.isAbsolute } // absolute path
                 ?: Path(inputFile.parent, filePath).toFile() // path relative to input file
-            if (!file.exists()) throw IllegalArgumentException("Title: '$title' of type $type. File not found: $filePath")
+            if (!file.exists()) throw IllegalArgumentException("Template section '$section'. File not found: $filePath")
 
             // check file
-            if (file.length() > 10_485_760) throw IllegalArgumentException("Title: '$title' of type $type. File exceeds 10mb: $filePath")
+            if (file.length() > 10_485_760) throw IllegalArgumentException("Template section '$section'. File exceeds 10mb: $filePath")
 
             return file
         }

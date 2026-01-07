@@ -63,7 +63,7 @@ Steps to use:
 - [x] Add Github build pipeline for release
 - [x] Add Slider/Range, number rating & horizontal choice question type
 - [x] Add support for text input validation and more data patterns (age, birthday, nickname)
-- [ ] Add support for images (Background, Summary, Page Header)
+- [x] Add support for images (summary page background, survey description, highscore background, page header)
 - [ ] Add conditional pages/question
 - [x] Add command line arguments to load configuration
 - [ ] Refactor package structure and remedy some code smells
@@ -71,7 +71,7 @@ Steps to use:
 - [ ] Add remote configuration loading and data sending
 - [ ] Enable Android target
 - [ ] Add fullscreen/kiosk mode (Desktop)
-- [ ] Add multi survey languages support
+- [ ] Add survey multi language support
 - [ ] Add support for custom color themes
 - [ ] Extend question types II (ImageChoice, LikertSlider, ?)
 

@@ -81,12 +81,16 @@ import java.time.ZoneOffset
  * @param pageDescription The description of the page to be displayed. If null, the description will not be shown.
  */
 @Composable
-fun PageHeader(pageTitle: String?, pageDescription: String?) {
-    if (pageTitle == null && pageDescription == null) return
+fun PageHeader(pageTitle: String?, pageDescription: String?, pageImage: File?) {
+    if (pageTitle == null && pageDescription == null && pageImage == null) return
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(8.dp)) {
             pageTitle?.let { Text(text = it, fontWeight = FontWeight.Bold) }
             pageDescription?.let { Text(text = it) }
+            pageImage?.let {
+                val imageBitmap = remember(it) { loadImageBitmap(it) }
+                Image(bitmap = imageBitmap, contentDescription = null, modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }
@@ -674,13 +678,15 @@ fun InformationBlockElement(block: InformationBlock) {
             Text(text = block.title, fontWeight = FontWeight.Bold)
             block.description?.let { Text(text = it, modifier = Modifier.padding(top = 8.dp)) }
             block.image?.let {
-                val image = remember(block.image) { loadImageBitmap(it) }
+                val image = remember(it) { loadImageBitmap(it) }
                 Image(image, contentDescription = null, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
             }
         }
     }
 }
 
+// this is not caching image bitmaps. That means going back and forth between pages/screens will reload from file.
+// it's not a big deal for now, but could be improved in the future.
 fun loadImageBitmap(file: File) = file.readBytes().decodeToImageBitmap()
 
 /**

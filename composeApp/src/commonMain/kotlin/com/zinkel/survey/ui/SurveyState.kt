@@ -46,7 +46,9 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
         totalPages = surveyConfig.pages.size,
         totalQuestions = surveyConfig.pages.sumOf { it.content.size },
         description = surveyConfig.description,
-        highscoreEnabled = surveyConfig.type == SurveyType.QUIZ && surveyConfig.score.showLeaderboard
+        highscoreEnabled = surveyConfig.type == SurveyType.QUIZ && surveyConfig.score.showLeaderboard,
+        image = surveyConfig.image,
+        backgroundImage = surveyConfig.backgroundImage,
     )
 
     // dataManager is responsible for persisting each survey run and a summary
@@ -85,10 +87,11 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
      */
     var highscoreUiState by mutableStateOf(
         HighscoreUiState(
-            surveyConfig.score.leaderboard.limit,
-            surveyConfig.score.leaderboard.showScores,
-            surveyConfig.score.leaderboard.showPlaceholder,
-            emptyList()
+            limit = surveyConfig.score.leaderboard.limit,
+            showScores = surveyConfig.score.leaderboard.showScores,
+            showPlaceholder = surveyConfig.score.leaderboard.showPlaceholder,
+            backgroundImage = surveyConfig.score.leaderboard.backgroundImage,
+            scores = emptyList(),
         )
     )
         private set
@@ -143,6 +146,7 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
                 currentPage = currentPageIndex + 1,
                 pageTitle = surveyConfig.pages[currentPageIndex].title,
                 pageDescription = surveyConfig.pages[currentPageIndex].description,
+                pageImage = surveyConfig.pages[currentPageIndex].image,
                 showQuestionScores = surveyConfig.score.showQuestionScores,
                 content = surveyContentPage.values.toList(),
             )
@@ -175,6 +179,7 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
                 currentPage = currentPageIndex + 1,
                 pageTitle = surveyConfig.pages[currentPageIndex].title,
                 pageDescription = surveyConfig.pages[currentPageIndex].description,
+                pageImage = surveyConfig.pages[currentPageIndex].image,
                 content = surveyContentPage.values.toList(),
             )
         )
@@ -220,6 +225,7 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
                     currentPage = currentPageIndex + 1,
                     pageTitle = surveyConfig.pages[currentPageIndex].title,
                     pageDescription = surveyConfig.pages[currentPageIndex].description,
+                    pageImage = surveyConfig.pages[currentPageIndex].image,
                     content = surveyContentPage.values.toList(),
                     inputErrors = emptyMap()
                 )
@@ -390,12 +396,14 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
  * @param showScores Whether to show numeric scores next to names.
  * @param showPlaceholder Whether empty lines should be filled up to limit.
  * @param scores Current list of entries, newest appended at the end.
+ * @param backgroundImage Optional background image.
  */
 data class HighscoreUiState(
     val limit: Int,
     val showScores: Boolean,
     val showPlaceholder: Boolean,
     val scores: List<HighscoreEntry>,
+    val backgroundImage: File? = null,
 )
 
 /**
@@ -427,6 +435,8 @@ data class SurveySummaryUiState(
     val totalQuestions: Int,
     val description: String,
     val highscoreEnabled: Boolean = true,
+    val image: File? = null,
+    val backgroundImage: File? = null,
 )
 
 /**
@@ -447,6 +457,7 @@ data class SurveyContentUiState(
     val currentPage: Int,
     val pageTitle: String? = null,
     val pageDescription: String? = null,
+    val pageImage: File? = null,
     val showQuestionScores: Boolean = false,
     val content: List<SurveyContentData>,
     val inputErrors: Map<String, String> = emptyMap(),

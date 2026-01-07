@@ -122,7 +122,7 @@ fun SurveyContentScreen(surveyModel: SurveyModel) {
                 scrollState.animateScrollTo(0)
             }
             Column(modifier = Modifier.weight(1f).padding(8.dp).verticalScroll(scrollState), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                PageHeader(surveyContentUiState.pageTitle, surveyContentUiState.pageDescription)
+                PageHeader(surveyContentUiState.pageTitle, surveyContentUiState.pageDescription, surveyContentUiState.pageImage)
 
                 surveyContentUiState.content.forEach {
                     when (it) {

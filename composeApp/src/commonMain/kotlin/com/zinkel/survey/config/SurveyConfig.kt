@@ -25,7 +25,8 @@ import java.time.LocalTime
  * @property title Human-readable title displayed prominently in the UI.
  * @property description Optional longer description shown on the summary/intro screen.
  * @property type The mode of the survey (SURVEY vs QUIZ), influencing scoring and UI hints.
- * @property imagePath Optional path or URL to a header image; interpretation is up to the hosting UI.
+ * @property image Optional file to an image part of description; interpretation is up to the hosting UI.
+ * @property backgroundImage Optional file to a background image; interpretation is up to the hosting UI.
  * @property score Scoring and leaderboard configuration; relevant when [type] implies scoring (e.g., QUIZ).
  * @property pages Ordered list of pages forming the survey/quiz; each page holds its own content items.
  */
@@ -33,7 +34,8 @@ data class SurveyConfig(
     val title: String,
     val description: String,
     val type: SurveyType = SurveyType.SURVEY,
-    val imagePath: String? = null,
+    val image: File? = null,
+    val backgroundImage: File? = null,
 
     val score: ScoreSettings = ScoreSettings(),
 
@@ -66,11 +68,13 @@ data class ScoreSettings(
  * @property showScores Whether numeric scores are displayed next to participant names.
  * @property showPlaceholder Whether the leaderboard should be filled with placeholder lines if not enough quiz runs are available
  * @property limit Maximum number of entries to display in the leaderboard.
+ * @property backgroundImage Optional file to a background image.
  */
 data class LeaderboardSettings(
     val showScores: Boolean = true,
     val showPlaceholder: Boolean = true,
     val limit: Int = 10,
+    val backgroundImage: File? = null,
 )
 
 /**
@@ -81,13 +85,13 @@ data class LeaderboardSettings(
  *
  * @property title Optional page title.
  * @property description Optional page description to provide context.
- * @property imagePath Optional image path/URL to illustrate the page.
+ * @property image Optional image file to illustrate the page.
  * @property content List of content items (questions) shown on this page.
  */
 data class SurveyPage(
     val title: String? = null,
     val description: String? = null,
-    val imagePath: String? = null,
+    val image: File? = null,
 
     val content: List<SurveyPageContent>,
 )

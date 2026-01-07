@@ -1,6 +1,8 @@
 package com.zinkel.survey.ui.elements
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,8 +11,10 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,20 +52,26 @@ fun HighscorePreview() {
 @Composable
 fun HighScore(highscoreUiState: HighscoreUiState) {
     ElevatedCard(modifier = Modifier.padding(16.dp).widthIn(max = 600.dp)) {
-        Column(modifier = Modifier.padding(32.dp)) {
-            Text(
-                text = stringResource(Res.string.highscore),
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 16.dp)
-            )
-
-            highscoreUiState.scores.sortedByDescending { it.score }.take(highscoreUiState.limit).forEachIndexed { index, it ->
-                HighscoreElement(index + 1, it, highscoreUiState.showScores)
+        Box {
+            if (highscoreUiState.backgroundImage != null) {
+                val image = remember(highscoreUiState.backgroundImage) { loadImageBitmap(highscoreUiState.backgroundImage) }
+                Image(image, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.matchParentSize())
             }
-            if (highscoreUiState.showPlaceholder) {
-                for (i in highscoreUiState.scores.size..<highscoreUiState.limit) {
-                    HighscoreElement(i + 1, HighscoreEntry("-".repeat(10), 0), highscoreUiState.showScores)
+            Column(modifier = Modifier.padding(32.dp)) {
+                Text(
+                    text = stringResource(Res.string.highscore),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 16.dp)
+                )
+
+                highscoreUiState.scores.sortedByDescending { it.score }.take(highscoreUiState.limit).forEachIndexed { index, it ->
+                    HighscoreElement(index + 1, it, highscoreUiState.showScores)
+                }
+                if (highscoreUiState.showPlaceholder) {
+                    for (i in highscoreUiState.scores.size..<highscoreUiState.limit) {
+                        HighscoreElement(i + 1, HighscoreEntry("-".repeat(10), 0), highscoreUiState.showScores)
+                    }
                 }
             }
         }
