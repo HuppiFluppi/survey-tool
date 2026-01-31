@@ -66,8 +66,8 @@ Steps to use:
 - [x] Add support for images (summary page background, survey description, highscore background, page header)
 - [ ] Add conditional pages/question
 - [x] Add command line arguments to load configuration
-- [ ] Refactor package structure and remedy some code smells
 - [ ] Add system test (load, fill, submit, check)
+- [ ] Refactor package structure and remedy some code smells
 - [ ] Add remote configuration loading and data sending
 - [ ] Enable Android target
 - [ ] Add fullscreen/kiosk mode (Desktop)

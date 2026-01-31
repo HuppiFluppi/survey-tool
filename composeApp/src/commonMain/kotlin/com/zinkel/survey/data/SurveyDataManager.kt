@@ -78,7 +78,7 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
         val submitCount: Int = list.size
         var previousId = 0
         var previousFirstTime: ZonedDateTime = ZonedDateTime.now()
-        val zeroTimeToken = Instant.ofEpochMilli(0).atZone(ZoneId.of("Europe/Paris"))
+        val zeroTimeToken = Instant.ofEpochMilli(0).atZone(ZoneId.of("UTC"))
         var previousLastTime: ZonedDateTime = zeroTimeToken
         var previousHighScore: Int = Int.MIN_VALUE
         var previousLowScore: Int = Int.MAX_VALUE

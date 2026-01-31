@@ -26,14 +26,30 @@ class CSVAccess : SurveyDataAccess {
             add(instance.startTime)
             add(instance.endTime)
             add(instance.type)
-            if (instance.type == SurveyType.QUIZ) add(instance.user)
+            if (instance.type == SurveyType.QUIZ) add(sanitizeCSV(instance.user))
             if (instance.type == SurveyType.QUIZ) add(instance.score)
             instance.getAllAnswers().forEach { answer ->
                 add(answer.question.id)
                 add(answer.question.title)
-                add(answer.answer)
+                add(sanitizeCSV(answer.answer))
             }
         }
+
+    // sanitize CSV data to prevent formula injection
+    private fun sanitizeCSV(value: Any?): Any? {
+        if (value == null) return null
+        if (value !is String) return value
+
+        val trimmed = value.trim()
+        if (trimmed.isEmpty()) return trimmed
+
+        // Escape if starts with dangerous characters
+        return if (trimmed.firstOrNull() in setOf('=', '+', '-', '@', '\t', '\r')) {
+            "'$trimmed"  // Prefix with single quote to treat as text
+        } else {
+            trimmed
+        }
+    }
 
     private fun generateHeaderRow(questionCount: Int, instance: SurveyInstance): List<String> = buildList {
         add("#")

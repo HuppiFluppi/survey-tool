@@ -43,6 +43,10 @@ Start the Survey Tool application. You'll see the main screen with option to loa
 Click the "Load Survey" button and select a survey configuration file (`.yaml` file). Alternatively, you can drag and drop a file into the app. 
 See [Create your own survey](#create-your-own-survey) for how to create a configuration file.
 
+> **Note:** Information from the survey configuration file is used to display the survey to the user. 
+> For this, the survey can also define files to load as image from the users computer. 
+> While misuse is unlikely and the referenced images are not sent or captured, dont load suspicious surveys. 
+
 ### Step 3: Review Survey Information
 
 After loading, you'll see the survey summary screen showing:

@@ -144,7 +144,7 @@ class DataSurveyContentData(
             val dtf = DateTimeFormatterBuilder().parseLenient().appendLocalized(FormatStyle.SHORT, null).toFormatter()
             val birthday = LocalDate.parse(answer, dtf)
             val today = LocalDate.now()
-            if ((today.year - birthday.year) in 0..100) return AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_birthday))
+            if ((today.year - birthday.year) !in 0..100) return AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_birthday))
         } catch (e: Exception) {
             e.printStackTrace()
             return AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_birthday))
