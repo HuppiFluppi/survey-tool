@@ -60,13 +60,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zinkel.survey.config.*
 import com.zinkel.survey.data.DateTimePick
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import surveytool.composeapp.generated.resources.*
 import java.io.File
 import java.time.Instant
@@ -155,7 +155,7 @@ fun DataElement(question: DataQuestion, onValueChange: (String) -> Unit, savedVa
                     },
                     onValueChange = {
                         if (question.dataType == DataQuestionType.AGE && it.any { char -> !char.isDigit() }) return@TextFieldWithoutPadding
-                        txt = it;
+                        txt = it
                         onValueChange(it)
                     },
                     modifier = Modifier.weight(1f)
@@ -660,8 +660,8 @@ fun InformationBlockElementPreview() {
     InformationBlockElement(
         InformationBlock(
             title = "Mighty information block",
-            "1-1",
-            "The description is descriptive as such. Only a description like this brings true description joy. It's just so describable!",
+            id = "1-1",
+            description = "The description is descriptive as such. Only a description like this brings true description joy. It's just so describable!",
         )
     )
 }
