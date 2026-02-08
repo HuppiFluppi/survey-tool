@@ -35,7 +35,7 @@ And maybe help others who come across this repo, having the same need I had year
 - Currently supports Desktop
 
 ## Tech stack
-- Kotlin: 2.2 / JVM 21
+- Kotlin: 2.3 / JVM 25
 - Build system: Gradle (Kotlin DSL)
 - UI: Jetpack Compose (Android) or Compose Multiplatform
 

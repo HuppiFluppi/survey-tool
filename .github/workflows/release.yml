@@ -10,26 +10,26 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - name: Build+Check
         run: |
           ./gradlew --version
           ./gradlew -Pversion=$GITHUB_REF_NAME clean build
       - name: Upload Test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Test results Linux
           path: composeApp/build/reports/tests/
       - name: Package
         run: ./gradlew -Pversion=$GITHUB_REF_NAME packageReleaseUberJarForCurrentOS
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Survey Tool Jar Linux
           path: composeApp/build/compose/jars/survey-tool-linux-x64-${{ github.ref_name }}-release.jar
@@ -44,26 +44,26 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - name: Build+Check
         run: |
           ./gradlew --version
           ./gradlew -Pversion="$env:GITHUB_REF_NAME" clean build
       - name: Upload Test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Test results Windows
           path: composeApp/build/reports/tests/
       - name: Package
         run: ./gradlew -Pversion="$env:GITHUB_REF_NAME" packageReleaseUberJarForCurrentOS
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: Survey Tool Jar Windows
           path: composeApp/build/compose/jars/survey-tool-windows-x64-${{ github.ref_name }}-release.jar
