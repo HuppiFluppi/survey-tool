@@ -33,16 +33,13 @@ content:
 
   - type: choice
     required: false
-    title: "Random question y?"
+    title: "What animal is your favorite?"
     config:
+      conditional_key: animal
       choices:
-        - title: "Choice 1"
-          score: 5
-          correct: true
-        - title: "Choice 2"
-        - title: "Choice 3"
-        - title: "Choice 4"
-        - title: "Choice 5"
+        - title: "Dog"
+        - title: "Cat"
+        - title: "Horse"
 
   - type: text
     required: false
@@ -116,10 +113,30 @@ content:
 
   - type: rating
     required: false
-    title: "random question r?"
+    conditional:
+      key: animal
+      value: ["Dog"]
+    title: "How much do you like dogs?"
+
+  - type: rating
+    required: false
+    conditional:
+      key: animal
+      value: ["Cat"]
+    title: "How much do you like cats?"
+
+  - type: rating
+    required: false
+    conditional:
+      key: animal
+      value: ["Horse"]
+    title: "How much do you like horses?"
 
 ---
-title: "Page 2"
+title: "Dog Page"
+conditional:
+  key: animal
+  value: ["Dog"]
 content:
   - type: data
     required: false
@@ -233,7 +250,10 @@ content:
     title: "random question r?"
 
 ---
-title: "Page 3"
+title: "Cat page"
+conditional:
+  key: animal
+  value: ["Cat"]
 content:
   - type: data
     required: false
@@ -347,7 +367,10 @@ content:
     title: "random question r?"
 
 ---
-title: "Page 4"
+title: "Horse page"
+conditional:
+  key: animal
+  value: ["Horse"]
 content:
   - type: data
     required: false

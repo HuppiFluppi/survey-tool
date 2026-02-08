@@ -100,6 +100,7 @@ content:
       limit: 2 # Int (default: 2) — max selections when multiple == true; if 0, no limit
       dropdown: false # Boolean (default: false). If true, show a dropdown instead of checklist items. Only relevant if multiple == false. Not compatible with horizontal
       horizontal: true # Boolean (default: false). Show choices horizontally. Use only with short choice titles. Only relevant if multiple == false. Not compatible with dropdown
+      conditional_key: conditionKey # String (optional). If given, this choice question can be used for conditionally showing other elements by using this reference. Must be unique.
       choices: # list of choices
         - title: "Sun" # String (required). Title of the choice
           correct: true # Boolean (default: false). If true, this choice is correct. Used in quiz mode
@@ -116,6 +117,12 @@ content:
   - type: text
     required: true
     title: "What is your favorite ice cream?"
+    conditional: # conditional: ConditionalSettings (optional): conditionally show this element
+      key: conditionKey # String (required). Reference to a choice question 'conditional_key' that will be used for the condition. The choice question needs to exist and must be before this element
+      value: # List of Strings (required). If the choice, referenced by key has one of the given values, this element is shown. Otherwise, it is skipped.
+        - "Sun"
+        - "Wind"
+        - "Rain"
     config:
       multiline: true # Boolean (default: false). If you expect lengthy answers, set this to true
       pattern: '.*' # String (optional). Regex pattern to match the input against. Not used for scoring.
@@ -185,3 +192,18 @@ content:
         - title: "Action"
           correct_choice: "Love it"
           score: 5
+
+--- # A second page
+
+# conditional: ConditionalSettings (optional): conditionally show this page
+# If the key has the given value, the page is shown. Otherwise, it is skipped.
+# A corresponding choice question needs to exist with the given key configured.
+conditional:
+  key: conditionKey
+  value:
+    - "Snow"
+
+content:
+  - type: information
+    title: "This is a secondpage"
+    description: "It is shown conditionally"

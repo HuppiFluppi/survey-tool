@@ -13,7 +13,7 @@ import java.time.LocalTime
  * Semantics and expectations:
  * - The list of [pages] defines the end-to-end flow; its order is the navigation order.
  * - When [type] is a quiz, the [score] settings control scoring behavior and leaderboard visibility.
- * - [imagePath], when present, can be used by the UI as a header/banner illustration.
+ * - [image] & [backgroundImage], when present, can be used by the UI for illustration.
  *
  * Invariants:
  * - [title] should be non-blank for a good UX.
@@ -92,8 +92,22 @@ data class SurveyPage(
     val title: String? = null,
     val description: String? = null,
     val image: File? = null,
+    val conditional: ConditionalSettings? = null,
 
     val content: List<SurveyPageContent>,
+)
+
+/**
+ * Setting for conditional display.
+ *
+ * Elements & Pages can be hidden/shown based on the users selection of other elements.
+ *
+ * @property key Reference to a conditional key. This must be configured and match with a choice question.
+ * @property values List of valid values for the referenced key to show this element.
+ */
+data class ConditionalSettings(
+    val key: String,
+    val values: List<String>,
 )
 
 //### Survey question hierarchy
@@ -112,6 +126,7 @@ sealed class SurveyPageContent(
     val id: String,
     val required: Boolean = true,
     val savable: Boolean = true,
+    val conditional: ConditionalSettings? = null,
 )
 
 enum class SurveyContentType {
@@ -139,6 +154,7 @@ class TextQuestion(
     title: String,
     id: String,
     required: Boolean = true,
+    conditional: ConditionalSettings? = null,
 
     val multiline: Boolean = false,
     val pattern: Regex? = null,
@@ -146,7 +162,7 @@ class TextQuestion(
     val correctAnswer: String? = null,
     val correctAnswerPattern: Regex? = null,
     val correctAnswerList: List<String>? = null,
-) : SurveyPageContent(SurveyContentType.TEXT, title, id, required)
+) : SurveyPageContent(SurveyContentType.TEXT, title = title, id = id, required = required, conditional = conditional)
 
 /**
  * Choice-based question.
@@ -162,13 +178,15 @@ class ChoiceQuestion(
     title: String,
     id: String,
     required: Boolean = true,
+    conditional: ConditionalSettings? = null,
 
     val multiple: Boolean = false,
     val limit: Int = 2,
     val dropdown: Boolean = false,
     val horizontal: Boolean = false,
+    val conditionalKey: String? = null,
     val choices: List<ChoiceItem>,
-) : SurveyPageContent(SurveyContentType.CHOICE, title, id, required)
+) : SurveyPageContent(SurveyContentType.CHOICE, title = title, id = id, required = required, conditional = conditional)
 
 /**
  * A single option in a [ChoiceQuestion].
@@ -196,11 +214,12 @@ class DataQuestion(
     title: String,
     id: String,
     required: Boolean = true,
+    conditional: ConditionalSettings? = null,
 
     val dataType: DataQuestionType = DataQuestionType.NAME,
     val validationPattern: String? = null,
     val useForLeaderboard: Boolean = true,
-) : SurveyPageContent(SurveyContentType.DATA, title, id, required)
+) : SurveyPageContent(SurveyContentType.DATA, title = title, id = id, required = required, conditional = conditional)
 
 enum class DataQuestionType {
     NAME,
@@ -228,6 +247,7 @@ class DateTimeQuestion(
     title: String,
     id: String,
     required: Boolean = true,
+    conditional: ConditionalSettings? = null,
 
     val inputType: DateTimeType = DateTimeType.DATETIME,
     val initialSelectedTime: LocalTime? = null,
@@ -236,7 +256,7 @@ class DateTimeQuestion(
     val score: Int? = null,
     val correctTimeAnswer: LocalTime? = null,
     val correctDateAnswer: LocalDate? = null,
-) : SurveyPageContent(SurveyContentType.DATETIME, title, id, required)
+) : SurveyPageContent(SurveyContentType.DATETIME, title = title, id = id, required = required, conditional = conditional)
 
 enum class DateTimeType {
     DATE,
@@ -261,11 +281,12 @@ class RatingQuestion(
     title: String,
     id: String,
     required: Boolean = true,
+    conditional: ConditionalSettings? = null,
 
     val level: Int = 5,
     val symbol: RatingSymbol = RatingSymbol.STAR,
     val colorGradient: RatingColorGradient = RatingColorGradient.NONE,
-) : SurveyPageContent(SurveyContentType.RATING, title, id, required)
+) : SurveyPageContent(SurveyContentType.RATING, title = title, id = id, required = required, conditional = conditional)
 
 enum class RatingSymbol {
     STAR,
@@ -299,6 +320,7 @@ class SliderQuestion(
     title: String,
     id: String,
     required: Boolean = true,
+    conditional: ConditionalSettings? = null,
 
     val range: Boolean = false,
     val start: Float = 0f,
@@ -308,7 +330,7 @@ class SliderQuestion(
     val unit: String? = null,
     val score: Int? = null,
     val correctAnswer: Float? = null,
-) : SurveyPageContent(SurveyContentType.SLIDER, title, id, required)
+) : SurveyPageContent(SurveyContentType.SLIDER, title = title, id = id, required = required, conditional = conditional)
 
 /**
  * Likert scale question.
@@ -323,10 +345,11 @@ class LikertQuestion(
     title: String,
     id: String,
     required: Boolean = true,
+    conditional: ConditionalSettings? = null,
 
     val choices: List<String>,
     val statements: List<LikertStatement>,
-) : SurveyPageContent(SurveyContentType.LIKERT, title, id, required)
+) : SurveyPageContent(SurveyContentType.LIKERT, title = title, id = id, required = required, conditional = conditional)
 
 /**
  * A single statement within a [LikertQuestion].
@@ -352,7 +375,8 @@ data class LikertStatement(
 class InformationBlock(
     title: String,
     id: String,
+    conditional: ConditionalSettings? = null,
 
     val description: String? = null,
     val image: File? = null,
-) : SurveyPageContent(SurveyContentType.INFORMATION, title, id, required = true, savable = false)
+) : SurveyPageContent(SurveyContentType.INFORMATION, title = title, id = id, required = true, savable = false, conditional = conditional)

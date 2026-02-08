@@ -16,6 +16,7 @@ class YamlReader : SurveyConfigReader {
     }
 
     private inner class YamlProcessor(private val inputFile: File) {
+        private val conditionals = mutableListOf<String>()
 
         fun load(): SurveyConfig {
             val load = Load(yamlLoadSettings)
@@ -59,15 +60,41 @@ class YamlReader : SurveyConfigReader {
             title = page["title"] as? String,
             description = page["description"] as? String,
             image = checkFile(page["image"] as? String, "Page${pageNumber + 1}::image"),
+            conditional = (page["conditional"] as? Map<String, Any>)?.let { mapConditional(it).checkConditional() },
             content = (page["content"] as? List<Map<String, Any>>)?.mapIndexed { index, it -> mapContent(it, pageNumber, index) }
                 ?: throw IllegalArgumentException("Survey file malformed (document without content)")
         )
+
+        private fun mapConditional(conditionalSettings: Map<String, Any>): ConditionalSettings {
+            val key = conditionalSettings["key"] as? String ?: throw IllegalArgumentException("Survey file malformed (conditional key)")
+            val values = conditionalSettings["value"] as? List<String> ?: throw IllegalArgumentException("Survey file malformed (conditional value)")
+            if (values.isEmpty()) throw IllegalArgumentException("Survey file malformed (conditional value list empty)")
+
+            return ConditionalSettings(key = key, values = values)
+        }
+
+        private fun ConditionalSettings.checkConditional(): ConditionalSettings {
+            if (key !in conditionals) throw IllegalArgumentException("Survey file malformed (referenced conditional key '${key}' not found)")
+            return this
+        }
+
+        private fun String?.addConditional(): String? {
+            if (this != null) {
+                if (this in conditionals) {
+                    throw IllegalArgumentException("Survey file malformed (duplicated conditional_key '$this')")
+                } else {
+                    conditionals.add(this)
+                }
+            }
+            return this
+        }
 
         private fun mapContent(content: Map<String, Any>, pageNumber: Int, contentNumber: Int): SurveyPageContent {
             val type = (content["type"] as? String)?.let { SurveyContentType.valueOf(it.uppercase()) }
                 ?: throw IllegalArgumentException("Survey file malformed (content without type)")
             val title = content["title"] as? String ?: throw IllegalArgumentException("Survey file malformed (no title for content)")
             val required = content["required"] as? Boolean ?: true
+            val conditional = (content["conditional"] as? Map<String, Any>)?.let { mapConditional(it).checkConditional() }
 
             when (type) {
                 SurveyContentType.TEXT        -> {
@@ -76,6 +103,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+                        conditional = conditional,
 
                         multiline = config?.get("multiline") as? Boolean ?: false,
                         pattern = (config?.get("pattern") as? String)?.toRegex(),
@@ -107,11 +135,14 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+                        conditional = conditional,
 
                         multiple = config["multiple"] as? Boolean ?: false,
                         limit = config["limit"] as? Int ?: 2,
                         dropdown = config["dropdown"] as? Boolean ?: false,
                         horizontal = config["horizontal"] as? Boolean ?: false,
+                        conditionalKey = (config["conditional_key"] as? String).addConditional(),
+
                         choices = choices
                     )
                 }
@@ -122,6 +153,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+                        conditional = conditional,
 
                         dataType = (config?.get("datatype") as? String)?.let { DataQuestionType.valueOf(it.uppercase()) } ?: DataQuestionType.NAME,
                         validationPattern = config?.get("validation_pattern") as? String,
@@ -135,6 +167,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+                        conditional = conditional,
 
                         level = (config?.get("level") as? Int)
                             ?.also { if (it !in 3..10) throw IllegalArgumentException("Survey file malformed (rating level valid 3 to 10)") }
@@ -152,6 +185,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+                        conditional = conditional,
 
                         choices = (config["choices"] as? List<String>)
                             ?: throw IllegalArgumentException("Survey file malformed (no choices for likert content)"),
@@ -174,6 +208,8 @@ class YamlReader : SurveyConfigReader {
                     return InformationBlock(
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
+                        conditional = conditional,
+
                         description = content["description"] as? String,
                         image = checkFile(content["image"] as? String, "Page${contentNumber + 1}::$title($type)::image"),
                     )
@@ -186,6 +222,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+                        conditional = conditional,
 
                         inputType = (config?.get("input_type") as? String)?.let { DateTimeType.valueOf(it.uppercase()) } ?: DateTimeType.DATETIME,
                         initialSelectedTime = (config?.get("initial_selected_time") as? String)?.let { LocalTime.parse(it) },
@@ -204,6 +241,7 @@ class YamlReader : SurveyConfigReader {
                         title = title,
                         id = getContentId(pageNumber, contentNumber),
                         required = required,
+                        conditional = conditional,
 
                         range = config?.get("range") as? Boolean ?: false,
                         start = getFloat(config?.get("start")) ?: 0f,
