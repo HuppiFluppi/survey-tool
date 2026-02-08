@@ -18,6 +18,7 @@ Documentation for developers working on the Survey Tool project.
 - [Code Organization](#code-organization)
 - [Key Components](#key-components)
 - [Configuration Format](#configuration-format)
+- [Schema files](#schema-files)
 - [Contributing](#contributing)
 - [Additional Resources](#additional-resources)
 - [License](#license)
@@ -30,13 +31,13 @@ Survey Tool is a Kotlin Multiplatform desktop application. It provides a declara
 
 ### Tech Stack
 
-- **Language**: Kotlin 2.2.21
-- **JVM Target**: Java 21
+- **Language**: Kotlin 2.3
+- **JVM Target**: Java 25
 - **Build System**: Gradle 9.0+ (Kotlin DSL)
-- **UI Framework**: Compose Multiplatform 1.9.1
-- **Configuration**: YAML (SnakeYAML Engine 2.10)
+- **UI Framework**: Compose Multiplatform 1.10.0
+- **Configuration**: YAML (SnakeYAML Engine 3.0)
 - **Data Export**: CSV (Kotlin CSV 1.10.0)
-- **Testing**: Kotlin Test, MockK 1.14.6
+- **Testing**: Kotlin Test, MockK 1.14
 
 ### Supported Platforms
 
@@ -116,6 +117,7 @@ survery-tool/
 │   │       └── kotlin/com/zinkel/survey/
 │   │           └── Main.kt     # Application entry point
 │   └── build.gradle.kts        # Module build configuration
+├── docs/                       # Usage and development documentation
 ├── examples/                   # Example survey configurations
 ├── gradle/
 │   ├── wrapper/                # Gradle wrapper
@@ -160,13 +162,13 @@ com.zinkel.survey/
 
 ### Required
 
-- **JDK 21** or higher
+- **JDK 25** or higher
 - **Gradle 9.0+** (included via wrapper)
 - **Git** (for version control)
 
 ### Recommended
 
-- **IntelliJ IDEA 2024.3+** with Kotlin plugin
+- **IntelliJ IDEA** with Kotlin plugin
 - **Compose Multiplatform IDE Support** plugin
 - **Git** client or IDE integration
 
@@ -200,7 +202,7 @@ java -version
 **IntelliJ IDEA**:
 1. File → Open → Select `survery-tool` directory
 2. Wait for Gradle sync to complete
-3. Ensure Project SDK is set to JDK 21+
+3. Ensure Project SDK is set to JDK 25+
 
 ---
 
@@ -337,7 +339,7 @@ Output: `composeApp/build/compose/binaries/main/deb/`
 
 **Workflow** (`.github/workflows/ci.yml`):
 1. Checkout code
-2. Setup Java 21
+2. Setup Java 25
 3. Setup Gradle
 4. Build: `./gradlew clean assemble`
 5. Test: `./gradlew allTests`
@@ -552,6 +554,18 @@ See `template.yaml` for complete documentation.
 
 ---
 
+## Schema Files
+
+**survey_schema.json:** in `docs/files` can be used to verify survey configuration templates.
+It uses json schema and can be used together with json schema validation tools (e.g. in the IDE).
+To match the document structure of a template file, `anyOf` is used to handle survey head or page data.
+
+> Note: Tool support of multiple documents in a single yaml file might be limited 
+
+Make sure to update the schema file to reflect any changes to the survey configuration input.
+
+---
+
 ## Contributing
 
 ### Pull Request Process
@@ -599,6 +613,7 @@ Following steps need to be taken.
 6. For new questions, add an `updateAnswer` overload in `SurveyState.kt`
 7. For new questions, add a branch for when in `SurveyContentScreen.kt`
 8. Add to [User Guide](usage.md) documentation and check if examples need update (e.g. besides the template.yaml, all questions should be in `minimal-all-question-types-survey.yaml`) 
+9. Change survey schemas in `docs/files/` to reflect changes.
 
 Make sure to not hardcode string and use the compose resource handling.
 

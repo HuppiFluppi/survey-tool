@@ -131,7 +131,7 @@ Configuration requirements:
 Two schema files exist to help you write and check your created configuration file. You dont have to use any of the schema files to write the configuration file.
 How to set up your editor to take the schema into account varies (for the Visual Studio Code Yaml plugin, one can add `# yaml-language-server: $schema=<urlToTheSchema>` to the file).
 
-Please be aware that as of this writing, the autocomplete and schema checking is not working great. 
+Please be aware that as of this writing, the autocomplete and schema checking inside different tools is not working great. 
 The configuration file consist of multiple yaml documents (separated by `---`) and the schema checkers really don't like that.
 
 Schema files:
@@ -139,6 +139,8 @@ Schema files:
 - [survey_schema2.json](files/survey_schema2.json): This schema uses `arrays` to handle multiple documents. Probably the *correct* way but doesn't seem to be supported by editors.
 
 Choose the schema that works best in your editor (or none at all).
+
+> Note: survey_schema2.json is currently unmaintained. Majority of tools and libs show better results with the other approach.
 
 ---
 
