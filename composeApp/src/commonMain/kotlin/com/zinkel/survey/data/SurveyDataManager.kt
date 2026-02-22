@@ -4,6 +4,8 @@ import com.zinkel.survey.config.SurveyConfig
 import com.zinkel.survey.config.SurveyType
 import com.zinkel.survey.data.SurveyDataManager.Companion.DATA_FILE_SUFFIX
 import com.zinkel.survey.data.SurveyDataManager.Companion.SUMMARY_FILE_SUFFIX
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.time.Instant
 import java.time.ZoneId
@@ -60,7 +62,7 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
             summary.maxScore = max(summary.maxScore ?: Int.MIN_VALUE, score)
         }
 
-        dataAccess.saveSurveySummary(summaryFile, summary)
+        withContext(Dispatchers.IO) { dataAccess.saveSurveySummary(summaryFile, summary) }
     }
 
     /**
@@ -72,7 +74,7 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
      * @return List of [SurveyInstance]s with highest score.
      */
     suspend fun fillSummaryAndInstanceIdFromPrevious(limit: Int): List<SurveyInstance> {
-        val list = dataAccess.loadHeadSurveyData(dataFile)
+        val list = withContext(Dispatchers.IO) { dataAccess.loadHeadSurveyData(dataFile) }
         if (list.isEmpty()) return emptyList()
 
         val submitCount: Int = list.size
@@ -119,7 +121,7 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
      */
     suspend fun addSurveyData(instance: SurveyInstance) {
         updateSummary(instance)
-        dataAccess.saveSurveyData(dataFile, instance)
+        withContext(Dispatchers.IO) { dataAccess.saveSurveyData(dataFile, instance) }
     }
 
     private var instanceId = 0

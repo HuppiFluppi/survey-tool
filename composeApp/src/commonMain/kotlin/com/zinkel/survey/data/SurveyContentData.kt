@@ -225,7 +225,7 @@ class SliderSurveyContentData(
         if (question.correctAnswer == null) return 0
 
         // calculation for range
-        if (question.range && (question.correctAnswer in (answer!!.first..answer!!.second!!))) return question.score ?: 0
+        if (question.range && (question.correctAnswer in (answer!!.first..(answer!!.second ?: 0.0f)))) return question.score ?: 0
 
         // calculation for single value
         val div = abs(question.correctAnswer - answer!!.first)

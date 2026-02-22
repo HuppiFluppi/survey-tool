@@ -260,12 +260,17 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
      *
      * Note: This operates in a mutable snapshot to avoid recomposition glitches.
      */
-    private fun updateHighscore(instance: SurveyInstance) {
+    private suspend fun updateHighscore(instance: SurveyInstance) {
         if (surveyConfig.type != SurveyType.QUIZ || !surveyConfig.score.showLeaderboard) return
 
         Snapshot.withMutableSnapshot {
             // as the UI sorts and limits, simply adding works but might eventually become a problem with many highscore entries
-            highscoreUiState = highscoreUiState.copy(scores = highscoreUiState.scores + HighscoreEntry(instance.user ?: "<unset>", instance.score ?: 0))
+            highscoreUiState = highscoreUiState.copy(
+                scores = highscoreUiState.scores + HighscoreEntry(
+                    instance.user ?: getString(Res.string.highscore_unknown_player),
+                    instance.score ?: 0
+                )
+            )
         }
     }
 
