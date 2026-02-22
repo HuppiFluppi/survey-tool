@@ -86,6 +86,7 @@ data class LeaderboardSettings(
  * @property title Optional page title.
  * @property description Optional page description to provide context.
  * @property image Optional image file to illustrate the page.
+ * @property conditional Optional settings for conditional display of this page.
  * @property content List of content items (questions) shown on this page.
  */
 data class SurveyPage(
@@ -119,6 +120,7 @@ data class ConditionalSettings(
  * @property id Stable identifier used to correlate answers and validations.
  * @property required Whether the question needs an answer.
  * @property savable Whether this content should be saved.
+ * @property conditional Optional settings for conditional display of this element.
  */
 sealed class SurveyPageContent(
     val type: SurveyContentType,
@@ -172,6 +174,9 @@ class TextQuestion(
  *
  * @param multiple Whether multiple selections are allowed.
  * @param limit Maximum number of selections allowed when [multiple] is true.
+ * @param dropdown Whether to display the choices in a dropdown menu instead of buttons.
+ * @param horizontal Whether the choices should be displayed horizontally.
+ * @param conditionalKey Optional key to reference a choice question for conditional display of elements
  * @param choices The available options for the question.
  */
 class ChoiceQuestion(

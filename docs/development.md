@@ -187,7 +187,7 @@ cd survery-tool
 
 ```bash
 java -version
-# Should show version 21 or higher
+# Should show version 25 or higher
 ```
 
 ### 3. Verify Gradle
@@ -502,14 +502,15 @@ data class SurveyConfig(
 4. **RatingQuestion**: Visual rating scales
 5. **LikertQuestion**: Grid-based rating
 6. **DateTimeQuestion**: Date/time picker
-7. **Information**: Non-interactive content
+7. **SliderQuestion**: Numeric range/value slider
+8. **Information**: Non-interactive content
 
 ### State Flow
 
 ```kotlin
 // Load state
 sealed class SurveyLoadUiState {
-    object Idle
+    object NotLoaded
     object Loading
     data class Loaded(val config: SurveyConfig)
     data class Error(val message: String)

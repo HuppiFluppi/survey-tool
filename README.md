@@ -30,7 +30,7 @@ And maybe help others who come across this repo, having the same need I had year
 ## Features
 - Declarative survey/quiz configuration
 - Support for multiple pages
-- Support for different survey questions (Text, Multiple Choice, Rating, Likert)
+- Support for different survey questions (Text, Multiple Choice, Rating, Likert, Data, DateTime, Slider)
 - Quizzes with points and optional leaderboard
 - Currently supports Desktop
 

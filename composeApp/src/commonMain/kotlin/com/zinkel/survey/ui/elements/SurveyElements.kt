@@ -3,7 +3,7 @@
  *
  * Contents:
  * - Page building blocks (headers, error banners).
- * - Question composables for Data, Text, Choice, Rating, and Likert types.
+ * - Question composables for all content types: Data, Text, Choice, Rating, Likert, DateTime, Slider, and Information.
  * - Utility functions for selection handling and a padding-adjusted TextField.
  *
  * Design notes:
@@ -74,11 +74,12 @@ import java.time.LocalTime
 import java.time.ZoneOffset
 
 /**
- * A composable function that displays a page header with an optional title and description.
- * If both, title and description are null, returns without adding composables.
+ * A composable function that displays a page header with an optional title, description, and image.
+ * If title, description, and image are all null, returns without adding composables.
  *
  * @param pageTitle The title of the page to be displayed. If null, the title will not be shown.
  * @param pageDescription The description of the page to be displayed. If null, the description will not be shown.
+ * @param pageImage Optional image file to display below the title and description.
  */
 @Composable
 fun PageHeader(pageTitle: String?, pageDescription: String?, pageImage: File?) {
@@ -363,13 +364,14 @@ fun RatingElementNumberPreview() {
 }
 
 /**
- * Renders a 1..5 star rating ui component for a Rating question.
+ * Renders a rating UI component for a Rating question.
  *
- * Displays a title row and five clickable stars. Selection is remembered per question id
- * and propagated via [onValueChange].
+ * Displays a title row and clickable rating symbols (stars, hearts, etc.) or a segmented number row.
+ * The number of levels and symbol type are driven by [RatingQuestion.level] and [RatingQuestion.symbol].
+ * Selection is remembered per question id and propagated via [onValueChange].
  *
  * @param question The RatingQuestion configuration to render.
- * @param onValueChange Callback invoked with the selected rating (1..5).
+ * @param onValueChange Callback invoked with the selected rating value.
  * @param savedValue Optional initial rating value (0 means no selection).
  * @param inputError Optional error text to display above the card.
  */
@@ -669,7 +671,7 @@ fun InformationBlockElementPreview() {
 /**
  * A composable function that displays an information block with an optional description and image.
  *
- * @param block The [Information block] holding information about title, description and image of the element to be displayed.
+ * @param block The [InformationBlock] holding the title, description, and image to display.
  */
 @Composable
 fun InformationBlockElement(block: InformationBlock) {
@@ -723,7 +725,7 @@ private fun TitleRow(title: String, required: Boolean, showQuestionScores: Boole
 /**
  * TextField variant with adjustable content padding.
  *
- * Based on Material3 TextField but exposes [contentPadding] as content padding is fixed to 16.dp.
+ * Based on Material3 TextField but exposes [contentPadding] as a parameter (default 8.dp on all sides).
  * All other behavior mirrors the standard composable.
  */
 @OptIn(ExperimentalMaterial3Api::class)

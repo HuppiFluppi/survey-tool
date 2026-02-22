@@ -23,7 +23,7 @@ A complete guide for using the Survey Tool to create and run surveys or quizzes.
 ### System Requirements
 
 - Windows or Linux desktop computer
-- Java Runtime Environment (JRE) 21 or higher
+- Java Runtime Environment (JRE) 25 or higher
 
 ### Run the app
 
@@ -156,7 +156,7 @@ Please keep in mind that the result filenames are based on the survey configurat
 
 ## Understanding Content Types
 
-Survey Tool supports seven different content types. Check `template.yaml` for detailed information about how they can be configured. 
+Survey Tool supports eight different content types. Check `template.yaml` for detailed information about how they can be configured. 
 Each serves a specific purpose:
 
 ### 1. Data Question
@@ -286,7 +286,7 @@ Each serves a specific purpose:
 
 ---
 
-### 6. Slider Question
+### 8. Slider Question
 
 ![usage_content_rating.png](images/usage_content_slider.png)
 
@@ -314,7 +314,7 @@ Questions and leaderboard can be configured to display scores.
 
 1. Complete the quiz by answering all questions
 2. The score is calculated based on correct answers
-3. Participants name is taken from the first data field with type `name`
+3. Participants name is taken from the first data field with type `name` or `nickname` (with `use_for_leaderboard: true`)
 4. A ranking appears on the leaderboard, showing the highest scores
 
 ### Leaderboard Display
