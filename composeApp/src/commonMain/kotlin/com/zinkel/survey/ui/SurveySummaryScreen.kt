@@ -29,6 +29,7 @@ import com.zinkel.survey.ui.elements.loadImageBitmap
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import surveytool.composeapp.generated.resources.Res
+import surveytool.composeapp.generated.resources.survey_pages_conditional_questions
 import surveytool.composeapp.generated.resources.survey_pages_questions
 import surveytool.composeapp.generated.resources.take_quiz
 import surveytool.composeapp.generated.resources.take_survey
@@ -66,7 +67,7 @@ fun SurveySummaryScreen(surveyModel: SurveyModel) {
 
                 Text(
                     text = pluralStringResource(
-                        Res.plurals.survey_pages_questions,
+                        if (surveySummaryUiState.hasConditionals) Res.plurals.survey_pages_conditional_questions else Res.plurals.survey_pages_questions,
                         surveySummaryUiState.totalPages,
                         surveySummaryUiState.totalPages,
                         surveySummaryUiState.totalQuestions

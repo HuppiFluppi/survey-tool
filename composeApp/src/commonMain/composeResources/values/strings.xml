@@ -8,6 +8,10 @@
         <item quantity="one">%2$d questions on %1$d page</item>
         <item quantity="other">%2$d questions on %1$d pages</item>
     </plurals>
+    <plurals name="survey_pages_conditional_questions">
+        <item quantity="one">Max %2$d questions on %1$d page</item>
+        <item quantity="other">Max %2$d questions on up to %1$d pages</item>
+    </plurals>
     <string name="take_quiz">Take quiz</string>
     <string name="take_survey">Take survey</string>
     <string name="cancel">Cancel</string>

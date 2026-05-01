@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
+import com.zinkel.survey.config.ConditionalSettings
 import com.zinkel.survey.config.DataQuestionType
 import com.zinkel.survey.config.SurveyConfig
 import com.zinkel.survey.config.SurveyType
@@ -49,7 +50,11 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
         highscoreEnabled = surveyConfig.type == SurveyType.QUIZ && surveyConfig.score.showLeaderboard,
         image = surveyConfig.image,
         backgroundImage = surveyConfig.backgroundImage,
+        hasConditionals = surveyConfig.pages.any { page -> page.conditional != null || page.content.any { it.conditional != null } }
     )
+
+    // a map of all conditionals and their current value
+    private val surveyConditions = mutableMapOf<String, String>()
 
     // dataManager is responsible for persisting each survey run and a summary
     private val dataManager = SurveyDataManager(surveyConfig, configFile)
@@ -142,8 +147,8 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
         surveyUiState = SurveyUiState.Content(
             SurveyContentUiState(
                 surveyTitle = surveyConfig.title,
-                totalPages = surveyConfig.pages.size,
-                currentPage = currentPageIndex + 1,
+                totalPages = getTotalPageNumber(),
+                currentPage = getCurrentPageNumber(currentPageIndex),
                 pageTitle = surveyConfig.pages[currentPageIndex].title,
                 pageDescription = surveyConfig.pages[currentPageIndex].description,
                 pageImage = surveyConfig.pages[currentPageIndex].image,
@@ -152,6 +157,16 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
             )
         )
     }
+
+    /**
+     * Returns the current page number based on conditional status of previous pages
+     */
+    private fun getCurrentPageNumber(pageIndex: Int) = (0..pageIndex).count { isPageVisible(it) }
+
+    /**
+     * Returns the total available pages based on current conditional status
+     */
+    private fun getTotalPageNumber(): Int = surveyConfig.pages.indices.count { isPageVisible(it) }
 
     /**
      * Cancels the current survey run and returns to the summary screen.
@@ -167,16 +182,20 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
      * - Repopulates the previous page’s content.
      */
     fun backSurvey() {
-        if (currentPageIndex == 0) return //should be prevented by UI logic
+        if (currentPageIndex == 0) { cancelSurvey(); return } //should be prevented by UI logic
 
         syncPageToInstance()
-        currentPageIndex--
+
+        //flip through hidden(conditional) pages
+        do {
+            currentPageIndex--
+        } while (currentPageIndex > 0 && !isPageVisible(currentPageIndex))
 
         // set content
         fillSurveyContentPage()
         surveyUiState = SurveyUiState.Content(
             (surveyUiState as SurveyUiState.Content).contentUiState.copy(
-                currentPage = currentPageIndex + 1,
+                currentPage = getCurrentPageNumber(currentPageIndex),
                 pageTitle = surveyConfig.pages[currentPageIndex].title,
                 pageDescription = surveyConfig.pages[currentPageIndex].description,
                 pageImage = surveyConfig.pages[currentPageIndex].image,
@@ -191,6 +210,7 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
     private fun resetSurvey() {
         surveyInstance = null
         currentPageIndex = 0
+        surveyConditions.clear()
         surveyUiState = SurveyUiState.Summary(surveySummaryUiState)
     }
 
@@ -207,7 +227,11 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
 
         //input valid, advance
         syncPageToInstance()
-        currentPageIndex++
+
+        //flip through hidden(conditional) pages
+        do {
+            currentPageIndex++
+        } while (currentPageIndex < surveyConfig.pages.size && !isPageVisible(currentPageIndex))
 
         if (currentPageIndex == surveyConfig.pages.size) { //finalized survey
             val instance4save = surveyInstance ?: throw RuntimeException("SurveyInstance is null")
@@ -222,7 +246,7 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
             fillSurveyContentPage()
             surveyUiState = SurveyUiState.Content(
                 (surveyUiState as SurveyUiState.Content).contentUiState.copy(
-                    currentPage = currentPageIndex + 1,
+                    currentPage = getCurrentPageNumber(currentPageIndex),
                     pageTitle = surveyConfig.pages[currentPageIndex].title,
                     pageDescription = surveyConfig.pages[currentPageIndex].description,
                     pageImage = surveyConfig.pages[currentPageIndex].image,
@@ -241,13 +265,11 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
     private suspend fun completeInstance(instance: SurveyInstance) {
         val answers = instance.getAllAnswers()
 
-        val user =
-            answers.find {
-                it is DataSurveyContentData
-                        && (it.question.dataType == DataQuestionType.NAME || it.question.dataType == DataQuestionType.NICKNAME)
-                        && it.question.useForLeaderboard
-            }
-                ?.answer as? String ?: getString(Res.string.highscore_unknown_player)
+        val user = answers.find {
+            it is DataSurveyContentData
+                    && (it.question.dataType == DataQuestionType.NAME || it.question.dataType == DataQuestionType.NICKNAME)
+                    && it.question.useForLeaderboard
+        }?.answer as? String ?: getString(Res.string.highscore_unknown_player)
         val score = answers.sumOf { it.calculateScore() }
 
         instance.user = user
@@ -307,19 +329,27 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
         return true
     }
 
+    /** Returns true if the page at [index] should be shown given the current [surveyConditions]. */
+    private fun isPageVisible(index: Int): Boolean = conditionMet(surveyConfig.pages[index].conditional)
+
+    /** Returns true if the given [conditional] is satisfied by the current [surveyConditions]. */
+    private fun conditionMet(conditional: ConditionalSettings?): Boolean = conditional == null || surveyConditions[conditional.key] in conditional.values
+
     /**
-     * Builds the [surveyContentPage] map for the current page, optionally seeding content
-     * with previously entered answers if the user navigated back.
+     * Builds the [surveyContentPage] map for the current page, optionally seeding content with previously entered answers if the user navigated back.
+     * Filters out any content which does not meet its conditional settings (e.g. is hidden due to a conditional choice)
      */
     private fun fillSurveyContentPage() {
         val previousAnswers = surveyInstance?.getPageAnswers(currentPageIndex)?.associate { it.question.id to it.answer }.orEmpty()
-        surveyContentPage = surveyConfig.pages[currentPageIndex].content.associate {
-            it.id to SurveyContentData.fromSurveyPageContent(it, previousAnswers[it.id])
-        }
+        surveyContentPage = surveyConfig.pages[currentPageIndex].content
+            .filter { conditionMet(it.conditional) }
+            .associate { it.id to SurveyContentData.fromSurveyPageContent(it, previousAnswers[it.id]) }
     }
 
     /**
      * Writes the current page content answers into the active [SurveyInstance].
+     *
+     * Note: The way page content answers are currently synced, answers to hidden questions are lost/reset
      */
     private fun syncPageToInstance() {
         surveyInstance?.setPageAnswers(currentPageIndex, surveyContentPage.values.toList().filter { it.question.savable })
@@ -347,7 +377,25 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
      * @param choices The new string list answer value.
      */
     fun updateAnswer(id: String, choices: List<String>) {
-        (surveyContentPage[id] as? ChoiceSurveyContentData)?.answer = choices
+        val content = surveyContentPage[id] as? ChoiceSurveyContentData ?: throw RuntimeException("SurveyContentData <$id> not found or invalid type")
+
+        // set answer
+        content.answer = choices
+
+        // check if choice is configured as conditional key
+        val key = content.question.conditionalKey ?: return
+        choices.firstOrNull()?.let { surveyConditions[key] = it }
+
+        // update content
+        syncPageToInstance()
+        fillSurveyContentPage()
+        surveyUiState = SurveyUiState.Content(
+            (surveyUiState as SurveyUiState.Content).contentUiState.copy(
+                totalPages = getTotalPageNumber(),
+                currentPage = getCurrentPageNumber(currentPageIndex),
+                content = surveyContentPage.values.toList()
+            )
+        )
     }
 
     /**
@@ -442,6 +490,7 @@ data class SurveySummaryUiState(
     val highscoreEnabled: Boolean = true,
     val image: File? = null,
     val backgroundImage: File? = null,
+    val hasConditionals: Boolean = false,
 )
 
 /**

@@ -118,7 +118,7 @@ content:
     required: true
     title: "What is your favorite ice cream?"
     conditional: # conditional: ConditionalSettings (optional): conditionally show this element
-      key: conditionKey # String (required). Reference to a choice question 'conditional_key' that will be used for the condition. The choice question needs to exist and must be before this element
+      key: conditionKey # String (required). Reference to a choice question 'conditional_key' that will be used for the condition. The choice question needs to exist and must be prior to this element
       value: # List of Strings (required). If the choice, referenced by key has one of the given values, this element is shown. Otherwise, it is skipped.
         - "Sun"
         - "Wind"

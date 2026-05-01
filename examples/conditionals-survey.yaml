@@ -1,0 +1,173 @@
+# title: String (required)
+# Title of the survey
+title: "Conditionals Survey"
+
+# description: String (required)
+# Description of the survey
+description: "This survey shows the conditionals mechanism with conditional(optional) pages and questions."
+
+# type: SurveyType. Allowed values: "survey" or "quiz". default: "survey"
+# Type of the survey
+type: survey
+
+--- # Each '---' starts a new page document. Pages help structure your survey. At least one page is required
+# Page 1
+
+# title: String (optional)
+# Title of this page
+title: "First Page"
+
+# content: list (required)
+# The different questions to ask in this page
+content:
+  # All questions have 3 fields in common:
+  # * type: String (required). Specify the type of question. one of [data, choice, text, rating, likert]
+  # * required: Boolean (default: true). If true, the user must answer this question
+  # * title: String (required). Question/Headline to show to the user
+  # Configuration specific to each question type is specified in the 'config' area
+
+  # Data questions are simple text questions which cannot be scored. You usually ask for things like name or email
+  - type: data
+    required: false
+    title: "Give me your name"
+
+  # Choice questions are questions which can be scored. You usually ask for things like favorite color or to pick the right answer
+  # They can be multiple or single choice.
+  - type: choice
+    required: true
+    title: "What is your favorite programming language?"
+    config:
+      horizontal: true # Boolean (default: false). If true, choices will be shown horizontally
+      conditional_key: pLang # String (optional). If given, this choice question can be used for conditionally showing other elements by using this reference. Must be unique.
+      choices: # list of choices
+        - title: "Kotlin" # String (required). Title of the choice
+        - title: "Rust"
+        - title: "Python"
+        - title: "Other"
+
+---
+# Page 2
+title: "Kotlin Page"
+conditional:
+  key: pLang
+  value:
+    - "Kotlin"
+content:
+  # Rating questions are asking for a 1-5 rating. They cannot be scored
+  - type: rating
+    required: false
+    title: "How much do you like Kotlin?"
+
+  # Choice questions are questions which can be scored. You usually ask for things like favorite color or to pick the right answer
+  # They can be multiple or single choice.
+  - type: choice
+    required: true
+    title: "Did you code in Kotlin before?"
+    config:
+      horizontal: true # Boolean (default: false). If true, choices will be shown horizontally
+      conditional_key: kotlinExperience # String (optional). If given, this choice question can be used for conditionally showing other elements by using this reference. Must be unique.
+      choices: # list of choices
+        - title: "Yes" # String (required). Title of the choice
+        - title: "No"
+        - title: "Dont know"
+
+  - type: text
+    required: true
+    conditional:
+      key: kotlinExperience
+      value:
+        - "Yes"
+    title: "How long have you been coding in Kotlin?"
+
+---
+# Page 3
+title: "Rust Page"
+conditional:
+  key: pLang
+  value:
+    - "Rust"
+content:
+  # Rating questions are asking for a 1-5 rating. They cannot be scored
+  - type: rating
+    required: false
+    title: "How much do you like Rust?"
+
+  # Choice questions are questions which can be scored. You usually ask for things like favorite color or to pick the right answer
+  # They can be multiple or single choice.
+  - type: choice
+    required: true
+    title: "Did you code in Rust before?"
+    config:
+      horizontal: true # Boolean (default: false). If true, choices will be shown horizontally
+      conditional_key: rustExperience # String (optional). If given, this choice question can be used for conditionally showing other elements by using this reference. Must be unique.
+      choices: # list of choices
+        - title: "Yes" # String (required). Title of the choice
+        - title: "No"
+        - title: "Dont know"
+
+  - type: text
+    required: true
+    conditional:
+      key: rustExperience
+      value:
+        - "Yes"
+    title: "How long have you been coding in Rust?"
+
+---
+# Page 4
+title: "Python Page"
+conditional:
+  key: pLang
+  value:
+    - "Python"
+content:
+  # Rating questions are asking for a 1-5 rating. They cannot be scored
+  - type: rating
+    required: false
+    title: "How much do you like Python?"
+
+  # Choice questions are questions which can be scored. You usually ask for things like favorite color or to pick the right answer
+  # They can be multiple or single choice.
+  - type: choice
+    required: true
+    title: "Did you code in Python before?"
+    config:
+      horizontal: true # Boolean (default: false). If true, choices will be shown horizontally
+      conditional_key: pythonExperience # String (optional). If given, this choice question can be used for conditionally showing other elements by using this reference. Must be unique.
+      choices: # list of choices
+        - title: "Yes" # String (required). Title of the choice
+        - title: "No"
+        - title: "Dont know"
+
+  - type: text
+    required: true
+    conditional:
+      key: pythonExperience
+      value:
+        - "Yes"
+    title: "How long have you been coding in Python?"
+
+---
+# Page 5
+title: "Final Page"
+content:
+  # Choice questions are questions which can be scored. You usually ask for things like favorite color or to pick the right answer
+  # They can be multiple or single choice.
+  - type: choice
+    required: true
+    title: "How did you learn your favorite language?"
+    config:
+      conditional_key: learn # String (optional). If given, this choice question can be used for conditionally showing other elements by using this reference. Must be unique.
+      choices: # list of choices
+        - title: "Websites" # String (required). Title of the choice
+        - title: "Book"
+        - title: "Course"
+        - title: "Other"
+
+  - type: text
+    required: true
+    conditional:
+      key: learn
+      value:
+        - "Other"
+    title: "Please specify how"

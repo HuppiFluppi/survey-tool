@@ -78,7 +78,7 @@ class YamlReader : SurveyConfigReader {
             return this
         }
 
-        private fun String?.addConditional(): String? {
+        private fun String?.addConditionalKey(): String? {
             if (this != null) {
                 if (this in conditionals) {
                     throw IllegalArgumentException("Survey file malformed (duplicated conditional_key '$this')")
@@ -141,7 +141,7 @@ class YamlReader : SurveyConfigReader {
                         limit = config["limit"] as? Int ?: 2,
                         dropdown = config["dropdown"] as? Boolean ?: false,
                         horizontal = config["horizontal"] as? Boolean ?: false,
-                        conditionalKey = (config["conditional_key"] as? String).addConditional(),
+                        conditionalKey = (config["conditional_key"] as? String).addConditionalKey(),
 
                         choices = choices
                     )
