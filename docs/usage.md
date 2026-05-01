@@ -11,6 +11,7 @@ A complete guide for using the Survey Tool to create and run surveys or quizzes.
 - [Create your own survey](#create-your-own-survey)
 - [Results](#results)
 - [Understanding Content Types](#understanding-content-types)
+- [Conditionals](#conditionals)
 - [Leaderboard](#leaderboard)
 - [Frequently Asked Questions](#frequently-asked-questions)
 - [Getting Help](#getting-help)
@@ -301,6 +302,80 @@ Each serves a specific purpose:
 - This question type can be scores to either match (range: false) or be in range (range: true)
 
 **Example**: "What is your height?"
+
+---
+
+## Conditionals
+
+Conditionals allow you to dynamically show or hide pages and individual questions/content based on a participant's answer to a previous choice question. 
+This is useful for branching surveys where follow-up questions only make sense depending on an earlier answer.
+
+### What Conditionals Can Do
+
+- **Show/hide entire pages**: A page is only displayed if the participant selected a specific choice earlier
+- **Show/hide individual questions/content**: A single question or content on a page can be conditionally visible
+- **Create branching paths**: Different participants see different questions based on their answers
+
+When conditionals are present, the summary screen shows "Max X questions on up to Y pages" to indicate that not all content may be shown to every participant.
+
+### Configuring Conditionals
+
+Conditionals require two parts: a **source** (choice question with a `conditional_key` field) and a **target** (a page or question with a `conditional` block).
+
+#### Step 1: Define a conditional key on a choice question
+
+Add `conditional_key` to the `config` of a choice question. This registers the question as a condition source.
+
+```yaml
+- type: choice
+  title: "What is your favorite language?"
+  config:
+    conditional_key: favLang
+    choices:
+      - title: "Kotlin"
+      - title: "Python"
+      - title: "Other"
+```
+
+#### Step 2: Reference the key on a page or question
+
+Add a `conditional` block with `key` (matching the `conditional_key`) and `value` (a list of choices that make this element visible).
+
+**Conditional page:**
+```yaml
+---
+title: "Kotlin Follow-up"
+conditional:
+  key: favLang
+  value:
+    - "Kotlin"
+content:
+  - type: text
+    title: "How long have you used Kotlin?"
+```
+
+**Conditional question (on the same page as the source):**
+```yaml
+- type: text
+  required: true
+  conditional:
+    key: favLang
+    value:
+      - "Other"
+  title: "Please specify which language"
+```
+
+See `examples/conditionals-survey.yaml` for a complete working example and `template.yaml` for the full configuration reference.
+
+### Caveats & Limitations
+
+- **Order matters**: The choice question with `conditional_key` must appear *before* any element that references it. This is validated at load time.
+- **Unique keys**: Each `conditional_key` must be unique across the entire survey.
+- **Choice questions only**: Only choice questions can act as condition sources. Other question types cannot define a `conditional_key`.
+- **First selection used**: For the condition evaluation, only the first selected choice value is used. This means multi-select choice questions will only use the first checked item as the condition value.
+- **Hidden questions are skipped**: When a question is hidden by a conditional, it is not shown, not validated, and not saved. If the condition later becomes true (e.g. user navigates back and changes their answer), the question appears without any previous answer.
+- **Answers to hidden questions are discarded**: When navigating back and changing a choice that hides previously answered questions, those answers are lost.
+- **Page navigation skips hidden pages**: Hidden pages are automatically skipped during forward and backward navigation. The progress bar and page counter reflect only visible pages.
 
 ---
 
