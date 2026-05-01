@@ -15,21 +15,21 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v6
       - name: Build+Check
         run: |
           ./gradlew --version
           ./gradlew -Pversion=$GITHUB_REF_NAME clean build
       - name: Upload Test results
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Test results Linux
           path: composeApp/build/reports/tests/
       - name: Package
         run: ./gradlew -Pversion=$GITHUB_REF_NAME packageReleaseUberJarForCurrentOS
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Survey Tool Jar Linux
           path: composeApp/build/compose/jars/survey-tool-linux-x64-${{ github.ref_name }}-release.jar
@@ -49,21 +49,21 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
-      - uses: gradle/actions/setup-gradle@v5
+      - uses: gradle/actions/setup-gradle@v6
       - name: Build+Check
         run: |
           ./gradlew --version
           ./gradlew -Pversion="$env:GITHUB_REF_NAME" clean build
       - name: Upload Test results
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Test results Windows
           path: composeApp/build/reports/tests/
       - name: Package
         run: ./gradlew -Pversion="$env:GITHUB_REF_NAME" packageReleaseUberJarForCurrentOS
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: Survey Tool Jar Windows
           path: composeApp/build/compose/jars/survey-tool-windows-x64-${{ github.ref_name }}-release.jar

@@ -7,12 +7,13 @@ plugins {
 //    alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.composeHotReload)
 }
 
 kotlin {
 //    androidTarget {
 //        compilerOptions {
-//            jvmTarget.set(JvmTarget.JVM_17)
+//            jvmTarget.set(JvmTarget.JVM_11)
 //        }
 //    }
 
