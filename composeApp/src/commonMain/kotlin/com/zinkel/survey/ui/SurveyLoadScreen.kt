@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +46,7 @@ import org.jetbrains.compose.resources.stringResource
 import surveytool.composeapp.generated.resources.*
 import java.io.File
 import java.net.URI
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * A composable function that displays the Survey Load Screen UI. This screen allows users to load a survey
@@ -74,16 +74,15 @@ fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = stringResource(Res.string.app_name),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline,
                 modifier = Modifier.padding(top = 32.dp, bottom = 8.dp)
             )
             Icon(
@@ -98,7 +97,7 @@ fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "${stringResource(Res.string.app_version)} (${stringResource(Res.string.app_build)})",
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 10.sp
             )
             Text(
@@ -111,7 +110,7 @@ fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File
 
         // Drag and drop indicator
         if (showDragAndDropIndicatorState.value || fileSelectionResult != null) {
-            Card(modifier = Modifier.fillMaxSize().padding(16.dp).alpha(0.9f), shape = CutCornerShape(0.dp)) {
+            Card(modifier = Modifier.fillMaxSize().padding(16.dp).alpha(0.95f), shape = CutCornerShape(0.dp)) {
                 Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                     when (fileSelectionResult?.valid) {
                         true -> Icon(painter = painterResource(Res.drawable.file_drop_success), contentDescription = null, tint = Color.Green)
@@ -123,9 +122,9 @@ fun SurveyLoadScreen(surveyLoadUiState: SurveyLoadUiState, onFileSelected: (File
                     }
                     if (fileSelectionResult != null) {
                         LaunchedEffect(fileSelectionResult) {
-                            delay(800)
+                            delay(800.milliseconds)
                             if (fileSelectionResult!!.valid) onFileSelected(fileSelectionResult!!.file!!)
-                            delay(800)
+                            delay(800.milliseconds)
                             fileSelectionResult = null
                         }
                     }
