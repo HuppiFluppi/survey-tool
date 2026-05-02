@@ -205,5 +205,5 @@ conditional:
 
 content:
   - type: information
-    title: "This is a secondpage"
+    title: "This is a second page"
     description: "It is shown conditionally"

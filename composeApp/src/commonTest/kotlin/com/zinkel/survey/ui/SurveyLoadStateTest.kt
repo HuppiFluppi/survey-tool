@@ -13,6 +13,7 @@ import java.io.File
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.milliseconds
 
 class SurveyLoadStateTest {
 
@@ -31,7 +32,7 @@ class SurveyLoadStateTest {
 
         // Act
         val job = launch { SurveyLoadModel.load(mockFile) }
-        delay(20)
+        delay(20.milliseconds)
 
         // Assert
         assertEquals(SurveyLoadUiState.Loading, SurveyLoadModel.surveyLoadUiState)

@@ -44,8 +44,10 @@ class CSVAccess : SurveyDataAccess {
         if (trimmed.isEmpty()) return trimmed
 
         // Escape if starts with dangerous characters
-        return if (trimmed.firstOrNull() in setOf('=', '+', '-', '@', '\t', '\r')) {
-            "'$trimmed"  // Prefix with single quote to treat as text
+        return if (trimmed.firstOrNull() in setOf('=', '+', '@', '\t', '\r')) {
+            "'$trimmed"
+        } else if (trimmed.startsWith('-') && trimmed.getOrNull(1)?.isDigit() != true) {
+            "'$trimmed"  // Only escape '-' when not followed by a digit (i.e., not a negative number)
         } else {
             trimmed
         }
@@ -110,7 +112,7 @@ class CSVAccess : SurveyDataAccess {
         if (!inputFile.exists()) return emptyList()
 
         val instances = csvReader { autoRenameDuplicateHeaders = true; skipEmptyLine = true }.openAsync(inputFile) {
-            readAllWithHeaderAsSequence().map { row ->
+            readAllWithHeaderAsSequence().mapNotNull { row ->
                 try {
                     SurveyInstance(
                         instanceId = row["#"]?.toIntOrNull() ?: throw IllegalArgumentException("Survey data file malformed (no # or wrong format)"),
@@ -125,7 +127,7 @@ class CSVAccess : SurveyDataAccess {
                     println("Error loading survey data: ${e.message}")
                     null
                 }
-            }.filterNotNull().toList()
+            }.toList()
         }
         return instances
     }

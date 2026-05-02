@@ -182,7 +182,7 @@ interface SurveyDataAccess {
  * @property minScore Minimum score observed across runs (QUIZ only).
  * @property maxScore Maximum score observed across runs (QUIZ only).
  */
-data class SurveySummary(
+class SurveySummary(
     val title: String,
     val type: SurveyType,
     val pageCount: Int,

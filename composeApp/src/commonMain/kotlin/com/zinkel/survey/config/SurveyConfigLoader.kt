@@ -64,7 +64,7 @@ interface SurveyConfigReader {
  *
  * The identifier is a simple "pageNumber-contentNumber" composite string.
  * It is useful for mapping answers, validation messages, and UI state to a unique key.
- * The id of a questio should be unique within a page and created once.
+ * The id of a question should be unique within a page and created once.
  *
  * @return A composite identifier in the form "pageNumber-contentNumber" (e.g., "2-3").
  */

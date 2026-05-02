@@ -7,6 +7,9 @@ import java.time.LocalDate
 import java.time.LocalTime
 import kotlin.io.path.Path
 
+const val MAX_EMBEDDED_FILE_SIZE = 10_485_760
+const val MAX_CONFIG_YAML_FILE_SIZE = 10_485_760
+
 class YamlReader : SurveyConfigReader {
 
     private val yamlLoadSettings: LoadSettings = LoadSettings.builder().build()
@@ -19,12 +22,16 @@ class YamlReader : SurveyConfigReader {
         private val conditionals = mutableListOf<String>()
 
         fun load(): SurveyConfig {
+            if (inputFile.length() > MAX_CONFIG_YAML_FILE_SIZE) throw IllegalArgumentException("Survey file too large")
+
             val load = Load(yamlLoadSettings)
             val documents = inputFile.inputStream().use { stream ->
-                load.loadAllFromInputStream(stream).map { it as Map<String, Any> }
+                load.loadAllFromInputStream(stream).mapIndexed { index, it ->
+                    it as? Map<String, Any> ?: throw IllegalArgumentException("Survey file malformed (document ${index + 1})")
+                }
             }
 
-            if (documents.isEmpty() || documents.size < 2) throw IllegalArgumentException("Survey file malformed (not enough documents)")
+            if (documents.size < 2) throw IllegalArgumentException("Survey file malformed (expected at least 2 yaml documents)")
 
             return mapYamlToSurveyConfig(documents)
         }
@@ -271,7 +278,7 @@ class YamlReader : SurveyConfigReader {
             if (!file.exists()) throw IllegalArgumentException("Template section '$section'. File not found: $filePath")
 
             // check file
-            if (file.length() > 10_485_760) throw IllegalArgumentException("Template section '$section'. File exceeds 10mb: $filePath")
+            if (file.length() > MAX_EMBEDDED_FILE_SIZE) throw IllegalArgumentException("Template section '$section'. File exceeds 10mb: $filePath")
 
             return file
         }

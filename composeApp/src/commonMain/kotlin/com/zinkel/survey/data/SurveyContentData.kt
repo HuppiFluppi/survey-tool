@@ -128,11 +128,7 @@ class DataSurveyContentData(
         question.dataType == DataQuestionType.PHONE    -> checkPattern(answer!!, validationRegex ?: PHONE_PATTERN, Res.string.validation_error_pattern_phone)
         question.dataType == DataQuestionType.EMAIL    -> checkPattern(answer!!, validationRegex ?: EMAIL_PATTERN, Res.string.validation_error_pattern_email)
         question.dataType == DataQuestionType.CUSTOM   -> checkPattern(answer!!, validationRegex, Res.string.validation_error_pattern_custom)
-        question.dataType == DataQuestionType.NICKNAME -> checkPattern(
-            answer!!,
-            validationRegex ?: NICKNAME_PATTERN,
-            Res.string.validation_error_pattern_nickname
-        )
+        question.dataType == DataQuestionType.NICKNAME -> checkPattern(answer!!, validationRegex ?: NICKNAME_PATTERN, Res.string.validation_error_pattern_nickname)
 
         question.dataType == DataQuestionType.AGE      -> checkAge(answer!!)
         question.dataType == DataQuestionType.BIRTHDAY -> checkBirthday(answer!!)
@@ -146,7 +142,7 @@ class DataSurveyContentData(
             val today = LocalDate.now()
             if ((today.year - birthday.year) !in 0..100) return AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_birthday))
         } catch (e: Exception) {
-            e.printStackTrace()
+            println("Birthday not correct: ${e.message}")
             return AnswerValidationResult(false, listOf(Res.string.validation_error_pattern_birthday))
         }
         return AnswerValidationResult(true)
@@ -172,7 +168,7 @@ class DataSurveyContentData(
         private val NAME_PATTERN = "^\\p{L}[\\p{L} ]{2,40}$".toRegex()
         private val NICKNAME_PATTERN = "^[\\p{L} \\d._-]{3,40}$".toRegex()
         private val PHONE_PATTERN = "^((\\+|00)[1-9]{1,2})?[0-9 \\-()./]{6,32}$".toRegex()
-        private val EMAIL_PATTERN = "^[a-zA-Z0-9+._%-]{1,256}@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}(.[a-zA-Z0-9][a-zA-Z0-9-]{0,25})+$".toRegex()
+        private val EMAIL_PATTERN = "^[a-zA-Z0-9+._%-]{1,256}@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}(\\.[a-zA-Z0-9][a-zA-Z0-9-]{0,25})+$".toRegex()
     }
 }
 
@@ -354,7 +350,7 @@ class DateTimeSurveyContentData(
     override fun calculateScore(): Int {
         if (!isAnswered()) return 0
         val (date, time) = answer!!
-        if (time?.equals(question.correctTimeAnswer) ?: true && date?.equals(question.correctDateAnswer) ?: true) return question.score ?: 0
+        if ((time?.equals(question.correctTimeAnswer) ?: true) && (date?.equals(question.correctDateAnswer) ?: true)) return question.score ?: 0
         return 0
     }
 }

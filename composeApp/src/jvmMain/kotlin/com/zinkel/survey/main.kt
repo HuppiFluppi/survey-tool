@@ -17,10 +17,13 @@ import surveytool.composeapp.generated.resources.Res
 import surveytool.composeapp.generated.resources.app_icon
 import surveytool.composeapp.generated.resources.app_name
 import java.io.File
+import javax.swing.UIManager
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) = application {
     checkArgs(args) // check cmd line params
+
+    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
 
     val surveyLoadUiState = SurveyLoadModel.surveyLoadUiState
 

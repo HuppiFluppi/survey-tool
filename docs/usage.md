@@ -46,7 +46,7 @@ See [Create your own survey](#create-your-own-survey) for how to create a config
 
 > **Note:** Information from the survey configuration file is used to display the survey to the user. 
 > For this, the survey can also define files to load as image from the users computer. 
-> While misuse is unlikely and the referenced images are not sent or captured, dont load suspicious surveys. 
+> While misuse is unlikely and the referenced images are not sent or captured, don't load suspicious surveys. 
 
 ### Step 3: Review Survey Information
 
@@ -120,20 +120,20 @@ Several example surveys can be found in the `examples` folder:
 - **minimal-all-question-types-survey.yaml** - Demonstrates all available question types
 
 It is suggested to use one of the examples as base and alter it according to your needs. 
-To help with the formatting, use an editor with yaml support (e.g. Visual Studio Code with Red Hat `YAML` plugin).
+To help with the formatting, use an editor with YAML support (e.g. Visual Studio Code with Red Hat `YAML` plugin).
 
 Configuration requirements:
 - Must consist of exactly one survey header and it must be the first document (separated by `---`) in the file
 - Must have at least one survey page with at least one question
-- The elements in the configuration yaml must have all required fields
+- The elements in the configuration YAML must have all required fields
 
 ### Schema files
 
-Two schema files exist to help you write and check your created configuration file. You dont have to use any of the schema files to write the configuration file.
-How to set up your editor to take the schema into account varies (for the Visual Studio Code Yaml plugin, one can add `# yaml-language-server: $schema=<urlToTheSchema>` to the file).
+Two schema files exist to help you write and check your created configuration file. You don't have to use any of the schema files to write the configuration file.
+How to set up your editor to take the schema into account varies (for the Visual Studio Code YAML plugin, one can add `# yaml-language-server: $schema=<urlToTheSchema>` to the file).
 
 Please be aware that as of this writing, the autocomplete and schema checking inside different tools is not working great. 
-The configuration file consist of multiple yaml documents (separated by `---`) and the schema checkers really don't like that.
+The configuration file consist of multiple YAML documents (separated by `---`) and the schema checkers really don't like that.
 
 Schema files:
 - [survey_schema.json](files/survey_schema.json): This schema uses `anyOf` to handle multiple documents. It seems to yield better results in most editors
@@ -241,7 +241,7 @@ Each serves a specific purpose:
 - **Date and time**: Select both date and time
 - Initial values may be pre-selected
 - Click the picker icon to open the selection interface
-- If an initial time or date is set and the user doesnt change, the initial set is taken as answer
+- If an initial time or date is set and the user doesn't change, the initial set is taken as answer
 
 **Example**: 
 - "When is your birthday?" (date)
@@ -410,7 +410,7 @@ Only the name provided in the quiz is displayed on the leaderboard. No other per
 
 Your progress will be lost. The tool doesn't support resuming survey runs.
 
-### What happens with previous completed surveys if i close and reopen the app?
+### What happens with previous completed surveys if I close and reopen the app?
 
 Survey Tool will attempt to load previous data according to the configuration filename. It then restores leaderboard and appends new data.
 

@@ -16,7 +16,7 @@ The tool loads a configuration file (YAML format) that defines your survey quest
 - [License](#license)
 
 ## Overview
-Survey Tool abstracts survey/quiz definition through a declarative configuration in yaml.
+Survey Tool abstracts survey/quiz definition through a declarative configuration in YAML.
 
 The idea goes back some years when I was tasked to create a quiz for visitors of a job fair.
 We wanted to offer a programming quiz at our booth that applicants could fill out to show their skills and win prizes.
@@ -60,7 +60,7 @@ Steps to use:
 - [x] Add content element with text+description+image
 - [x] Extend question types I (DateTimePicker, Dropdown, Configurable Rating(Icon, Color, Scale))
 - [x] Extend documentation (question types, survey config, etc.)
-- [x] Add Github build pipeline for release
+- [x] Add GitHub build pipeline for release
 - [x] Add Slider/Range, number rating & horizontal choice question type
 - [x] Add support for text input validation and more data patterns (age, birthday, nickname)
 - [x] Add support for images (summary page background, survey description, highscore background, page header)
@@ -71,7 +71,7 @@ Steps to use:
 - [ ] Add remote configuration loading and data sending
 - [ ] Enable Android target
 - [ ] Add fullscreen/kiosk mode (Desktop)
-- [ ] Add survey multi language support
+- [ ] Add survey multi-language support
 - [ ] Add support for custom color themes
 - [ ] Extend question types II (ImageChoice, LikertSlider, ?)
 

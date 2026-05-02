@@ -472,7 +472,7 @@ fun SliderElement(
         Column(modifier = Modifier.padding(8.dp)) {
             TitleRow(question.title, question.required, showQuestionScores, question.score)
 
-            val questionvalueRange = question.start..question.end
+            val questionValueRange = question.start..question.end
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 val startTxt = buildString {
@@ -489,7 +489,7 @@ fun SliderElement(
             }
 
             if (!question.range) { // simple slider
-                val sliderState = rememberSliderState(value = savedValues?.first ?: question.start, valueRange = questionvalueRange, steps = question.steps)
+                val sliderState = rememberSliderState(value = savedValues?.first ?: question.start, valueRange = questionValueRange, steps = question.steps)
                 sliderState.onValueChangeFinished = { onValueChange(Pair(sliderState.value, null)) }
 
                 Slider(state = sliderState)
@@ -504,7 +504,7 @@ fun SliderElement(
                     activeRangeStart = savedValues?.first ?: question.start,
                     activeRangeEnd = savedValues?.second ?: question.end,
                     steps = question.steps,
-                    valueRange = questionvalueRange,
+                    valueRange = questionValueRange,
                 )
                 sliderState.onValueChangeFinished = { onValueChange(Pair(sliderState.activeRangeStart, sliderState.activeRangeEnd)) }
 

@@ -38,7 +38,7 @@ class AppLoadTest {
 
     // getString() fetches the current ResourceEnvironment to know which language to load.
     // This crashes on environments w/o GUI (e.g. pipelines, containers, etc.)
-    // While the getString() can be given a own ResourceEnvironment, this class is internal. Hence the mocking and init block.
+    // While the getString() can be given a own ResourceEnvironment, this class is internal. Hence, the mocking and init block.
     @OptIn(InternalResourceApi::class)
     val testEnv = mockk<ResourceEnvironment>()
 
