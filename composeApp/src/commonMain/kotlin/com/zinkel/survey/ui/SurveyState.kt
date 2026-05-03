@@ -182,7 +182,10 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
      * - Repopulates the previous page’s content.
      */
     fun backSurvey() {
-        if (currentPageIndex == 0) { cancelSurvey(); return } //should be prevented by UI logic
+        if (currentPageIndex == 0) { //should be prevented by UI logic
+            cancelSurvey()
+            return
+        }
 
         syncPageToInstance()
 
@@ -265,15 +268,12 @@ class SurveyModel(private val surveyConfig: SurveyConfig, configFile: File, priv
     private suspend fun completeInstance(instance: SurveyInstance) {
         val answers = instance.getAllAnswers()
 
-        val user = answers.find {
+        instance.user = answers.find {
             it is DataSurveyContentData
                     && (it.question.dataType == DataQuestionType.NAME || it.question.dataType == DataQuestionType.NICKNAME)
                     && it.question.useForLeaderboard
         }?.answer as? String ?: getString(Res.string.highscore_unknown_player)
-        val score = answers.sumOf { it.calculateScore() }
-
-        instance.user = user
-        instance.score = score
+        instance.score = answers.sumOf { it.calculateScore() }
         instance.endTime = ZonedDateTime.now()
     }
 

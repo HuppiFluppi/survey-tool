@@ -41,6 +41,10 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
     private val summaryFile = File(surveyFile.parent, surveyFile.nameWithoutExtension + SUMMARY_FILE_SUFFIX)
     private val dataFile = File(surveyFile.parent, surveyFile.nameWithoutExtension + DATA_FILE_SUFFIX)
 
+    private val totalPages = surveyConfig.pages.size
+    private val hasConditionals = surveyConfig.pages.any { page -> page.conditional != null || page.content.any { it.conditional != null } }
+    private val questionIDs = surveyConfig.pages.flatMap { page -> page.content.filter { it.savable }.map { content -> content.id } }
+
     private val summary = SurveySummary(
         title = surveyConfig.title,
         type = surveyConfig.type,
@@ -62,7 +66,21 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
             summary.maxScore = max(summary.maxScore ?: Int.MIN_VALUE, score)
         }
 
-        withContext(Dispatchers.IO) { dataAccess.saveSurveySummary(summaryFile, summary) }
+        dataAccess.saveSurveySummary(summaryFile, summary)
+    }
+
+    /**
+     * Persists a completed survey [instance].
+     *
+     * Behavior:
+     * - Updates and saves the aggregated [SurveySummary].
+     * - Saves per-run data via the configured [SurveyDataAccess].
+     */
+    suspend fun addSurveyData(instance: SurveyInstance) {
+        withContext(Dispatchers.IO) {
+            updateSummary(instance)
+            dataAccess.saveSurveyData(dataFile, instance, totalPages, hasConditionals, questionIDs)
+        }
     }
 
     /**
@@ -112,18 +130,6 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
         return topInstances.toList()
     }
 
-    /**
-     * Persists a completed survey [instance].
-     *
-     * Behavior:
-     * - Updates and saves the aggregated [SurveySummary].
-     * - Saves per-run data via the configured [SurveyDataAccess].
-     */
-    suspend fun addSurveyData(instance: SurveyInstance) {
-        updateSummary(instance)
-        withContext(Dispatchers.IO) { dataAccess.saveSurveyData(dataFile, instance) }
-    }
-
     private var instanceId = 0
 
     /**
@@ -141,7 +147,7 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
         private val accessTypes = mutableMapOf<String, SurveyDataAccess>()
 
         init {
-            accessTypes["csv"] = CSVAccess()
+            accessTypes["csv"] = CSVAccess
         }
     }
 }
@@ -156,7 +162,7 @@ interface SurveyDataAccess {
     /**
      * Saves an entire survey [instance]/run (answers, metadata) to [file].
      */
-    suspend fun saveSurveyData(file: File, instance: SurveyInstance)
+    suspend fun saveSurveyData(file: File, instance: SurveyInstance, totalPages: Int, hasConditionals: Boolean, questionIDs: List<String>)
 
     /**
      * Saves the aggregated [summary] to [file].
@@ -204,6 +210,7 @@ class SurveySummary(
  * @property type Survey type; used e.g. for scoring behavior.
  * @property startTime Timestamp when the run started.
  * @property endTime Timestamp when the run ended; null until completion.
+ * @property user Participant identification (e.g. email or name).
  * @property score The score (only for QUIZ type) of the run; null until completion.
  */
 class SurveyInstance(
@@ -215,6 +222,11 @@ class SurveyInstance(
     var score: Int? = null,
 ) {
     private val pageAnswers = mutableMapOf<Int, List<SurveyContentData>>()
+
+    val amountOfPages: Int
+        get() = pageAnswers.size
+    val amountOfQuestions: Int
+        get() = pageAnswers.values.sumOf { it.size }
 
     /**
      * Replaces the stored answers for a specific page.

@@ -30,6 +30,7 @@ And maybe help others who come across this repo, having the same need I had year
 ## Features
 - Declarative survey/quiz configuration
 - Support for multiple pages
+- Support for conditional pages/questions
 - Support for different survey questions (Text, Multiple Choice, Rating, Likert, Data, DateTime, Slider)
 - Quizzes with points and optional leaderboard
 - Currently supports Desktop
@@ -64,7 +65,7 @@ Steps to use:
 - [x] Add Slider/Range, number rating & horizontal choice question type
 - [x] Add support for text input validation and more data patterns (age, birthday, nickname)
 - [x] Add support for images (summary page background, survey description, highscore background, page header)
-- [ ] Add conditional pages/question
+- [x] Add conditional pages/question
 - [x] Add command line arguments to load configuration
 - [ ] Add system test (load, fill, submit, check)
 - [ ] Refactor package structure and remedy some code smells

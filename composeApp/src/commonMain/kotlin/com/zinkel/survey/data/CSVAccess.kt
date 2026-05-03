@@ -6,34 +6,77 @@ import com.zinkel.survey.config.SurveyType
 import java.io.File
 import java.time.ZonedDateTime
 
-class CSVAccess : SurveyDataAccess {
+object CSVAccess : SurveyDataAccess {
 
-    override suspend fun saveSurveyData(file: File, instance: SurveyInstance) {
+    override suspend fun saveSurveyData(
+        file: File,
+        instance: SurveyInstance,
+        totalPages: Int,
+        hasConditionals: Boolean,
+        questionIDs: List<String>,
+    ) {
         val outputFile = File(file.parent, file.name + ".csv")
         val writeHeader = !outputFile.exists() || outputFile.length() == 0L
 
         csvWriter().openAsync(outputFile, append = true) {
             if (writeHeader) { //add header row
-                writeRow(generateHeaderRow(instance.getAllAnswers().size, instance))
+                writeRow(generateHeaderRow(questionIDs.size, instance, hasConditionals))
             }
-            writeRow(generateDataRow(instance))
+            writeRow(generateDataRow(instance, hasConditionals, totalPages, questionIDs.size, questionIDs))
         }
     }
 
-    private fun generateDataRow(instance: SurveyInstance): List<Any?> =
-        buildList {
+    private fun generateHeaderRow(questionCount: Int, instance: SurveyInstance, hasConditionals: Boolean): List<String> = buildList {
+        add("#")
+        add("Start Time")
+        add("End Time")
+        add("Survey Type")
+        if (instance.type == SurveyType.QUIZ) add("User")
+        if (instance.type == SurveyType.QUIZ) add("Score")
+        if (hasConditionals) {
+            add("Shown Pages")
+            add("Shown Questions")
+        }
+        repeat(questionCount) {
+            add("Question ID")
+            add("Question Title")
+            add("Question Answer")
+        }
+    }
+
+    private fun generateDataRow(
+        instance: SurveyInstance,
+        hasConditionals: Boolean,
+        totalPages: Int,
+        totalQuestions: Int,
+        questionIDs: List<String>,
+    ): List<Any?> {
+        val answers = instance.getAllAnswers().associateBy { it.question.id }
+
+        return buildList {
             add(instance.instanceId)
             add(instance.startTime)
             add(instance.endTime)
             add(instance.type)
             if (instance.type == SurveyType.QUIZ) add(sanitizeCSV(instance.user))
             if (instance.type == SurveyType.QUIZ) add(instance.score)
-            instance.getAllAnswers().forEach { answer ->
-                add(answer.question.id)
-                add(answer.question.title)
-                add(sanitizeCSV(answer.answer))
+            if (hasConditionals) {
+                add("${instance.amountOfPages}/$totalPages")
+                add("${instance.amountOfQuestions}/$totalQuestions")
+            }
+            questionIDs.forEach { id ->
+                add(id)
+
+                if (answers[id] != null) {
+                    add(answers[id]!!.question.title)
+                    add(sanitizeCSV(answers[id]!!.answer))
+                } else {
+                    add("")
+                    add("")
+                }
             }
         }
+    }
 
     // sanitize CSV data to prevent formula injection
     private fun sanitizeCSV(value: Any?): Any? {
@@ -50,20 +93,6 @@ class CSVAccess : SurveyDataAccess {
             "'$trimmed"  // Only escape '-' when not followed by a digit (i.e., not a negative number)
         } else {
             trimmed
-        }
-    }
-
-    private fun generateHeaderRow(questionCount: Int, instance: SurveyInstance): List<String> = buildList {
-        add("#")
-        add("Start Time")
-        add("End Time")
-        add("Survey Type")
-        if (instance.type == SurveyType.QUIZ) add("User")
-        if (instance.type == SurveyType.QUIZ) add("Score")
-        repeat(questionCount) {
-            add("Question ID")
-            add("Question Title")
-            add("Question Answer")
         }
     }
 
