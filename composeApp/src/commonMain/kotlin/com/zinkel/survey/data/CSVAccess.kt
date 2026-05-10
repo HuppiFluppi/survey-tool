@@ -62,23 +62,13 @@ object CSVAccess : SurveyDataAccess {
                 add("${instance.amountOfQuestions}/$totalQuestions")
             }
             questionIDandTitles.forEach { entry ->
-
-                when (answers[entry.first]) {
+                when (val data = answers[entry.first]) {
                     null -> add("")
-
                     // Specialization when the slider only has one value (not a range)
-                    is SliderSurveyContentData if answers[entry.first]!!.answer != null && (answers[entry.first]!!.answer as? Pair<Float, Float?>?)?.second == null -> add(
-                        (answers[entry.first]!!.answer as? Pair<Float, Float?>?)?.first
-                    )
-
+                    is SliderSurveyContentData if data.answer != null && data.answer?.second == null -> add(data.answer?.first)
                     // Specialization when there is only one choice
-                    is ChoiceSurveyContentData if !(answers[entry.first] as? ChoiceSurveyContentData)?.question?.multiple!! && (answers[entry.first] as? ChoiceSurveyContentData)?.answer?.size == 1 -> add(
-                        sanitizeCSV((answers[entry.first] as? ChoiceSurveyContentData)?.answer?.first())
-                    )
-
-                    else -> add(
-                        sanitizeCSV(answers[entry.first]!!.answer)
-                    )
+                    is ChoiceSurveyContentData if !data.question.multiple && data.answer?.size == 1 -> add(sanitizeCSV(data.answer?.first()))
+                    else -> add(sanitizeCSV(data.answer))
                 }
             }
         }
