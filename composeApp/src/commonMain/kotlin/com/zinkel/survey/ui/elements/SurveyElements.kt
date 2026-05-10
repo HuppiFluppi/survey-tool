@@ -55,6 +55,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.decodeToImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
@@ -338,7 +340,7 @@ fun LikertElement(
                         RadioButton(
                             selected = (choice == selectedOption),
                             onClick = { onOptionSelected(choice); onValueChange(statement.title, choice) },
-                            modifier = Modifier.weight(0.5f)
+                            modifier = Modifier.weight(0.5f).semantics { contentDescription = choice }
                         )
                     }
                 }
@@ -417,7 +419,7 @@ fun RatingElement(question: RatingQuestion, onValueChange: (Int) -> Unit, savedV
                         val image = if (i <= rating) filledIcon else unfilledIcon
                         Icon(
                             image,
-                            contentDescription = null,
+                            contentDescription = "rating_option_$i",
                             modifier = Modifier.padding(8.dp).clickable { rating = i; onValueChange(i) },
                             tint = colorList?.get(i - 1) ?: LocalContentColor.current
                         )

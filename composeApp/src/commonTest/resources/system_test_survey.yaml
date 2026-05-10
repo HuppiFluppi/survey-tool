@@ -1,0 +1,190 @@
+# This template file explains all options for a survey.
+
+# title: String (required)
+# Title of the survey
+title: "Test Survey"
+
+# description: String (required)
+# Description of the survey
+description: > # '>' means to continue the description on the next line. The quotation marks (") are then omitted. Alternatively, you can also write all on one line. 
+  This survey configurations is a template.
+  It's purpose is to help you get started.
+  All options are explained and you can get an understanding of what is possible
+
+# type: SurveyType. Allowed values: "survey" or "quiz". default: "survey"
+# Type of the survey
+type: quiz
+
+# score: ScoreSettings (optional)
+score:
+  # showQuestionScores: Boolean (default: false)
+  # If true, achievable points are shown on each question
+  show_question_scores: true
+
+  # showLeaderboard: Boolean (default: true)
+  # High score leaderboard is only relevant when type == "quiz".
+  show_leaderboard: true
+
+  # leaderboard: LeaderboardSettings (optional)
+  leaderboard:
+    # showScores: Boolean (default: true)
+    # Show scored points at each entry in the leaderboard
+    show_scores: true
+
+    # showPlaceholder: Boolean (default: true)
+    # Show placeholder rows to fill the leaderboard up to limit
+    show_placeholder: true
+
+    # limit: Int (default: 10)
+    # Number of entries to show in the leaderboard
+    limit: 10
+
+--- # Each '---' starts a new page document. Pages help structure your survey. At least one page is required
+# title: String (optional)
+# Title of this page
+title: "First Page"
+
+# description: String (optional)
+# Description of this page
+description: "This is a very lovely first page of the survey. This description adds not much value and indeed it could be omitted."
+
+# content: list (required)
+# The different questions/information to show on this page
+content:
+  # All questions have 3 fields in common:
+  # * type: String (required). Specify the type of question. one of [data, choice, text, rating, likert, datetime, information, slider]
+  # * required: Boolean (default: true). If true, the user must answer this question
+  # * title: String (required). Question/Headline to show to the user
+  # Configuration specific to each question type is specified in the 'config' area
+
+  # Data questions are simple text questions which cannot be scored. You usually ask for things like name or email
+  - type: data
+    required: true
+    title: "Give me your name"
+    config:
+      datatype: name # String (default: name). Type of the data. One of [name, nickname, email, phone, age, birthday, custom].
+      validation_pattern: '^\p{L}[\p{L}\s]{2,40}$' # String (optional). Regex pattern to validate the input. Not used for age and birthday. If omitted, data types name, nickname, email and phone use default patterns. Please make sure to use single quotes(') to avoid loading errors.
+      use_for_leaderboard: true # Boolean (default: true). If true, this data will be used for the leaderboard. Only relevant for quizzes and datatype 'name' or 'nickname'.
+
+  # Information content are blocks of text. They are no questions and cannot be scored. You can use them to provide additional information or to show a picture.
+  - type: information
+    title: "This is non question content"
+    description: "This is a description that is shown below the title" # String (optional). Description of the content block
+
+  # Choice questions are questions which can be scored. You usually ask for things like favorite color or to pick the right answer
+  # They can be multiple or single choice.
+  - type: choice
+    required: true
+    title: "What is your favorite weather?"
+    config:
+      multiple: false # Boolean (default: false) — allow multiple selections
+      limit: 2 # Int (default: 2) — max selections when multiple == true; if 0, no limit
+      dropdown: false # Boolean (default: false). If true, show a dropdown instead of checklist items. Only relevant if multiple == false. Not compatible with horizontal
+      horizontal: true # Boolean (default: false). Show choices horizontally. Use only with short choice titles. Only relevant if multiple == false. Not compatible with dropdown
+      conditional_key: conditionKey # String (optional). If given, this choice question can be used for conditionally showing other elements by using this reference. Must be unique.
+      choices: # list of choices
+        - title: "Sun" # String (required). Title of the choice
+          correct: true # Boolean (default: false). If true, this choice is correct. Used in quiz mode
+          score: 5 # Int (optional). Points to award for this choice. Used in quiz mode
+        - title: "Rain"
+          correct: false
+        - title: "Snow"
+          correct: false
+        - title: "Wind"
+          correct: true
+          score: 5
+
+  # Text questions are asking for free text answers. They can be scored
+  - type: text
+    required: true
+    title: "What is your favorite ice cream?"
+    conditional: # conditional: ConditionalSettings (optional): conditionally show this element
+      key: conditionKey # String (required). Reference to a choice question 'conditional_key' that will be used for the condition. The choice question needs to exist and must be prior to this element
+      value: # List of Strings (required). If the choice, referenced by key has one of the given values, this element is shown. Otherwise, it is skipped.
+        - "Sun"
+        - "Wind"
+        - "Rain"
+    config:
+      multiline: true # Boolean (default: false). If you expect lengthy answers, set this to true
+      pattern: '.*' # String (optional). Regex pattern to match the input against. Not used for scoring.
+      score: 5 # Int (optional). Points to award for this question. Used in quiz mode
+      correct_answer: "Any" # String (optional). Correct answer to the question. Used in quiz mode
+      correct_answer_pattern: '.*berry' # String (optional). Regex pattern to match the correct answer against. Used in quiz mode. Ignored if 'correct_answer' present.
+      correct_answer_list: # list of correct answers. Ignored if 'correct_answer' or 'correct_answer_pattern' present. Used in quiz mode.
+        - "Chocolate" # String (required). Correct answer to the question.
+        - "Strawberry"
+        - "Any"
+
+  # Datetime questions are asking for a date and/or time. They can be scored. If initial values are given, the user does not have to actively answer the question. Instead, the initial values are used.
+  - type: datetime
+    required: true
+    title: "When was this feature created?"
+    config:
+      input_type: datetime # String (default: datetime). Type of the input. Either [date], [time] or [datetime]
+      initial_selected_time: "21:33" # String (optional). If given, sets the initial selected time. Format: HH:mm
+      initial_selected_date: "2025-09-21" # String (optional). If given, sets the initial selected date. Format: YYYY-MM-DD
+      score: 10 # Int (optional). Points to award for this question. Used in quiz mode
+      correct_time_answer: "21:33" # String (optional). Correct time answer to the question. Used in quiz mode. Format: HH:mm
+      correct_date_answer: "2025-09-21" # String (optional). Correct date answer to the question. Used in quiz mode. Format: YYYY-MM-DD
+
+  # Slider questions allow to select a value from a range. They can be scored
+  - type: slider
+    required: true
+    title: "What is your favorite temperature?"
+    config:
+      range: false # Boolean (default: false). If true, the user can select a range (two values) on the slider
+      start: -10 # Number (default: 0). Together with 'end', defines first number of slider
+      end: 30 # Number (default: 1). Together with 'start', defines last number of slider
+      steps: 19 # Int (default: 0). Steps between start and end that can be chosen (start & end always add two steps). If 0, a continuous slider is created without any fixed steps.
+      show_decimals: false # Boolean (default: false). If true, the slider will show decimal values. Internally, the values are always decimals
+      unit: "°C" # String (optional). If given, will be shown next to start, end and current value
+      score: 5 # Int (optional). Points to award for this question. Used in quiz mode
+      correct_answer: 24 # Number (optional). Correct answer to the question. For ranges, this number must be in the chosen range. Used in quiz mode
+
+  # Rating questions are asking for a 1-5 rating. They cannot be scored
+  - type: rating
+    required: true
+    title: "How is your mood?"
+    config:
+      level: 6 # Int (default: 5, max: 10). Number of rating options to show
+      symbol: heart # String (default: star). Icon type for rating. One of [like, star, heart, smile, number]
+      color_gradient: red2green # String (default: none). Color scheme of the rating. One of [none, red2green]
+
+  # Likert questions are to answer multiple statements with the same options. They can be scored
+  - type: likert
+    required: true
+    title: "What tv/movie genres you like?"
+    config:
+      choices: # List<String> (required). Likert scale options (columns)
+        - "Love it"
+        - "Ok i guess"
+        - "Sometimes"
+        - "Nope"
+      statements: #List<LikertStatement> (rows)
+        - title: "Horror" # String (required). Title of the statement
+          correct_choice: "Sometimes" # String (optional). Correct choice for this statement. Needs to match one of the choices. Used in quiz mode
+          score: 5 # Int (optional). Points to award for this choice. Used in quiz mode
+        - title: "Comedy"
+          correct_choice: "Sometimes"
+          score: 5
+        - title: "Drama"
+          correct_choice: "Nope"
+          score: 5
+        - title: "Action"
+          correct_choice: "Love it"
+          score: 5
+
+--- # A second page
+
+# conditional: ConditionalSettings (optional): conditionally show this page
+# If the key has the given value, the page is shown. Otherwise, it is skipped.
+# A corresponding choice question needs to exist with the given key configured.
+conditional:
+  key: conditionKey
+  value:
+    - "Snow"
+
+content:
+  - type: information
+    title: "This is a second page"
+    description: "It is shown conditionally"
