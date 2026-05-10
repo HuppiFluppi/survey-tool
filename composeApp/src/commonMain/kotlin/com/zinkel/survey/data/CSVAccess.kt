@@ -13,43 +13,40 @@ object CSVAccess : SurveyDataAccess {
         instance: SurveyInstance,
         totalPages: Int,
         hasConditionals: Boolean,
-        questionIDs: List<String>,
+        questionIDandTitles: List<Pair<String, String>>,
     ) {
         val outputFile = File(file.parent, file.name + ".csv")
         val writeHeader = !outputFile.exists() || outputFile.length() == 0L
 
         csvWriter().openAsync(outputFile, append = true) {
             if (writeHeader) { //add header row
-                writeRow(generateHeaderRow(questionIDs.size, instance, hasConditionals))
+                writeRow(generateHeaderRow(questionIDandTitles, instance, hasConditionals))
             }
-            writeRow(generateDataRow(instance, hasConditionals, totalPages, questionIDs.size, questionIDs))
+            writeRow(generateDataRow(instance, hasConditionals, totalPages, questionIDandTitles.size, questionIDandTitles))
         }
     }
 
-    private fun generateHeaderRow(questionCount: Int, instance: SurveyInstance, hasConditionals: Boolean): List<String> = buildList {
-        add("#")
-        add("Start Time")
-        add("End Time")
-        add("Survey Type")
-        if (instance.type == SurveyType.QUIZ) add("User")
-        if (instance.type == SurveyType.QUIZ) add("Score")
-        if (hasConditionals) {
-            add("Shown Pages")
-            add("Shown Questions")
+    private fun generateHeaderRow(questionIDandTitles: List<Pair<String, String>>, instance: SurveyInstance, hasConditionals: Boolean): List<String> =
+        buildList {
+            add("#")
+            add("Start Time")
+            add("End Time")
+            add("Survey Type")
+            if (instance.type == SurveyType.QUIZ) add("User")
+            if (instance.type == SurveyType.QUIZ) add("Score")
+            if (hasConditionals) {
+                add("Shown Pages")
+                add("Shown Questions")
+            }
+            addAll(questionIDandTitles.map { it.second })
         }
-        repeat(questionCount) {
-            add("Question ID")
-            add("Question Title")
-            add("Question Answer")
-        }
-    }
 
     private fun generateDataRow(
         instance: SurveyInstance,
         hasConditionals: Boolean,
         totalPages: Int,
         totalQuestions: Int,
-        questionIDs: List<String>,
+        questionIDandTitles: List<Pair<String, String>>,
     ): List<Any?> {
         val answers = instance.getAllAnswers().associateBy { it.question.id }
 
@@ -64,15 +61,24 @@ object CSVAccess : SurveyDataAccess {
                 add("${instance.amountOfPages}/$totalPages")
                 add("${instance.amountOfQuestions}/$totalQuestions")
             }
-            questionIDs.forEach { id ->
-                add(id)
+            questionIDandTitles.forEach { entry ->
 
-                if (answers[id] != null) {
-                    add(answers[id]!!.question.title)
-                    add(sanitizeCSV(answers[id]!!.answer))
-                } else {
-                    add("")
-                    add("")
+                when (answers[entry.first]) {
+                    null -> add("")
+
+                    // Specialization when the slider only has one value (not a range)
+                    is SliderSurveyContentData if answers[entry.first]!!.answer != null && (answers[entry.first]!!.answer as? Pair<Float, Float?>?)?.second == null -> add(
+                        (answers[entry.first]!!.answer as? Pair<Float, Float?>?)?.first
+                    )
+
+                    // Specialization when there is only one choice
+                    is ChoiceSurveyContentData if !(answers[entry.first] as? ChoiceSurveyContentData)?.question?.multiple!! && (answers[entry.first] as? ChoiceSurveyContentData)?.answer?.size == 1 -> add(
+                        sanitizeCSV((answers[entry.first] as? ChoiceSurveyContentData)?.answer?.first())
+                    )
+
+                    else -> add(
+                        sanitizeCSV(answers[entry.first]!!.answer)
+                    )
                 }
             }
         }

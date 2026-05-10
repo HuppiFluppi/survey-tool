@@ -43,7 +43,7 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
 
     private val totalPages = surveyConfig.pages.size
     private val hasConditionals = surveyConfig.pages.any { page -> page.conditional != null || page.content.any { it.conditional != null } }
-    private val questionIDs = surveyConfig.pages.flatMap { page -> page.content.filter { it.savable }.map { content -> content.id } }
+    private val questionIDandTitles = surveyConfig.pages.flatMap { page -> page.content.filter { it.savable }.map { content -> content.id to content.title } }
 
     private val summary = SurveySummary(
         title = surveyConfig.title,
@@ -79,7 +79,7 @@ class SurveyDataManager(surveyConfig: SurveyConfig, surveyFile: File, formatType
     suspend fun addSurveyData(instance: SurveyInstance) {
         withContext(Dispatchers.IO) {
             updateSummary(instance)
-            dataAccess.saveSurveyData(dataFile, instance, totalPages, hasConditionals, questionIDs)
+            dataAccess.saveSurveyData(dataFile, instance, totalPages, hasConditionals, questionIDandTitles)
         }
     }
 
@@ -162,7 +162,7 @@ interface SurveyDataAccess {
     /**
      * Saves an entire survey [instance]/run (answers, metadata) to [file].
      */
-    suspend fun saveSurveyData(file: File, instance: SurveyInstance, totalPages: Int, hasConditionals: Boolean, questionIDs: List<String>)
+    suspend fun saveSurveyData(file: File, instance: SurveyInstance, totalPages: Int, hasConditionals: Boolean, questionIDandTitles: List<Pair<String, String>>)
 
     /**
      * Saves the aggregated [summary] to [file].
