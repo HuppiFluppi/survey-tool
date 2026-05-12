@@ -115,9 +115,12 @@ Survey Tool operates in two modes. For simplicity, the documentation always spea
 The `template.yaml` can serve as a blueprint for your own configuration file. It lists and explains all available options.
 Several example surveys can be found in the `examples` folder:
 
+- **conditionals-survey.yaml** - A survey with conditional elements (questions and pages)
 - **customer-satisfaction-survey.yaml** - A typical customer feedback survey
-- **trivia-quiz.yaml** - A general knowledge quiz with scoring
+- **many-pages-and-questions-quiz.yaml** - A quiz with a lot of pages and questions
 - **minimal-all-question-types-survey.yaml** - Demonstrates all available question types
+- **multi-page-survey.yaml** - A simple survey with multiple pages
+- **trivia-quiz.yaml** - A general knowledge quiz with scoring
 
 It is suggested to use one of the examples as base and alter it according to your needs. 
 To help with the formatting, use an editor with YAML support (e.g. Visual Studio Code with Red Hat `YAML` plugin).

@@ -106,7 +106,8 @@ survery-tool/
 │   │   ├── commonMain/         # Shared code
 │   │   │   ├── composeResources/
 │   │   │   │   ├── drawable/   # Images and icons
-│   │   │   │   └── values/     # Strings, app info
+│   │   │   │   ├── values/     # Strings, app info
+│   │   │   │   └── values-xx/  # Translated Strings
 │   │   │   └── kotlin/com/zinkel/survey/
 │   │   │       ├── config/     # Configuration loading
 │   │   │       ├── data/       # Data management
@@ -115,7 +116,8 @@ survery-tool/
 │   │   ├── commonTest/         # Shared tests
 │   │   └── jvmMain/            # JVM-specific code
 │   │       └── kotlin/com/zinkel/survey/
-│   │           └── Main.kt     # Application entry point
+│   │           ├── Main.kt     # Application entry point
+│   │           └── Platform.kt # Platform specific implementations
 │   └── build.gradle.kts        # Module build configuration
 ├── docs/                       # Usage and development documentation
 ├── examples/                   # Example survey configurations
@@ -126,6 +128,7 @@ survery-tool/
 ├── settings.gradle.kts         # Project settings
 ├── gradle.properties           # Gradle properties
 ├── template.yaml               # Survey configuration template
+├── LICENSE                     # License file
 └── README.md                   # Project documentation
 ```
 
