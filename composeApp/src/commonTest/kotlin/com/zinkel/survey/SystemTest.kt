@@ -8,16 +8,26 @@ import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.zinkel.survey.ui.SurveyApp
 import com.zinkel.survey.ui.SurveyLoadModel
 import com.zinkel.survey.ui.SurveyLoadUiState.Loaded
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.compose.resources.DensityQualifier
 import org.jetbrains.compose.resources.InternalResourceApi
+import org.jetbrains.compose.resources.LanguageQualifier
+import org.jetbrains.compose.resources.RegionQualifier
+import org.jetbrains.compose.resources.ResourceEnvironment
+import org.jetbrains.compose.resources.ThemeQualifier
 import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.getSystemResourceEnvironment
 import surveytool.composeapp.generated.resources.Res.string
 import surveytool.composeapp.generated.resources.cancel
 import surveytool.composeapp.generated.resources.finish
 import surveytool.composeapp.generated.resources.take_quiz
 import java.io.File
 import java.nio.file.Files
+import java.util.Locale
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -26,6 +36,22 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalTestApi::class, InternalResourceApi::class)
 class SystemTest {
+
+    // getString() fetches the current ResourceEnvironment to know which language to load.
+    // This crashes on environments w/o GUI (e.g. pipelines, containers, etc.)
+    // While the getString() can be given a own ResourceEnvironment, this class is internal. Hence, the mocking and init block.
+    @OptIn(InternalResourceApi::class)
+    val testEnv = mockk<ResourceEnvironment>()
+
+    init {
+        mockkStatic(::getSystemResourceEnvironment)
+        every { getSystemResourceEnvironment() } returns testEnv
+
+        every { testEnv getProperty "language" } returns LanguageQualifier(Locale.getDefault().language)
+        every { testEnv getProperty "region" } returns RegionQualifier("US")
+        every { testEnv getProperty "theme" } returns ThemeQualifier.DARK
+        every { testEnv getProperty "density" } returns DensityQualifier.HDPI
+    }
 
     @Test
     fun `E2E test with test survey config yaml`() = runBlocking {
@@ -41,12 +67,11 @@ class SystemTest {
             //load survey config
             SurveyLoadModel.load(configFile)
             assertIs<Loaded>(SurveyLoadModel.surveyLoadUiState)
-            val config = (SurveyLoadModel.surveyLoadUiState as Loaded).config
 
             // button texts
-            val startQuizText = getString(string.take_quiz)
-            val finishSurveyText = getString(string.finish)
-            val cancelSurveyText = getString(string.cancel)
+            val startQuizText = getString(testEnv, string.take_quiz)
+            val finishSurveyText = getString(testEnv, string.finish)
+            val cancelSurveyText = getString(testEnv, string.cancel)
 
             fun getSemanticRoleMatcher(role: Role) = SemanticsMatcher.keyIsDefined(SemanticsProperties.Role) and
                     SemanticsMatcher.expectValue(SemanticsProperties.Role, role)
